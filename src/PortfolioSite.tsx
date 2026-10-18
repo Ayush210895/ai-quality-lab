@@ -131,6 +131,19 @@ const FLAGSHIP_COVERS: Record<(typeof FLAGSHIP_NAMES)[number], string> = {
   "financial-doc-agent": "assets/financial-doc-agent-cover.jpg",
 };
 
+const PROJECT_COVERS: Record<string, string> = {
+  ...FLAGSHIP_COVERS,
+  "Credit-Card-Anomaly-Detection": "assets/fraud-anomaly-cover.jpg",
+  "Beijing-AQI-Prediction": "assets/aqi-forecast-cover.jpg",
+  "Amazon-Recommendation-System": "assets/recommendation-cover.jpg",
+  "FinBERT-Financial-News-Sentiment": "assets/finbert-sentiment-cover.jpg",
+  "Portfolio-Risk-PCA-From-Scratch": "assets/portfolio-risk-cover.jpg",
+  "Human-Activity-Monitoring": "assets/activity-signals-cover.jpg",
+  "multi-agent-dev-system": "assets/agent-orchestration-cover.jpg",
+  "Space-Race-Visualisation": "assets/space-analytics-cover.jpg",
+  "ai-quality-lab": "assets/quality-lab-cover.jpg",
+};
+
 const FLAGSHIP_META: Record<(typeof FLAGSHIP_NAMES)[number], { role: string; differentiator: string }> = {
   "travel-marketplace-harm-risk": {
     role: "Applied ML decision science",
@@ -776,9 +789,11 @@ function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: Proj
 
 function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: () => void }) {
   const reducedMotion = useReducedMotion();
+  const assetBase = import.meta.env.BASE_URL;
+  const cover = PROJECT_COVERS[project.name];
   return <motion.article layout className="project-tile group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] bg-[#0b1425] text-white transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(0,0,0,.35)]" style={{ borderTop: `4px solid ${project.accent}` }} initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: [0.22, 1, 0.36, 1] }}>
-    <button type="button" className="block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.displayName}`}>
-      <VisualStage project={project} compact />
+    <button type="button" className="project-media-panel relative block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.displayName}`}>
+      {cover ? <><img className="project-media-image absolute inset-0 h-full w-full object-cover" src={`${assetBase}${cover}`} alt="" /><span className="project-media-scrim absolute inset-0" aria-hidden="true" /><span className="project-media-scan absolute inset-y-0 w-20" aria-hidden="true" /><span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4"><span><span className="flex items-center gap-1.5 text-[9px] font-extrabold uppercase text-[#c7d4e7]"><i className="h-1.5 w-1.5" style={{ backgroundColor: project.accent }} /> Decision system</span><strong className="mt-1 block max-w-xs text-sm leading-5 text-white">{businessQuestion(project)}</strong></span><span className="shrink-0 rounded-full border border-white/30 bg-black/45 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur-md">Explore</span></span></> : <VisualStage project={project} compact />}
     </button>
     <div className="flex flex-1 flex-col border-t border-white/15 p-5">
       <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="rounded-full border border-[#324667] px-2 py-1 text-[9px] font-extrabold uppercase text-[#9fb0c8]">{STATUS_COPY[project.status].label}</span></div>
@@ -801,12 +816,15 @@ function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { 
     window.requestAnimationFrame(() => document.getElementById("project-detail")?.scrollIntoView({ behavior: "smooth" }));
   };
   const related = projectStories.filter((candidate) => candidate.name !== project.name && (projectGroup(candidate) === projectGroup(project) || candidate.visual === project.visual)).slice(0, 3);
+  const assetBase = import.meta.env.BASE_URL;
+  const cover = PROJECT_COVERS[project.name];
   return <div className="project-page relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]" style={{ "--project-accent": project.accent, "--project-soft": project.soft } as CSSProperties}>
     <ConstellationField />
     <div className="relative z-10">
     <SiteHeader onHome={onHome} onProjects={onBack} onOpenLab={onOpenLab} light />
     <main>
-      <section className="case-hero border-b-4 bg-[#0f1d24] text-white" style={{ borderColor: project.accent }}>
+      <section className="case-hero relative isolate overflow-hidden border-b-4 bg-[#0f1d24] text-white" style={{ borderColor: project.accent }}>
+        {cover && <><img className="absolute inset-0 -z-20 h-full w-full object-cover opacity-35" src={`${assetBase}${cover}`} alt="" /><span className="absolute inset-0 -z-10 bg-[#07101d]/80" aria-hidden="true" /></>}
         <div className="mx-auto max-w-[1500px] px-4 py-7 md:px-7 lg:py-10">
           <button type="button" className="inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#b9cac8] hover:bg-white/10" onClick={onBack}><ArrowLeft size={15} /> All projects</button>
           <div className="mt-5 grid gap-7 lg:grid-cols-[minmax(0,.85fr)_minmax(480px,1.15fr)] lg:items-stretch">

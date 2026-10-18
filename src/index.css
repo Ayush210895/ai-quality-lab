@@ -241,6 +241,31 @@ input[type="range"] { accent-color: #087e72; }
   box-shadow: 0 18px 46px rgb(0 0 0 / 24%);
 }
 
+.project-media-image {
+  transform: scale(1.015);
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1), filter 300ms ease;
+}
+
+.project-media-scrim {
+  background: linear-gradient(180deg, rgb(3 7 17 / 4%) 12%, rgb(3 7 17 / 26%) 52%, rgb(3 7 17 / 96%) 100%);
+}
+
+.project-media-scan {
+  left: -30%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 16%), transparent);
+  transform: skewX(-18deg);
+  transition: left 800ms cubic-bezier(.2,.8,.2,1);
+}
+
+.project-tile:hover .project-media-image,
+.project-tile:focus-within .project-media-image {
+  filter: saturate(1.12) contrast(1.04);
+  transform: scale(1.075);
+}
+
+.project-tile:hover .project-media-scan,
+.project-tile:focus-within .project-media-scan { left: 120%; }
+
 .project-index-row {
   position: relative;
   transition: background-color 180ms ease, padding-left 180ms ease;
@@ -328,6 +353,35 @@ input[type="range"] { accent-color: #087e72; }
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%);
 }
 
+.lab-cinema-backdrop {
+  opacity: .52;
+  transform: scale(1.04);
+  animation: lab-backdrop-arrive 900ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.lab-cinema-scrim {
+  background: linear-gradient(90deg, rgb(5 8 20 / 94%) 0%, rgb(5 8 20 / 66%) 52%, rgb(5 8 20 / 78%) 100%);
+}
+
+@keyframes lab-backdrop-arrive {
+  from { opacity: 0; transform: scale(1.09); }
+  to { opacity: .52; transform: scale(1.04); }
+}
+
+.lab-module-cover {
+  filter: saturate(.82) contrast(1.08);
+  transform: scale(1.04);
+  transition: filter 240ms ease, transform 500ms cubic-bezier(.2,.8,.2,1);
+}
+
+.lab-module-scrim { background: rgb(5 8 20 / 76%); }
+
+.lab-module-tab:hover .lab-module-cover,
+.lab-module-tab:focus-visible .lab-module-cover {
+  filter: saturate(1.08) contrast(1.08);
+  transform: scale(1.12);
+}
+
 .quality-lab .lab-icon-button {
   border-color: #324667;
   background: #0b1425;
@@ -413,6 +467,7 @@ input[type="range"] { accent-color: #087e72; }
 @media (prefers-reduced-motion: reduce) {
   .status-cursor { animation: none; }
   .signal-sweep { animation: none; transform: translateX(0); }
+  .lab-cinema-backdrop { animation: none; }
   *, *::before, *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;

@@ -594,6 +594,15 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
   const navigate = (module: ModuleId) => { setActive(module); setReport(null); setPaletteOpen(false); setPaletteQuery(""); };
   const visibleModules = useMemo(() => MODULES.filter((module) => `${module.label} ${module.short} ${module.description}`.toLowerCase().includes(paletteQuery.trim().toLowerCase())), [paletteQuery]);
   const evaluationStatus = typeof report?.assessment.status === "string" ? report.assessment.status : report ? "Evidence ready" : "Evaluating";
+  const moduleCover: Record<ModuleId, string> = {
+    classification: "assets/fraud-anomaly-cover.jpg",
+    comparison: "assets/travel-harm-risk-cover.jpg",
+    regression: "assets/aqi-forecast-cover.jpg",
+    ranking: "assets/recommendation-cover.jpg",
+    llm: "assets/financial-doc-agent-cover.jpg",
+    monitoring: "assets/activity-signals-cover.jpg",
+    portfolio: "assets/quality-lab-cover.jpg",
+  };
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
@@ -624,14 +633,16 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
             <span className="mr-1 hidden max-w-56 truncate text-xs text-[#9fb0c8] lg:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
             <button className="hidden h-9 items-center gap-2 rounded-[6px] border border-[#324667] bg-[#0b1425] px-3 text-xs font-bold text-[#c8d4e6] hover:border-[#64e8ff] hover:text-white sm:inline-flex" type="button" onClick={() => setPaletteOpen(true)}><Command size={14} /> Workspaces <kbd className="rounded-[3px] border border-[#435777] px-1.5 py-0.5 font-mono text-[9px]">⌘K</kbd></button>
             <button className="lab-icon-button" type="button" title="Reset active workspace" aria-label="Reset" onClick={() => setResetKey((value) => value + 1)}><RefreshCw size={16} /></button>
-            <button className="inline-flex h-9 items-center gap-2 rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d] disabled:cursor-not-allowed disabled:opacity-50" type="button" title="Download JSON evidence report" onClick={exportReport} disabled={!report}><Download size={15} /> Export evidence</button>
+            <button className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d] disabled:cursor-not-allowed disabled:opacity-50" type="button" title="Download JSON evidence report" aria-label="Export evidence" onClick={exportReport} disabled={!report}><Download size={15} /><span className="hidden sm:inline">Export evidence</span><span className="sm:hidden">Export</span></button>
           </div>
         </div>
         <ScrollProgress />
       </header>
 
-      <section className="border-b border-[#263657] bg-[#08111f]/88 text-white backdrop-blur-[2px]">
-        <div className="mx-auto max-w-[1500px] px-4 pb-5 pt-6 md:px-7 md:pt-8">
+      <section className="lab-cinema relative isolate overflow-hidden border-b border-[#263657] bg-[#08111f]/88 text-white backdrop-blur-[2px]">
+        <img key={active} className="lab-cinema-backdrop absolute inset-0 -z-20 h-full w-full object-cover" src={`${assetBase}${moduleCover[active]}`} alt="" />
+        <span className="lab-cinema-scrim absolute inset-0 -z-10" aria-hidden="true" />
+        <div className="relative mx-auto max-w-[1500px] px-4 pb-5 pt-6 md:px-7 md:pt-8">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div><p className="text-[11px] font-extrabold uppercase text-[#64e8ff]">Interactive evaluation studio</p><h1 className="portfolio-display mt-2 text-4xl sm:text-5xl">{activeModule.label}</h1><p className="mt-2 text-sm text-[#aebed6]">{activeModule.description}</p></div>
             <button className="inline-flex min-h-9 w-fit items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#aebed6] hover:bg-white/10 hover:text-white" type="button" onClick={onExit}><FolderGit2 size={15} /> Back to all projects</button>
@@ -640,9 +651,12 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
             {MODULES.map((module) => {
               const Icon = module.icon;
               const selected = module.id === active;
-              return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`group min-w-[150px] flex-1 rounded-[6px] border p-3 text-left transition-colors ${selected ? "border-transparent text-white shadow-[0_8px_20px_rgba(0,0,0,.28)]" : "border-[#324667] bg-[#0b1425] text-[#aebed6] hover:border-[#64e8ff] hover:text-white"}`} style={selected ? { backgroundColor: module.color } : undefined} onClick={() => navigate(module.id)}>
+              return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`lab-module-tab group relative isolate min-w-[150px] flex-1 overflow-hidden rounded-[6px] border p-3 text-left text-white transition-colors ${selected ? "shadow-[0_8px_20px_rgba(0,0,0,.38)]" : "border-[#324667] hover:border-[#64e8ff]"}`} style={selected ? { borderColor: module.color } : undefined} onClick={() => navigate(module.id)}>
+                <img className="lab-module-cover absolute inset-0 -z-20 h-full w-full object-cover" src={`${assetBase}${moduleCover[module.id]}`} alt="" />
+                <span className={`lab-module-scrim absolute inset-0 -z-10 ${selected ? "opacity-80" : "opacity-95"}`} aria-hidden="true" />
                 <span className="flex items-center gap-2"><Icon size={16} /><strong className="text-xs">{module.short}</strong></span>
-                <span className={`mt-2 hidden text-[10px] leading-4 xl:block ${selected ? "text-white/80" : "text-[#8296b5]"}`}>{module.description}</span>
+                <span className="mt-2 hidden text-[10px] leading-4 text-[#c5d1e3] xl:block">{module.description}</span>
+                {selected && <span className="absolute inset-x-0 bottom-0 h-1" style={{ backgroundColor: module.color }} aria-hidden="true" />}
               </button>;
             })}
           </nav>
