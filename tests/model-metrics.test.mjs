@@ -19,7 +19,7 @@ import {
   parseMonitoringCsv,
   parseRankingCsv,
   parseRegressionCsv,
-} from "../dist/model-metrics.mjs";
+} from "../src/lib/model-metrics.mjs";
 
 test("generic CSV parser supports quoted fields", () => {
   const rows = parseCsvObjects('actual,predicted,note\n10,11,"north, west"\n', { required: ["actual"] });

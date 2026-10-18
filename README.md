@@ -1,10 +1,10 @@
 # AI Quality Lab
 
-AI Quality Lab is a browser-based decision-support suite for evaluating whether an AI or ML system is ready to launch and healthy in production. It covers the main applied-model families through dedicated evaluation workspaces rather than forcing every system into classification metrics.
+AI Quality Lab is a browser-based decision-support suite for evaluating whether an AI or ML system is ready to launch and healthy in production. The React and TypeScript interface covers the main applied-model families through dedicated evaluation workspaces rather than forcing every system into classification metrics.
 
 **Live product:** [ayush210895.github.io/ai-quality-lab](https://ayush210895.github.io/ai-quality-lab/)
 
-![AI Quality Lab evaluation suite](artifacts/decision-threshold-explorer-v1.png)
+![AI Quality Lab evaluation suite](artifacts/ai-quality-lab-v3.png)
 
 ## Evaluation workspaces
 
@@ -45,18 +45,29 @@ Other workspaces expose their required CSV columns directly beside the upload co
 From this directory:
 
 ```bash
-python3 -m http.server 8765 --directory dist
+pnpm install
+pnpm dev
 ```
 
-Then open `http://localhost:8765`.
+Vite prints the local URL when the development server starts.
+
+## Product stack
+
+- React and TypeScript for isolated, reliable workspace state.
+- Vite for development and production builds.
+- Tailwind CSS for the responsive operational interface.
+- Recharts for accessible model-quality visualizations.
+- Zod for validating downloaded evidence reports.
+- Browser-local CSV parsing; no evaluation data is sent to a backend.
 
 ## Test
 
 ```bash
-node --test tests/*.test.mjs
+pnpm test
+pnpm build
 ```
 
-Requires a current Node.js release with the built-in test runner.
+Requires Node.js 20.19 or newer.
 
 Every push and pull request runs syntax checks and unit tests through GitHub Actions. A separate workflow deploys the static application to GitHub Pages after changes reach `main`.
 

@@ -9,7 +9,7 @@ import {
   generateScenario,
   parsePredictionCsv,
   recommendThreshold,
-} from "../dist/metrics.mjs";
+} from "../src/lib/metrics.mjs";
 
 const rows = [
   { actual: 1, score: 0.9 },
