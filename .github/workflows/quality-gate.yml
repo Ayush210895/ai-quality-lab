@@ -21,5 +21,7 @@ jobs:
         run: |
           node --check dist/app.mjs
           node --check dist/metrics.mjs
+          node --check dist/module-app.mjs
+          node --check dist/model-metrics.mjs
       - name: Run unit tests
-        run: node --test tests/metrics.test.mjs
+        run: node --test tests/*.test.mjs

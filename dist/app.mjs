@@ -308,6 +308,7 @@ function render({ regenerate = false } = {}) {
   const recommendation = renderPolicyComparison(state, costs, baseline, decision);
 
   window.currentReport = {
+    module: "classification",
     generatedAt: new Date().toISOString(),
     dataSource: dataMode === "upload"
       ? { type: "csv", filename: uploadedFilename, processedLocally: true }
@@ -376,6 +377,10 @@ elements["apply-recommendation"].addEventListener("click", () => {
 });
 
 document.querySelector("#reset-button").addEventListener("click", () => {
+  if ((document.body.dataset.activeModule || "classification") !== "classification") {
+    window.dispatchEvent(new CustomEvent("reset-active-module"));
+    return;
+  }
   Object.entries(defaults).forEach(([name, value]) => { controls[name].value = String(value); });
   dataMode = "synthetic";
   uploadedFilename = "";
@@ -386,12 +391,16 @@ document.querySelector("#reset-button").addEventListener("click", () => {
 });
 
 document.querySelector("#export-button").addEventListener("click", () => {
+  const moduleName = window.currentReport?.module || "model";
   downloadBlob(
     JSON.stringify(window.currentReport, null, 2),
     "application/json",
-    "ai-quality-lab-decision-report.json",
+    `ai-quality-lab-${moduleName}-report.json`,
   );
 });
 
-window.addEventListener("resize", () => render());
+window.addEventListener("resize", () => {
+  if ((document.body.dataset.activeModule || "classification") === "classification") render();
+});
+window.renderClassification = render;
 render({ regenerate: true });

@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Evaluate classification thresholds using quality, cost, and operating-capacity gates." />
-    <title>AI Quality Lab | Decision Threshold Explorer</title>
+    <meta name="description" content="Evaluate classification, regression, forecasting, ranking, LLM, RAG, and production-monitoring systems." />
+    <title>AI Quality Lab | Production Evaluation Suite</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="app-header">
       <div>
         <p class="product-name">AI Quality Lab</p>
-        <h1>Decision Threshold Explorer</h1>
+        <h1 id="module-heading">Classification Decision Lab</h1>
       </div>
       <div class="header-actions">
         <span class="dataset-badge" id="dataset-badge">Synthetic evaluation set</span>
@@ -20,7 +20,15 @@
       </div>
     </header>
 
-    <main class="workspace">
+    <nav class="module-nav" aria-label="Model evaluation modules" role="tablist">
+      <button type="button" role="tab" aria-selected="true" data-module="classification">Classification</button>
+      <button type="button" role="tab" aria-selected="false" data-module="regression">Regression &amp; forecasting</button>
+      <button type="button" role="tab" aria-selected="false" data-module="ranking">Ranking &amp; recommendations</button>
+      <button type="button" role="tab" aria-selected="false" data-module="llm">LLM &amp; RAG</button>
+      <button type="button" role="tab" aria-selected="false" data-module="monitoring">Production monitoring</button>
+    </nav>
+
+    <main class="workspace module-view active" id="classification-module" data-module-view="classification">
       <aside class="control-panel" aria-label="Scenario assumptions">
         <div class="panel-heading">
           <p class="section-label">Scenario</p>
@@ -175,7 +183,78 @@
       </section>
     </main>
 
+    <main class="workspace module-view" id="regression-module" data-module-view="regression" hidden>
+      <aside class="control-panel" aria-label="Regression evaluation controls">
+        <div class="panel-heading"><p class="section-label">Model family</p><h2>Regression &amp; forecasting</h2></div>
+        <p class="panel-intro">Evaluate numeric predictions, time-series forecasts, bias, and uncertainty intervals.</p>
+        <label class="control" for="reg-noise"><span><strong>Demo error level</strong><output id="reg-noise-output">10</output></span><input id="reg-noise" type="range" min="2" max="40" step="1" value="10" /><small>Controls random forecast error in the synthetic evaluation set.</small></label>
+        <label class="control" for="reg-bias"><span><strong>Demo systematic bias</strong><output id="reg-bias-output">+2</output></span><input id="reg-bias" type="range" min="-20" max="20" step="1" value="2" /><small>Positive values represent persistent over-prediction.</small></label>
+        <label class="control" for="reg-max-wape"><span><strong>Maximum WAPE</strong><output id="reg-max-wape-output">12%</output></span><input id="reg-max-wape" type="range" min="3" max="35" step="1" value="12" /><small>Business tolerance for weighted absolute forecast error.</small></label>
+        <div class="dataset-box"><p class="section-label">Use your data</p><label class="file-input" for="reg-file"><strong>Upload regression CSV</strong><span>actual, predicted; optional lower, upper, period</span><input id="reg-file" type="file" accept=".csv,text/csv" /></label><button class="text-button" id="reg-sample" type="button">Download sample CSV</button><p class="upload-status" id="reg-status">Synthetic 60-period forecast active.</p></div>
+      </aside>
+      <section class="results" aria-live="polite">
+        <section class="decision-banner" id="reg-banner"><div><p class="section-label">Release recommendation</p><div class="decision-title-row"><h2 id="reg-decision">Calculating</h2><span class="status-pill" id="reg-pill">Reviewing gates</span></div><p id="reg-summary">Evaluating error, bias, and interval reliability.</p></div><div class="decision-cost"><span>Weighted error</span><strong id="reg-primary">0%</strong><small id="reg-source">Synthetic evaluation</small></div></section>
+        <section class="metric-grid"><article class="metric"><span>MAE</span><strong id="reg-mae">0</strong><small>Average absolute error</small></article><article class="metric"><span>RMSE</span><strong id="reg-rmse">0</strong><small>Penalizes large misses</small></article><article class="metric"><span>Bias</span><strong id="reg-bias-metric">0</strong><small>Directional error</small></article><article class="metric"><span>R²</span><strong id="reg-r2">0</strong><small>Variance explained</small></article><article class="metric metric-emphasis"><span>Interval coverage</span><strong id="reg-coverage">N/A</strong><small>Actuals inside bounds</small></article></section>
+        <section class="analysis-panel model-chart-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">Forecast behavior</p><h2>Actual versus predicted</h2></div><span id="reg-count">60 periods</span></div><div class="legend"><span class="legend-precision">Actual</span><span class="legend-recall">Predicted</span></div><canvas id="reg-chart" width="1000" height="320" aria-label="Actual and predicted values"></canvas></section>
+        <section class="gate-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">Decision evidence</p><h2>Regression gates</h2></div><span class="gate-count" id="reg-gate-count">0 of 3 passed</span></div><div class="gate-list" id="reg-gates"></div></section>
+      </section>
+    </main>
+
+    <main class="workspace module-view" id="ranking-module" data-module-view="ranking" hidden>
+      <aside class="control-panel" aria-label="Ranking evaluation controls">
+        <div class="panel-heading"><p class="section-label">Model family</p><h2>Ranking &amp; recommendations</h2></div>
+        <p class="panel-intro">Evaluate search, recommendation, retrieval, and prioritization systems at the served cutoff.</p>
+        <label class="control" for="rank-k"><span><strong>Serving cutoff K</strong><output id="rank-k-output">5</output></span><input id="rank-k" type="range" min="1" max="10" step="1" value="5" /><small>Number of results shown to each user or query.</small></label>
+        <label class="control" for="rank-min-ndcg"><span><strong>Minimum NDCG@K</strong><output id="rank-min-ndcg-output">75%</output></span><input id="rank-min-ndcg" type="range" min="40" max="95" step="1" value="75" /><small>Required quality of ordering with graded relevance.</small></label>
+        <label class="control" for="rank-min-coverage"><span><strong>Minimum coverage</strong><output id="rank-min-coverage-output">60%</output></span><input id="rank-min-coverage" type="range" min="20" max="100" step="5" value="60" /><small>Required share of the catalog exposed in top-K results.</small></label>
+        <div class="dataset-box"><p class="section-label">Use your data</p><label class="file-input" for="rank-file"><strong>Upload ranking CSV</strong><span>query_id, item_id, relevance, score</span><input id="rank-file" type="file" accept=".csv,text/csv" /></label><button class="text-button" id="rank-sample" type="button">Download sample CSV</button><p class="upload-status" id="rank-status">Synthetic recommendation set active.</p></div>
+      </aside>
+      <section class="results" aria-live="polite">
+        <section class="decision-banner" id="rank-banner"><div><p class="section-label">Serving recommendation</p><div class="decision-title-row"><h2 id="rank-decision">Calculating</h2><span class="status-pill" id="rank-pill">Reviewing gates</span></div><p id="rank-summary">Evaluating relevance, retrieval, and catalog exposure.</p></div><div class="decision-cost"><span>NDCG at cutoff</span><strong id="rank-primary">0%</strong><small id="rank-source">Synthetic evaluation</small></div></section>
+        <section class="metric-grid"><article class="metric"><span>Precision@K</span><strong id="rank-precision">0%</strong><small>Top results that matter</small></article><article class="metric"><span>Recall@K</span><strong id="rank-recall">0%</strong><small>Relevant items retrieved</small></article><article class="metric"><span>NDCG@K</span><strong id="rank-ndcg">0%</strong><small>Quality of result order</small></article><article class="metric"><span>MRR</span><strong id="rank-mrr">0%</strong><small>First relevant rank</small></article><article class="metric metric-emphasis"><span>Coverage</span><strong id="rank-coverage">0%</strong><small>Catalog represented</small></article></section>
+        <section class="analysis-panel model-chart-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">Serving profile</p><h2>Ranking quality at K</h2></div><span id="rank-count">40 queries</span></div><canvas id="rank-chart" width="1000" height="320" aria-label="Ranking quality metrics"></canvas></section>
+        <section class="gate-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">Decision evidence</p><h2>Ranking gates</h2></div><span class="gate-count" id="rank-gate-count">0 of 3 passed</span></div><div class="gate-list" id="rank-gates"></div></section>
+      </section>
+    </main>
+
+    <main class="workspace module-view" id="llm-module" data-module-view="llm" hidden>
+      <aside class="control-panel" aria-label="LLM and RAG evaluation controls">
+        <div class="panel-heading"><p class="section-label">Model family</p><h2>LLM &amp; RAG systems</h2></div>
+        <p class="panel-intro">Evaluate answer quality together with groundedness, retrieval, safety, latency, and cost.</p>
+        <label class="control" for="llm-quality"><span><strong>Demo quality level</strong><output id="llm-quality-output">84%</output></span><input id="llm-quality" type="range" min="45" max="98" step="1" value="84" /><small>Controls evaluator scores in the synthetic test set.</small></label>
+        <label class="control" for="llm-min-quality"><span><strong>Minimum answer quality</strong><output id="llm-min-quality-output">80%</output></span><input id="llm-min-quality" type="range" min="50" max="95" step="1" value="80" /><small>Required average task-quality score.</small></label>
+        <label class="control" for="llm-max-latency"><span><strong>Maximum P95 latency</strong><output id="llm-max-latency-output">3,000 ms</output></span><input id="llm-max-latency" type="range" min="1000" max="8000" step="250" value="3000" /><small>Tail-latency service objective.</small></label>
+        <label class="control" for="llm-max-cost"><span><strong>Maximum average cost</strong><output id="llm-max-cost-output">$0.040</output></span><input id="llm-max-cost" type="range" min="0.01" max="0.15" step="0.005" value="0.04" /><small>Allowed model and retrieval cost per answer.</small></label>
+        <div class="dataset-box"><p class="section-label">Use your evaluations</p><label class="file-input" for="llm-file"><strong>Upload evaluation CSV</strong><span>quality, groundedness, retrieval, citation, latency_ms, cost_usd, safety_pass</span><input id="llm-file" type="file" accept=".csv,text/csv" /></label><button class="text-button" id="llm-sample" type="button">Download sample CSV</button><p class="upload-status" id="llm-status">Generic synthetic cases active. No RAG project data is accessed.</p></div>
+      </aside>
+      <section class="results" aria-live="polite">
+        <section class="decision-banner" id="llm-banner"><div><p class="section-label">Launch recommendation</p><div class="decision-title-row"><h2 id="llm-decision">Calculating</h2><span class="status-pill" id="llm-pill">Reviewing gates</span></div><p id="llm-summary">Evaluating quality, evidence, risk, performance, and economics.</p></div><div class="decision-cost"><span>Groundedness</span><strong id="llm-primary">0%</strong><small id="llm-source">Synthetic evaluation</small></div></section>
+        <section class="metric-grid llm-metrics"><article class="metric"><span>Answer quality</span><strong id="llm-quality-metric">0%</strong><small>Task success</small></article><article class="metric"><span>Groundedness</span><strong id="llm-groundedness">0%</strong><small>Supported by evidence</small></article><article class="metric"><span>Retrieval quality</span><strong id="llm-retrieval">0%</strong><small>Context relevance</small></article><article class="metric"><span>Citation coverage</span><strong id="llm-citation">0%</strong><small>Claims with sources</small></article><article class="metric"><span>Safety pass rate</span><strong id="llm-safety">0%</strong><small>Policy-safe cases</small></article><article class="metric"><span>P95 latency</span><strong id="llm-latency">0 ms</strong><small>Tail response time</small></article><article class="metric metric-emphasis"><span>Average cost</span><strong id="llm-cost">$0</strong><small>Per evaluated answer</small></article></section>
+        <section class="analysis-panel model-chart-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">System profile</p><h2>Quality dimensions</h2></div><span id="llm-count">80 cases</span></div><canvas id="llm-chart" width="1000" height="320" aria-label="LLM quality dimensions"></canvas></section>
+        <section class="gate-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">Decision evidence</p><h2>LLM and RAG gates</h2></div><span class="gate-count" id="llm-gate-count">0 of 5 passed</span></div><div class="gate-list gate-list-wide" id="llm-gates"></div></section>
+      </section>
+    </main>
+
+    <main class="workspace module-view" id="monitoring-module" data-module-view="monitoring" hidden>
+      <aside class="control-panel" aria-label="Production monitoring controls">
+        <div class="panel-heading"><p class="section-label">Lifecycle</p><h2>Production monitoring</h2></div>
+        <p class="panel-intro">Detect input drift, data-quality failures, and model-performance degradation after launch.</p>
+        <label class="control" for="mon-drift"><span><strong>Demo drift strength</strong><output id="mon-drift-output">35%</output></span><input id="mon-drift" type="range" min="0" max="100" step="5" value="35" /><small>Controls distribution and performance movement.</small></label>
+        <label class="control" for="mon-missing"><span><strong>Demo missing rate</strong><output id="mon-missing-output">1.5%</output></span><input id="mon-missing" type="range" min="0" max="15" step="0.5" value="1.5" /><small>Share of current production values unavailable.</small></label>
+        <label class="control" for="mon-max-psi"><span><strong>Maximum PSI</strong><output id="mon-max-psi-output">0.20</output></span><input id="mon-max-psi" type="range" min="0.05" max="0.5" step="0.01" value="0.2" /><small>Population Stability Index investigation threshold.</small></label>
+        <label class="control" for="mon-max-drop"><span><strong>Maximum performance drop</strong><output id="mon-max-drop-output">5%</output></span><input id="mon-max-drop" type="range" min="1" max="20" step="1" value="5" /><small>Allowed decline from the validated baseline.</small></label>
+        <div class="dataset-box"><p class="section-label">Use production data</p><label class="file-input" for="mon-file"><strong>Upload monitoring CSV</strong><span>reference, current; optional baseline_performance, current_performance</span><input id="mon-file" type="file" accept=".csv,text/csv" /></label><button class="text-button" id="mon-sample" type="button">Download sample CSV</button><p class="upload-status" id="mon-status">Synthetic reference and current windows active.</p></div>
+      </aside>
+      <section class="results" aria-live="polite">
+        <section class="decision-banner" id="mon-banner"><div><p class="section-label">Operational state</p><div class="decision-title-row"><h2 id="mon-decision">Calculating</h2><span class="status-pill" id="mon-pill">Reviewing signals</span></div><p id="mon-summary">Evaluating production stability and model degradation.</p></div><div class="decision-cost"><span>Population Stability Index</span><strong id="mon-primary">0.00</strong><small id="mon-source">Synthetic monitoring windows</small></div></section>
+        <section class="metric-grid monitoring-metrics"><article class="metric"><span>PSI</span><strong id="mon-psi">0.00</strong><small>Distribution drift</small></article><article class="metric"><span>Mean shift</span><strong id="mon-shift">0.00σ</strong><small>Standardized movement</small></article><article class="metric"><span>Missing rate</span><strong id="mon-missing-metric">0%</strong><small>Current data unavailable</small></article><article class="metric metric-emphasis"><span>Performance change</span><strong id="mon-performance">N/A</strong><small>Against validated baseline</small></article></section>
+        <section class="analysis-panel model-chart-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">Health profile</p><h2>Production signals versus limits</h2></div><span id="mon-count">2,000 observations</span></div><canvas id="mon-chart" width="1000" height="320" aria-label="Production monitoring signals"></canvas></section>
+        <section class="gate-panel"><div class="panel-heading horizontal-heading"><div><p class="section-label">Response evidence</p><h2>Monitoring gates</h2></div><span class="gate-count" id="mon-gate-count">0 of 4 healthy</span></div><div class="gate-list gate-list-wide" id="mon-gates"></div></section>
+      </section>
+    </main>
+
     <script type="module" src="./app.mjs"></script>
+    <script type="module" src="./module-app.mjs"></script>
   </body>
 </html>
 
