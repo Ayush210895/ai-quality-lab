@@ -96,8 +96,8 @@ describe("workspace navigation", () => {
     expect(screen.getAllByText(/Compare a logistic baseline with tuned XGBoost/).length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole("tab", { name: "artifact" }));
-    expect(screen.getByText("Evidence record")).toBeInTheDocument();
-    expect(screen.getByText("final_test_metrics.json")).toBeInTheDocument();
+    expect(await screen.findByText("Evidence record")).toBeInTheDocument();
+    expect(await screen.findByText("final_test_metrics.json")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "architecture" }));
     fireEvent.click(screen.getByRole("button", { name: "Run system flow" }));

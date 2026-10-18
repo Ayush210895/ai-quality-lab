@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -174,6 +175,7 @@ function SiteHeader({ onHome, onOpenLab, light = false }: { onHome: () => void; 
 function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onOpenLab" | "onSelectProject">) {
   const [group, setGroup] = useState<ProjectGroup>("Featured");
   const [query, setQuery] = useState("");
+  const reducedMotion = useReducedMotion();
   const visible = useMemo(() => projectStories.filter((project) => {
     const matchesGroup = group === "All" || (group === "Featured" ? project.featured : projectGroup(project) === group);
     const text = `${project.name} ${project.summary} ${project.problem} ${project.decision} ${project.stack.join(" ")}`.toLowerCase();
@@ -183,12 +185,13 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
   return <div className="min-h-screen bg-[#dfe9e6] text-[#142126]">
     <SiteHeader onHome={() => window.scrollTo({ top: 0, behavior: "smooth" })} onOpenLab={onOpenLab} />
     <main>
-      <section className="atlas-hero relative overflow-hidden bg-[#0c1a21] text-white">
-        <div className="mx-auto grid min-h-[520px] max-w-[1500px] gap-5 px-4 py-7 md:px-7 lg:grid-cols-[minmax(0,.88fr)_minmax(520px,1.12fr)] lg:items-center lg:gap-10 lg:py-8">
-          <div className="relative z-10 max-w-3xl">
+      <section className="atlas-hero relative isolate h-[calc(100svh-96px)] min-h-[640px] max-h-[760px] overflow-hidden bg-[#0c1a21] text-white">
+        <AtlasSignalField onSelectProject={onSelectProject} />
+        <div className="pointer-events-none relative z-10 mx-auto flex h-full max-w-[1500px] items-start px-4 pt-8 md:px-7 md:pt-12 lg:items-center lg:pt-0">
+          <motion.div className="pointer-events-auto max-w-3xl lg:max-w-[650px]" initial={reducedMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
             <p className="text-xs font-extrabold uppercase text-[#66d8c7]">Applied intelligence, made inspectable</p>
-            <h1 className="mt-3 max-w-3xl text-4xl font-black leading-[1.05] sm:text-5xl lg:text-6xl">Systems you can inspect, question, and operate.</h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#bed0ce] sm:text-base sm:leading-7">Move through the live signal map, open a system, and trace how model evidence becomes a business decision.</p>
+            <h1 className="hero-title mt-3 max-w-3xl text-4xl font-black leading-[1.02] sm:text-5xl lg:text-7xl">Systems you can inspect, question, and operate.</h1>
+            <p className="mt-5 max-w-xl text-sm leading-6 text-[#bed0ce] sm:text-base sm:leading-7">Move through the live signal field, open a system, and trace how model evidence becomes a business decision.</p>
             <div className="mt-6 flex flex-wrap gap-2">
               <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#66d8c7] px-4 text-sm font-black text-[#0c1a21]" onClick={() => document.getElementById("flagship-projects")?.scrollIntoView({ behavior: "smooth" })}><LayoutGrid size={17} /> Explore flagships</button>
               <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-white/30 bg-white/5 px-4 text-sm font-bold text-white hover:bg-white/10" onClick={onOpenLab}><FlaskConical size={17} /> Test a model</button>
@@ -198,8 +201,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
               <AtlasStat value={String(projectStories.filter((item) => item.status === "evidence-ready" || item.status === "connected").length)} label="Evidence backed" color="#ff8f70" />
               <AtlasStat value="6" label="Evaluation modes" color="#d0a8ff" />
             </div>
-          </div>
-          <AtlasSignalField onSelectProject={onSelectProject} />
+          </motion.div>
         </div>
       </section>
 
@@ -226,6 +228,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
 }
 
 function FlagshipProjects({ onSelectProject }: { onSelectProject: (project: ProjectStory) => void }) {
+  const reducedMotion = useReducedMotion();
   const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
   return <section id="flagship-projects" className="flagship-band border-b border-[#172a31] bg-[#10242b] text-white">
     <div className="mx-auto max-w-[1500px] px-4 py-12 md:px-7 lg:py-16">
@@ -238,10 +241,10 @@ function FlagshipProjects({ onSelectProject }: { onSelectProject: (project: Proj
           const meta = FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]];
           const visualOrder = index % 2 === 0 ? "lg:order-1" : "lg:order-2";
           const copyOrder = index % 2 === 0 ? "lg:order-2" : "lg:order-1";
-          return <article key={project.name} className="flagship-story relative grid gap-7 border-t border-white/15 pt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(360px,.88fr)] lg:items-center lg:gap-14">
+          return <motion.article key={project.name} className="flagship-story relative grid gap-7 border-t border-white/15 pt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(360px,.88fr)] lg:items-center lg:gap-14" initial={reducedMotion ? false : { opacity: 0, y: 44 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, delay: index * .08, ease: [0.22, 1, 0.36, 1] }}>
             <div className={`flagship-visual relative h-[640px] overflow-hidden md:h-[560px] lg:h-[360px] ${visualOrder}`} style={{ "--story-accent": project.accent } as CSSProperties}><VisualStage project={project} /><span aria-hidden="true" className="absolute right-4 top-1 font-mono text-7xl font-black text-white/10 sm:text-8xl">0{index + 1}</span></div>
             <div className={`${copyOrder}`}><div className="flex items-center gap-3"><span className="h-px w-10" style={{ backgroundColor: project.accent }} /><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{meta.role}</span></div><h3 className="mt-4 break-words text-3xl font-black leading-tight sm:text-4xl">{project.name}</h3><p className="mt-4 text-base font-bold leading-7 text-white">{businessQuestion(project)}</p><div className="mt-5 border-l-4 pl-4" style={{ borderColor: project.accent }}><span className="text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>Why this is different</span><p className="mt-1 text-sm leading-6 text-[#c7d4d2]">{meta.differentiator}</p></div><div className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-3"><span><strong className="block text-3xl font-black tabular-nums" style={{ color: project.accent }}>{project.metrics[0].value}</strong><small className="text-[10px] font-bold uppercase text-[#9fb4b2]">{project.metrics[0].label}</small></span><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] px-4 text-sm font-black text-white" style={{ backgroundColor: project.accent }} onClick={() => onSelectProject(project)}>Open case <ArrowRight size={16} /></button></div></div>
-          </article>;
+          </motion.article>;
         })}
       </div>
       <button type="button" className="mt-7 inline-flex min-h-10 items-center gap-2 text-xs font-extrabold text-[#9edfd5]" onClick={() => document.getElementById("project-explorer")?.scrollIntoView({ behavior: "smooth" })}><LayoutGrid size={15} /> Browse the complete project atlas</button>
@@ -254,12 +257,12 @@ function AtlasStat({ value, label, color }: { value: string; label: string; colo
 }
 
 const SIGNAL_PROJECTS = [
-  { name: "travel-marketplace-harm-risk", label: "Harm risk", x: 8, y: 14, color: "#ff765c" },
-  { name: "Credit-Risk-MLOps-AWS", label: "Credit MLOps", x: 57, y: 8, color: "#5fe0bd" },
-  { name: "financial-doc-agent", label: "Financial agent", x: 25, y: 43, color: "#c8a2ff" },
-  { name: "Amazon-Recommendation-System", label: "Recommender", x: 66, y: 42, color: "#ffc159" },
-  { name: "multi-agent-dev-system", label: "Agent system", x: 11, y: 66, color: "#72b7ff" },
-  { name: "ai-quality-lab", label: "Quality Lab", x: 58, y: 68, color: "#66d8c7" },
+  { name: "travel-marketplace-harm-risk", label: "Harm risk", x: 56, y: 18, mobileX: 5, mobileY: 59, color: "#ff765c" },
+  { name: "Credit-Risk-MLOps-AWS", label: "Credit MLOps", x: 79, y: 12, mobileX: 54, mobileY: 59, color: "#5fe0bd" },
+  { name: "financial-doc-agent", label: "Financial agent", x: 63, y: 45, mobileX: 18, mobileY: 70, color: "#c8a2ff" },
+  { name: "Amazon-Recommendation-System", label: "Recommender", x: 82, y: 43, mobileX: 57, mobileY: 70, color: "#ffc159" },
+  { name: "multi-agent-dev-system", label: "Agent system", x: 55, y: 69, mobileX: 6, mobileY: 81, color: "#72b7ff" },
+  { name: "ai-quality-lab", label: "Quality Lab", x: 77, y: 70, mobileX: 56, mobileY: 81, color: "#66d8c7" },
 ];
 
 function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: ProjectStory) => void }) {
@@ -292,7 +295,8 @@ function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: Proj
       context.clearRect(0, 0, width, height);
       context.strokeStyle = "rgba(120, 205, 194, .28)";
       context.lineWidth = 1;
-      const points = SIGNAL_PROJECTS.map((item) => ({ x: width * (item.x + 10) / 100, y: height * (item.y + 4) / 100 }));
+      const compact = width < 768;
+      const points = SIGNAL_PROJECTS.map((item) => ({ x: width * (compact ? item.mobileX : item.x) / 100, y: height * (compact ? item.mobileY : item.y) / 100 }));
       const links = [[0, 2], [0, 1], [1, 3], [2, 3], [2, 4], [3, 5], [4, 5]];
       links.forEach(([start, end], index) => {
         const from = points[start];
@@ -317,16 +321,16 @@ function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: Proj
     return () => { window.removeEventListener("resize", handleResize); window.cancelAnimationFrame(animation); };
   }, []);
 
-  return <div ref={shellRef} className="signal-field relative min-h-[360px] overflow-hidden border border-white/15 bg-[#10262d] lg:min-h-[430px]" aria-label="Interactive project signal map">
+  return <div ref={shellRef} className="signal-field absolute inset-0 overflow-hidden bg-[#10262d]" aria-label="Interactive project signal map">
     <canvas ref={canvasRef} className="pointer-events-none absolute inset-0" aria-hidden="true" />
-    <div className="absolute left-4 top-4 z-10"><p className="text-[10px] font-extrabold uppercase text-[#66d8c7]">Live project network</p><p className="mt-1 text-xs text-[#9fb4b2]">Select a signal to open its case study</p></div>
+    <div className="absolute right-7 top-8 z-10 hidden text-right lg:block"><p className="text-[10px] font-extrabold uppercase text-[#66d8c7]">Live project network</p><p className="mt-1 text-xs text-[#9fb4b2]">Select a signal to open its case study</p></div>
     {SIGNAL_PROJECTS.map((node) => {
       const selected = node.name === activeName;
       const project = projectStories.find((item) => item.name === node.name);
       if (!project) return null;
-      return <button key={node.name} type="button" className={`signal-node absolute z-10 min-h-10 border px-3 py-2 text-left text-[10px] font-black uppercase text-white ${selected ? "bg-[#0c1a21]" : "bg-[#17313a]/90"}`} style={{ left: `${node.x}%`, top: `${node.y}%`, borderColor: node.color, boxShadow: selected ? `0 0 0 2px ${node.color}` : undefined }} onMouseEnter={() => setActiveName(node.name)} onFocus={() => setActiveName(node.name)} onClick={() => onSelectProject(project)}><span className="mr-2 inline-block h-2 w-2" style={{ backgroundColor: node.color }} />{node.label}</button>;
+      return <button key={node.name} type="button" className={`signal-node absolute z-10 min-h-10 border px-3 py-2 text-left text-[10px] font-black uppercase text-white ${selected ? "bg-[#0c1a21]" : "bg-[#17313a]/90"}`} style={{ "--node-x": `${node.x}%`, "--node-y": `${node.y}%`, "--mobile-x": `${node.mobileX}%`, "--mobile-y": `${node.mobileY}%`, borderColor: node.color, boxShadow: selected ? `0 0 0 2px ${node.color}` : undefined } as CSSProperties} onMouseEnter={() => setActiveName(node.name)} onFocus={() => setActiveName(node.name)} onClick={() => onSelectProject(project)}><span className="mr-2 inline-block h-2 w-2" style={{ backgroundColor: node.color }} />{node.label}</button>;
     })}
-    <div className="absolute bottom-0 left-0 right-0 z-10 grid grid-cols-[1fr_auto] items-end gap-4 border-t border-white/15 bg-[#0c1a21]/95 px-4 py-3">
+    <div className="signal-decision absolute bottom-5 right-5 z-10 grid w-[min(440px,calc(100%-2.5rem))] grid-cols-[1fr_auto] items-end gap-4 border-t border-white/20 bg-[#0c1a21]/90 px-1 py-3 lg:bottom-8 lg:right-8">
       <span><span className="block text-[9px] font-extrabold uppercase text-[#66d8c7]">Active decision</span><strong className="mt-1 line-clamp-1 block text-xs sm:text-sm">{businessQuestion(activeProject)}</strong></span>
       <span className="text-right"><strong className="block text-lg tabular-nums text-[#ffc159]">{activeProject.metrics[0].value}</strong><small className="block max-w-24 text-[9px] text-[#9fb4b2]">{activeProject.metrics[0].label}</small></span>
     </div>
@@ -334,7 +338,8 @@ function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: Proj
 }
 
 function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: () => void }) {
-  return <article className="project-tile group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(12,26,33,.18)]" style={{ borderTop: `4px solid ${project.accent}`, backgroundColor: project.soft }}>
+  const reducedMotion = useReducedMotion();
+  return <motion.article layout className="project-tile group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(12,26,33,.18)]" style={{ borderTop: `4px solid ${project.accent}`, backgroundColor: project.soft }} initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: [0.22, 1, 0.36, 1] }}>
     <button type="button" className="block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.name}`}>
       <VisualStage project={project} compact />
     </button>
@@ -346,7 +351,7 @@ function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: (
       <div className="mt-4 border-l-4 pl-3" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why it matters</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#48565a]">{project.outcome}</p></div>
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#e0e7e6] pt-4"><span className="text-xs font-bold text-[#687579]">{project.metrics[0].label}: <strong className="text-[#142126]">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-9 shrink-0 items-center gap-2 rounded-[6px] px-3 text-xs font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onSelect}>Case study <ArrowRight size={15} /></button></div>
     </div>
-  </article>;
+  </motion.article>;
 }
 
 function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project: ProjectStory; onBack: () => void; onOpenLab: () => void; onSelectProject: (project: ProjectStory) => void }) {
@@ -456,6 +461,7 @@ const PROJECT_IMAGES: Partial<Record<string, { src: string; alt: string; caption
 function CaseArtifactDeck({ project }: { project: ProjectStory }) {
   const [view, setView] = useState<"signal" | "artifact" | "decision">("signal");
   const [tourIndex, setTourIndex] = useState(-1);
+  const reducedMotion = useReducedMotion();
   const views = ["signal", "artifact", "decision"] as const;
   useEffect(() => { setView("signal"); setTourIndex(-1); }, [project.slug]);
   useEffect(() => {
@@ -476,11 +482,13 @@ function CaseArtifactDeck({ project }: { project: ProjectStory }) {
         {views.map((item, index) => <button key={item} type="button" role="tab" aria-selected={view === item} className={`min-h-9 rounded-[4px] border-t-2 px-2 text-[9px] font-extrabold uppercase sm:text-[10px] ${view === item ? "bg-white text-[#142126]" : "border-white/15 text-[#aebfbd] hover:bg-white/10"}`} style={view === item ? { borderColor: project.accent } : undefined} onClick={() => selectView(item)}><span aria-hidden="true" className="mr-1 font-mono">0{index + 1}</span>{item}</button>)}
       </div>
     </div>
-    <div className="h-[610px] lg:h-[370px]">
-      {view === "signal" && <VisualStage project={project} />}
-      {view === "artifact" && <ArtifactView project={project} />}
-      {view === "decision" && <DecisionView project={project} />}
-    </div>
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div key={view} className="h-[610px] lg:h-[370px]" initial={reducedMotion ? false : { opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={reducedMotion ? undefined : { opacity: 0, x: -18 }} transition={{ duration: reducedMotion ? 0 : .24, ease: "easeOut" }}>
+        {view === "signal" && <VisualStage project={project} />}
+        {view === "artifact" && <ArtifactView project={project} />}
+        {view === "decision" && <DecisionView project={project} />}
+      </motion.div>
+    </AnimatePresence>
   </section>;
 }
 
