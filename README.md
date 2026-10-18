@@ -13,6 +13,7 @@ AI Quality Lab is a browser-based decision-support suite for evaluating whether 
 - **Ranking and recommendations:** Precision@K, Recall@K, NDCG@K, MRR, and catalog coverage.
 - **LLM and RAG:** answer quality, groundedness, retrieval quality, citation coverage, safety, latency, and cost.
 - **Production monitoring:** Population Stability Index, standardized mean shift, missingness, and performance degradation.
+- **GitHub model comparison:** traceable baseline-versus-candidate evidence from the public Travel Marketplace Harm-Risk model, pinned to its source commit and final-test artifacts.
 
 Every workspace includes a reproducible synthetic scenario, adjustable production gates, local CSV evaluation, a visual system profile, and a downloadable JSON evidence report.
 

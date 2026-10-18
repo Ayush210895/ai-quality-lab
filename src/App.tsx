@@ -6,8 +6,10 @@ import {
   Check,
   CircleAlert,
   Download,
+  ExternalLink,
   FileUp,
   Gauge,
+  GitCompare,
   ListOrdered,
   RefreshCw,
   ShieldCheck,
@@ -58,8 +60,9 @@ import {
   parseRankingCsv,
   parseRegressionCsv,
 } from "./lib/model-metrics.mjs";
+import { travelEvaluation } from "./data/travelEvaluation";
 
-type ModuleId = "classification" | "regression" | "ranking" | "llm" | "monitoring";
+type ModuleId = "classification" | "comparison" | "regression" | "ranking" | "llm" | "monitoring";
 type Tone = "pass" | "conditional" | "stop" | "neutral";
 type Report = {
   product: string;
@@ -85,6 +88,7 @@ const reportSchema = z.object({
 
 const MODULES: Array<{ id: ModuleId; label: string; short: string; icon: typeof Gauge }> = [
   { id: "classification", label: "Classification", short: "Classification", icon: Gauge },
+  { id: "comparison", label: "GitHub model comparison", short: "GitHub model", icon: GitCompare },
   { id: "regression", label: "Regression & forecasting", short: "Forecasting", icon: TrendingUp },
   { id: "ranking", label: "Ranking & recommendations", short: "Ranking", icon: ListOrdered },
   { id: "llm", label: "LLM & RAG", short: "LLM & RAG", icon: BrainCircuit },
@@ -347,6 +351,83 @@ function Matrix({ value, label, color }: { value: number; label: string; color: 
   return <div className={`flex min-h-24 flex-col items-center justify-center rounded-[6px] p-2 ${color}`}><strong className="text-xl tabular-nums">{value.toLocaleString()}</strong><span className="mt-1">{label}</span></div>;
 }
 
+function ComparisonLab({ onReport }: { onReport: (report: Report) => void }) {
+  const evaluation = travelEvaluation;
+  const baseline = evaluation.finalTest.baseline;
+  const candidate = evaluation.finalTest.candidate;
+  const uplift = candidate.harmValueCapture - baseline.harmValueCapture;
+  const relativeUplift = uplift / baseline.harmValueCapture;
+  const incidentsCaught = Math.round(candidate.recall * evaluation.finalTest.harmfulBookings);
+  const dataset = `GitHub artifact · ${evaluation.sourceCommit.slice(0, 7)}`;
+  const chart = [
+    { metric: "Harm value", baseline: baseline.harmValueCapture, candidate: candidate.harmValueCapture },
+    { metric: "Recall", baseline: baseline.recall, candidate: candidate.recall },
+    { metric: "Precision", baseline: baseline.precision, candidate: candidate.precision },
+  ];
+  const gates = [
+    { name: "Policy locked before test", value: 1, target: 1, pass: evaluation.policyLockedBeforeTest, direction: "min" },
+    { name: "Review capacity", value: evaluation.finalTest.reviewFraction, target: 0.05, pass: evaluation.finalTest.reviewFraction <= 0.05, direction: "max" },
+    { name: "Harm-value uplift", value: uplift, target: 0, pass: uplift > 0, direction: "min" },
+    { name: "Recall floor", value: candidate.recall, target: 0.15, pass: candidate.recall >= 0.15, direction: "min" },
+    { name: "Future-test sample", value: evaluation.finalTest.rows, target: 10000, pass: evaluation.finalTest.rows >= 10000, direction: "min", format: "number" },
+  ];
+  const assessment = {
+    status: "Promote for value objective",
+    tone: "pass",
+    summary: "Expected-loss ranking captures materially more harmful financial value at the same review capacity. It accepts lower incident recall, so recall remains an explicit production guardrail.",
+    gates,
+  };
+  const report = useMemo(() => makeReport(
+    "github-model-comparison",
+    dataset,
+    { repository: evaluation.repository, sourceCommit: evaluation.sourceCommit, policy: evaluation.policy },
+    { baseline, candidate, harmValueUplift: uplift, relativeHarmValueUplift: relativeUplift },
+    assessment,
+  ), [baseline, candidate, dataset, evaluation, relativeUplift, uplift]);
+  useReport(report, onReport);
+
+  return <Workspace controls={<ControlPanel eyebrow="Connected evidence" title="Travel harm-risk model" intro="A traceable decision view built from evaluation artifacts committed in your GitHub model repository.">
+    <div className="space-y-4 border-y border-line py-4 text-sm">
+      <div><span className="block text-xs font-bold text-slate-500">Model</span><strong className="mt-1 block">{evaluation.model}</strong></div>
+      <div><span className="block text-xs font-bold text-slate-500">Locked ranking policy</span><strong className="mt-1 block leading-5">{evaluation.policy}</strong></div>
+      <div><span className="block text-xs font-bold text-slate-500">Primary business objective</span><strong className="mt-1 block leading-5">{evaluation.primaryObjective}</strong></div>
+    </div>
+    <div className="mt-5 space-y-2">
+      <a className="flex items-center justify-between gap-2 rounded-[6px] border border-line px-3 py-2.5 text-xs font-bold text-navy hover:border-teal hover:text-teal" href={evaluation.repositoryUrl} target="_blank" rel="noreferrer">Source repository <ExternalLink size={14} /></a>
+      <a className="flex items-center justify-between gap-2 rounded-[6px] border border-line px-3 py-2.5 text-xs font-bold text-navy hover:border-teal hover:text-teal" href={evaluation.sourceCommitUrl} target="_blank" rel="noreferrer">Pinned commit {evaluation.sourceCommit.slice(0, 7)} <ExternalLink size={14} /></a>
+      <a className="flex items-center justify-between gap-2 rounded-[6px] border border-line px-3 py-2.5 text-xs font-bold text-navy hover:border-teal hover:text-teal" href={evaluation.finalArtifactUrl} target="_blank" rel="noreferrer">Final-test artifact <ExternalLink size={14} /></a>
+    </div>
+    <p className="mt-5 rounded-[6px] bg-slate-100 p-3 text-xs leading-5 text-slate-600">This workspace evaluates the committed model evidence. The Python/XGBoost model itself remains in its source repository and is not executed in the browser.</p>
+  </ControlPanel>}>
+    <DecisionBanner label="Model decision" status={assessment.status} tone="pass" summary={assessment.summary} metricLabel="Harmful value captured" metric={percent(candidate.harmValueCapture)} source={`+${percent(uplift)} points vs probability ranking`} />
+    <MetricGrid metrics={[
+      { label: "Harm value captured", value: percent(candidate.harmValueCapture), help: "Primary business metric" },
+      { label: "Relative uplift", value: `+${percent(relativeUplift)}`, help: "Versus probability ranking" },
+      { label: "Review capacity", value: percent(evaluation.finalTest.reviewFraction), help: `${evaluation.finalTest.reviewCount.toLocaleString()} bookings flagged` },
+      { label: "Harmful bookings caught", value: `${incidentsCaught} / ${evaluation.finalTest.harmfulBookings}`, help: "At the locked operating point" },
+      { label: "Future-test rows", value: evaluation.finalTest.rows.toLocaleString(), help: "Untouched chronological period", accent: "border-t-[3px] border-t-sky-600" },
+    ]} />
+    <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+      <ChartPanel eyebrow="Locked final test" title="Probability versus expected-loss ranking" aside="Same XGBoost model · same 5% capacity"><ResponsiveContainer width="100%" height="100%"><BarChart data={chart} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}><CartesianGrid className="chart-grid" vertical={false} /><XAxis dataKey="metric" /><YAxis domain={[0, 0.45]} tickFormatter={(value) => `${Math.round(value * 100)}%`} /><Tooltip contentStyle={chartTooltipStyle} formatter={(value) => percent(Number(value))} /><Legend /><Bar dataKey="baseline" name="Probability ranking" fill="#94a3b8" radius={[4, 4, 0, 0]} /><Bar dataKey="candidate" name="Expected-loss ranking" fill="#087e72" radius={[4, 4, 0, 0]} /></BarChart></ResponsiveContainer></ChartPanel>
+      <Panel className="p-5"><p className="text-[11px] font-extrabold uppercase text-teal">Decision trade-off</p><h2 className="mt-1 text-base font-bold">Value improves while incident recall falls</h2><div className="mt-5 space-y-4"><ComparisonDelta label="Harmful value capture" baseline={baseline.harmValueCapture} candidate={candidate.harmValueCapture} /><ComparisonDelta label="Incident recall" baseline={baseline.recall} candidate={candidate.recall} /><ComparisonDelta label="Precision" baseline={baseline.precision} candidate={candidate.precision} /></div><p className="mt-5 border-t border-line pt-4 text-xs leading-5 text-slate-600">This is not a universal model win. It is the correct policy only when prevented financial harm is the primary objective and the recall trade-off is accepted.</p></Panel>
+    </div>
+    <Panel className="overflow-hidden">
+      <div className="border-b border-line p-5"><p className="text-[11px] font-extrabold uppercase text-teal">Development evidence</p><h2 className="mt-1 text-base font-bold">Logistic baseline versus XGBoost candidate</h2></div>
+      <div className="overflow-x-auto"><table className="w-full min-w-[640px] text-left text-sm"><thead className="bg-slate-50 text-xs text-slate-500"><tr><th className="px-5 py-3">Validation policy</th><th className="px-5 py-3 text-right">Precision</th><th className="px-5 py-3 text-right">Recall</th><th className="px-5 py-3 text-right">Harm value captured</th></tr></thead><tbody><ComparisonRow model={evaluation.validation.baseline} /><ComparisonRow model={evaluation.validation.candidate} highlight /></tbody></table></div>
+    </Panel>
+    <GateList gates={gates} />
+  </Workspace>;
+}
+
+function ComparisonDelta({ label, baseline, candidate }: { label: string; baseline: number; candidate: number }) {
+  const delta = candidate - baseline;
+  return <div><div className="flex items-center justify-between gap-3"><span className="text-sm font-semibold">{label}</span><strong className={`text-sm tabular-nums ${delta >= 0 ? "text-success" : "text-coral"}`}>{delta >= 0 ? "+" : ""}{percent(delta)} pts</strong></div><div className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-500"><span>Baseline {percent(baseline)}</span><span className="text-right">Candidate {percent(candidate)}</span></div></div>;
+}
+
+function ComparisonRow({ model, highlight = false }: { model: { readonly name: string; readonly precision: number; readonly recall: number; readonly harmValueCapture: number }; highlight?: boolean }) {
+  return <tr className={`border-t border-line ${highlight ? "bg-emerald-50/60" : ""}`}><td className="px-5 py-3 font-bold">{model.name}</td><td className="px-5 py-3 text-right tabular-nums">{percent(model.precision)}</td><td className="px-5 py-3 text-right tabular-nums">{percent(model.recall)}</td><td className="px-5 py-3 text-right font-bold tabular-nums">{percent(model.harmValueCapture)}</td></tr>;
+}
+
 function RegressionLab({ onReport }: { onReport: (report: Report) => void }) {
   const [noise, setNoise] = useState(10); const [bias, setBias] = useState(2); const [maxWape, setMaxWape] = useState(12);
   const [uploaded, setUploaded] = useState<any[] | null>(null); const [dataset, setDataset] = useState("Synthetic forecast · 60 periods");
@@ -417,7 +498,7 @@ export default function App() {
     const valid = reportSchema.parse({ ...report, generatedAt: new Date().toISOString() });
     download(`ai-quality-lab-${active}-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(valid, null, 2));
   };
-  const lab = active === "classification" ? <ClassificationLab onReport={setReport} /> : active === "regression" ? <RegressionLab onReport={setReport} /> : active === "ranking" ? <RankingLab onReport={setReport} /> : active === "llm" ? <LlmLab onReport={setReport} /> : <MonitoringLab onReport={setReport} />;
+  const lab = active === "classification" ? <ClassificationLab onReport={setReport} /> : active === "comparison" ? <ComparisonLab onReport={setReport} /> : active === "regression" ? <RegressionLab onReport={setReport} /> : active === "ranking" ? <RankingLab onReport={setReport} /> : active === "llm" ? <LlmLab onReport={setReport} /> : <MonitoringLab onReport={setReport} />;
   return (
     <div className="min-h-screen bg-canvas text-ink">
       <header className="flex min-h-[74px] flex-col justify-between gap-4 bg-ink px-4 py-3 text-white sm:flex-row sm:items-center md:px-6 xl:px-8">

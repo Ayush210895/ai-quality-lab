@@ -21,6 +21,7 @@ vi.mock("recharts", () => ({
 describe("workspace navigation", () => {
   it.each([
     ["Classification", "Operating assumptions"],
+    ["GitHub model comparison", "Travel harm-risk model"],
     ["Regression & forecasting", "Regression & forecasting"],
     ["Ranking & recommendations", "Ranking & recommendations"],
     ["LLM & RAG", "LLM & RAG"],
