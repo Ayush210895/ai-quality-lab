@@ -470,9 +470,9 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
 
       <section className="border-b border-[#213050] bg-[#09101e]/78 backdrop-blur-[2px]">
         <div className="mx-auto grid max-w-[1500px] grid-cols-1 md:grid-cols-3 md:px-7">
-          <HomeProof value="75%+" label="N-4 forecast accuracy target exceeded" accent="#5fe0bd" />
-          <HomeProof value="30%" label="Faster executive decision-making" accent="#ff765c" />
-          <HomeProof value="40%" label="Less manual reporting effort" accent="#c8a2ff" />
+          <HomeProof value="37.2%" label="Harmful value captured at 5% review capacity" accent="#5fe0bd" />
+          <HomeProof value="33" label="Automated tests across six evaluation workspaces" accent="#ff765c" />
+          <HomeProof value="50 / 200" label="Curated business tables from governed sources" accent="#c8a2ff" />
         </div>
       </section>
 
