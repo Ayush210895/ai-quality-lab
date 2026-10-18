@@ -479,7 +479,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
       <section className="border-b border-[#213050] bg-[#070d19]/82 py-16 backdrop-blur-[2px] lg:py-24" id="systems">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 border-b border-[#263657] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">GitHub showcase</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Strongest public<br />engineering work.</h2></div>
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">GitHub showcase</p><h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">Strongest public<br />engineering work.</h2></div>
             <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Five repositories selected for decision quality, technical depth, reproducible evidence, and production thinking across applied ML, GenAI, MLOps, and ranking.</p>
           </div>
           <div>
@@ -496,7 +496,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
       <section className="border-b border-[#213050] bg-[#0a1120]/82 py-16 backdrop-blur-[2px] lg:py-24" id="featured-work">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Featured work</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Choose a system.<br />Inspect the evidence.</h2></div>
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Featured work</p><h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">Choose a system.<br />Inspect the evidence.</h2></div>
             <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Three distinct business problems, each with its own visual world. Open a preview for the decision, proof, trade-offs, and path into the complete case study.</p>
           </div>
           <div className="featured-shelf scrollbar-thin flex snap-x snap-mandatory gap-4 overflow-x-auto pb-5">
@@ -512,7 +512,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
 
       <section className="border-b border-[#213050] bg-[#050814]/84 py-16 text-white backdrop-blur-[2px] lg:py-24" id="experience">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
-          <div className="grid gap-8 lg:grid-cols-[.6fr_1.4fr]"><div><p className="text-xs font-extrabold uppercase text-[#67dcc7]">Experience</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Built across product, finance, and operations.</h2></div><p className="max-w-2xl text-base leading-7 text-[#b9cac7]">The common thread is not a particular algorithm. It is turning uncertain data into a decision, earning stakeholder trust, and building the path from analysis to use.</p></div>
+          <div className="grid gap-8 lg:grid-cols-[.6fr_1.4fr]"><div><p className="text-xs font-extrabold uppercase text-[#67dcc7]">Experience</p><h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl">Built across product, finance, and operations.</h2></div><p className="max-w-2xl text-base leading-7 text-[#b9cac7]">The common thread is not a particular algorithm. It is turning uncertain data into a decision, earning stakeholder trust, and building the path from analysis to use.</p></div>
           <div className="mt-12 border-t border-[#263657]">
             {EXPERIENCE.map((item) => <article key={`${item.company}-${item.years}`} className="grid gap-6 border-b border-[#263657] py-10 lg:grid-cols-[150px_260px_1fr] lg:gap-8"><span className="font-mono text-xs font-bold text-[#64e8ff]">{item.years}</span><span><strong className="block text-lg">{item.company}</strong><small className="mt-1 block text-xs text-[#91a7c5]">{item.role}</small><span className="mt-4 inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase text-[#67dcc7]"><Boxes size={13} /> Selected project work</span></span><div className="border-t border-[#263657]">{item.projects.map((project, index) => <div key={project.name} className="grid gap-2 border-b border-[#263657] py-4 sm:grid-cols-[minmax(170px,.55fr)_minmax(0,1fr)] sm:gap-6"><h3 className="text-sm font-black leading-6 text-white"><span className="mr-2 font-mono text-[10px] text-[#5fe0bd]">0{index + 1}</span>{project.name}</h3><p className="text-sm leading-6 text-[#c8d4e6]">{project.detail}</p></div>)}</div></article>)}
           </div>
@@ -542,7 +542,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
           <div className="grid gap-10 border-y border-[#263657] py-10 lg:grid-cols-[1.2fr_.8fr] lg:items-end lg:py-14">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5fe0bd]">Open to the next hard problem</p>
-              <h2 className="portfolio-display mt-4 max-w-[840px] text-[clamp(2.3rem,5vw,5.4rem)] leading-[0.98] text-white">
+              <h2 className="portfolio-display mt-4 max-w-[840px] text-[clamp(2rem,4vw,4rem)] leading-[1.02] text-white">
                 Let&apos;s build AI systems people can trust and teams can operate.
               </h2>
               <p className="mt-6 max-w-[760px] text-base leading-7 text-[#aebed6] md:text-lg">
@@ -656,7 +656,7 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
       </section>
 
       <section id="project-explorer" className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-12">
-        <div className="mb-7 flex items-end justify-between gap-4 border-b border-[#263657] pb-6"><div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">More projects</p><h2 className="portfolio-display mt-2 text-4xl">{group === "All" ? "Explore the broader atlas" : group === "Featured" ? "More featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#8ea4c2]">{visible.length} projects</span></div>
+        <div className="mb-7 flex items-end justify-between gap-4 border-b border-[#263657] pb-6"><div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">More projects</p><h2 className="portfolio-display mt-2 text-3xl sm:text-4xl">{group === "All" ? "Explore the broader atlas" : group === "Featured" ? "More featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#8ea4c2]">{visible.length} projects</span></div>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={group} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
             {visible.map((item) => <ProjectTile key={item.name} project={item} onSelect={() => onSelectProject(item)} />)}
