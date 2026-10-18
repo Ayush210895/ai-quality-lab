@@ -579,6 +579,7 @@ function Workspace({ controls, children }: { controls: ReactNode; children: Reac
 }
 
 function QualityLabApp({ onExit }: { onExit: () => void }) {
+  const assetBase = import.meta.env.BASE_URL;
   const [active, setActive] = useState<ModuleId>("classification");
   const [resetKey, setResetKey] = useState(0);
   const [report, setReport] = useState<Report | null>(null);
@@ -611,10 +612,14 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
       <div className="relative z-10">
       <header className="sticky top-0 z-40 border-b border-white/15 bg-[#07101d]/95 text-white backdrop-blur-xl">
         <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-3 px-4 md:px-7">
-          <button className="flex min-w-0 items-center gap-3 text-left" type="button" title="Return to Project Atlas" onClick={onExit}>
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[6px] bg-[#64e8ff] text-[#07101d]"><FlaskConical size={18} /></span>
-            <span className="min-w-0"><strong className="block truncate text-sm">AI Quality Lab</strong><span className="block truncate text-[10px] font-extrabold uppercase text-[#75a7ff]">Ayush Soni · Project Atlas</span></span>
-          </button>
+          <div className="flex min-w-0 items-center gap-3">
+            <button className="creator-home-link flex min-w-0 items-center gap-2.5 text-left" type="button" title="Open Ayush Soni portfolio home" onClick={onExit}>
+              <img className="h-9 w-9 shrink-0 rounded-full border-2 border-[#2d92ff] object-cover object-top" src={`${assetBase}assets/ayush-soni-headshot.jpg`} alt="" />
+              <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className="block truncate text-[10px] font-extrabold uppercase text-[#75a7ff]">Portfolio home</span></span>
+            </button>
+            <span className="hidden h-8 w-px bg-white/15 sm:block" aria-hidden="true" />
+            <span className="hidden font-mono text-[10px] font-bold uppercase text-[#8296b5] sm:block">AI Quality Lab</span>
+          </div>
           <div className="flex items-center gap-2">
             <span className="mr-1 hidden max-w-56 truncate text-xs text-[#9fb0c8] lg:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
             <button className="hidden h-9 items-center gap-2 rounded-[6px] border border-[#324667] bg-[#0b1425] px-3 text-xs font-bold text-[#c8d4e6] hover:border-[#64e8ff] hover:text-white sm:inline-flex" type="button" onClick={() => setPaletteOpen(true)}><Command size={14} /> Workspaces <kbd className="rounded-[3px] border border-[#435777] px-1.5 py-0.5 font-mono text-[9px]">⌘K</kbd></button>

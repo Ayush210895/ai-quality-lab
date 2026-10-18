@@ -45,6 +45,17 @@ input[type="range"] { accent-color: #087e72; }
 }
 .lab-icon-button:hover { background: #edf2f1; color: #142126; }
 
+.creator-home-link img {
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.creator-home-link:hover img,
+.creator-home-link:focus-visible img {
+  transform: scale(1.06);
+  border-color: #64e8ff;
+  box-shadow: 0 0 0 3px rgba(100, 232, 255, 0.12);
+}
+
 [aria-label="Evaluation metrics"] article:nth-child(5n + 1) { border-top: 3px solid var(--lab-accent); }
 [aria-label="Evaluation metrics"] article:nth-child(5n + 2) { border-top: 3px solid #2878a5; }
 [aria-label="Evaluation metrics"] article:nth-child(5n + 3) { border-top: 3px solid #a85f00; }

@@ -6,7 +6,6 @@ import {
   ArrowUpRight,
   Boxes,
   CheckCircle2,
-  ChartNoAxesCombined,
   Code2,
   Cpu,
   Database,
@@ -263,12 +262,17 @@ export default function PortfolioSite({ project, view, onHome, onProjects, onOpe
 }
 
 function SiteHeader({ onHome, onProjects, onOpenLab, subtitle = "AI/ML Project Atlas" }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean; subtitle?: string }) {
+  const assetBase = import.meta.env.BASE_URL;
   return <header className="sticky top-0 z-30 border-b border-white/15 bg-[#07101d]/95 text-white backdrop-blur-xl">
     <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-4 px-4 md:px-7">
-      <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={onHome}>
-        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[6px] bg-[#64e8ff] text-[#07101d]"><ChartNoAxesCombined size={19} /></span>
-        <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className="block truncate text-[11px] font-bold uppercase text-[#75a7ff]">{subtitle}</span></span>
-      </button>
+      <div className="flex min-w-0 items-center gap-3">
+        <button type="button" className="creator-home-link flex min-w-0 items-center gap-2.5 text-left" onClick={onHome} title="Open Ayush Soni portfolio home">
+          <img className="h-9 w-9 shrink-0 rounded-full border-2 border-[#2d92ff] object-cover object-top" src={`${assetBase}assets/ayush-soni-headshot.jpg`} alt="" />
+          <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className="block truncate text-[10px] font-bold uppercase text-[#64e8ff]">Portfolio home</span></span>
+        </button>
+        <span className="hidden h-8 w-px bg-white/15 sm:block" aria-hidden="true" />
+        <span className="hidden font-mono text-[10px] font-bold uppercase text-[#8296b5] sm:block">{subtitle}</span>
+      </div>
       <nav className="flex items-center gap-2" aria-label="Portfolio navigation">
         <button className="inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold hover:bg-white/10" type="button" title="Browse all projects" onClick={onProjects}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
         <a className="hidden min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold hover:bg-white/10 sm:inline-flex" href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><Code2 size={15} /> GitHub</a>
