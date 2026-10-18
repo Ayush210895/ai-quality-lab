@@ -8,9 +8,12 @@ This site is an interactive portfolio for Ayush Soni's public AI, machine-learni
 
 - Searchable, category-based explorer for all public projects.
 - Animated, keyboard-accessible project signal map linking directly to flagship case studies.
+- A clearly ranked Flagship Three spanning applied ML decision science, production MLOps, and grounded GenAI.
 - Dedicated hash URL for every project, suitable for direct sharing.
 - Project-specific color system and live visual preview.
 - Per-project case workbench with interactive signal, source-artifact, and decision-room views.
+- An 18-second guided case tour plus recruiter and engineer views that change the level of detail without hiding the evidence.
+- Direct repository, architecture, evidence, and live-demo entry points where each destination genuinely exists.
 - Genuine repository visuals for the Quality Lab and Space Race cases, plus traceable metric, report, CSV, and run-manifest views across the remaining projects.
 - A prominent, evidence-bounded decision statement for every project.
 - Rich overview, system architecture, and evidence views with verified metrics, decision owners, next validation steps, and honest limitations.

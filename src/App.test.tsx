@@ -69,6 +69,8 @@ describe("workspace navigation", () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { name: /Systems you can inspect, question, and operate/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Three systems\. Three kinds of leadership/ })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Open case" })).toHaveLength(3);
     fireEvent.click(screen.getByRole("button", { name: "Harm risk" }));
 
     expect(await screen.findByRole("heading", { name: "travel-marketplace-harm-risk" })).toBeInTheDocument();
@@ -81,11 +83,17 @@ describe("workspace navigation", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Explore travel-marketplace-harm-risk" }));
 
-    expect(await screen.findByText("The result in one sentence")).toBeInTheDocument();
+    expect(await screen.findByText("Why this project is different")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Recruiter" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "18 sec guided tour" })).toBeInTheDocument();
     expect(screen.getByText("Who should receive limited review capacity?")).toBeInTheDocument();
     expect(screen.getByText("Business question")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "What had to be balanced" })).toBeInTheDocument();
     expect(screen.getByText("Harm value captured versus incident recall")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Engineer" }));
+    expect(screen.getByRole("button", { name: "Engineer" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getAllByText(/Compare a logistic baseline with tuned XGBoost/).length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole("tab", { name: "artifact" }));
     expect(screen.getByText("Evidence record")).toBeInTheDocument();
