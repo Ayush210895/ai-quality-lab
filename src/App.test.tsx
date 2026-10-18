@@ -20,6 +20,7 @@ vi.mock("recharts", () => ({
 
 describe("workspace navigation", () => {
   it.each([
+    ["Project portfolio", "All GitHub projects, one evaluation path"],
     ["Classification", "Operating assumptions"],
     ["GitHub model comparison", "Travel harm-risk model"],
     ["Regression & forecasting", "Regression & forecasting"],
@@ -36,10 +37,19 @@ describe("workspace navigation", () => {
 
   it("applies and resets the classification recommendation", () => {
     render(<App />);
+    fireEvent.click(screen.getByRole("tab", { name: "Classification" }));
     fireEvent.click(screen.getByRole("button", { name: /Apply 0\.406/ }));
     expect(screen.getByText("Current: 0.41")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Reset" }));
     expect(screen.getByText("Current: 0.50")).toBeInTheDocument();
+  });
+
+  it("routes a connected project to its evidence workspace", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "Open evidence" }));
+
+    expect(screen.getByRole("tab", { name: "GitHub model comparison" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getAllByRole("heading", { name: "Travel harm-risk model" }).length).toBeGreaterThan(0);
   });
 });

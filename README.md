@@ -8,6 +8,7 @@ AI Quality Lab is a browser-based decision-support suite for evaluating whether 
 
 ## Evaluation workspaces
 
+- **Project portfolio:** maps all 19 public GitHub repositories to their model family, evidence state, pinned source commit, repository, and matching evaluation path.
 - **Classification:** confusion matrix, PR-AUC, threshold optimization, false-positive and false-negative economics, and review capacity.
 - **Regression and forecasting:** MAE, RMSE, WAPE, directional bias, R², and prediction-interval coverage.
 - **Ranking and recommendations:** Precision@K, Recall@K, NDCG@K, MRR, and catalog coverage.
@@ -16,6 +17,17 @@ AI Quality Lab is a browser-based decision-support suite for evaluating whether 
 - **GitHub model comparison:** traceable baseline-versus-candidate evidence from the public Travel Marketplace Harm-Risk model, pinned to its source commit and final-test artifacts.
 
 Every workspace includes a reproducible synthetic scenario, adjustable production gates, local CSV evaluation, a visual system profile, and a downloadable JSON evidence report.
+
+## Portfolio evidence states
+
+The project portfolio deliberately separates repository visibility from evaluation readiness:
+
+- **Connected:** a repository-specific adapter renders traceable committed evidence in the Quality Lab.
+- **Evidence ready:** a committed report exists and can be normalized into an adapter next.
+- **Needs artifact:** model or metric code exists, but a reproducible evaluation output still needs to be committed.
+- **Learning / Infrastructure:** useful portfolio work that should be tracked without being scored as a production model.
+
+The registry is a pinned static snapshot, so the public application does not depend on GitHub API availability or expose account credentials.
 
 ## Classification threshold optimization
 

@@ -8,12 +8,14 @@ import {
   Download,
   ExternalLink,
   FileUp,
+  FolderGit2,
   Gauge,
   GitCompare,
   ListOrdered,
   RefreshCw,
   ShieldCheck,
   SlidersHorizontal,
+  Search,
   TrendingUp,
   X,
 } from "lucide-react";
@@ -61,8 +63,9 @@ import {
   parseRegressionCsv,
 } from "./lib/model-metrics.mjs";
 import { travelEvaluation } from "./data/travelEvaluation";
+import { portfolioProjects, type PortfolioProject, type ProjectStatus } from "./data/projectRegistry";
 
-type ModuleId = "classification" | "comparison" | "regression" | "ranking" | "llm" | "monitoring";
+type ModuleId = "portfolio" | "classification" | "comparison" | "regression" | "ranking" | "llm" | "monitoring";
 type Tone = "pass" | "conditional" | "stop" | "neutral";
 type Report = {
   product: string;
@@ -87,6 +90,7 @@ const reportSchema = z.object({
 });
 
 const MODULES: Array<{ id: ModuleId; label: string; short: string; icon: typeof Gauge }> = [
+  { id: "portfolio", label: "Project portfolio", short: "Projects", icon: FolderGit2 },
   { id: "classification", label: "Classification", short: "Classification", icon: Gauge },
   { id: "comparison", label: "GitHub model comparison", short: "GitHub model", icon: GitCompare },
   { id: "regression", label: "Regression & forecasting", short: "Forecasting", icon: TrendingUp },
@@ -351,6 +355,84 @@ function Matrix({ value, label, color }: { value: number; label: string; color: 
   return <div className={`flex min-h-24 flex-col items-center justify-center rounded-[6px] p-2 ${color}`}><strong className="text-xl tabular-nums">{value.toLocaleString()}</strong><span className="mt-1">{label}</span></div>;
 }
 
+const STATUS_DETAILS: Record<ProjectStatus, { label: string; className: string }> = {
+  connected: { label: "Connected", className: "border-success bg-emerald-50 text-success" },
+  "evidence-ready": { label: "Evidence ready", className: "border-sky-600 bg-sky-50 text-sky-700" },
+  "needs-evidence": { label: "Needs artifact", className: "border-amber bg-amber-50 text-amber" },
+  learning: { label: "Learning", className: "border-slate-400 bg-slate-50 text-slate-700" },
+  infrastructure: { label: "Infrastructure", className: "border-slate-400 bg-slate-50 text-slate-700" },
+};
+
+type PortfolioFilter = "all" | ProjectStatus;
+
+function PortfolioLab({ onReport, onNavigate }: { onReport: (report: Report) => void; onNavigate: (module: ModuleId) => void }) {
+  const [filter, setFilter] = useState<PortfolioFilter>("all");
+  const [query, setQuery] = useState("");
+  const visible = portfolioProjects.filter((project) => {
+    const matchesFilter = filter === "all" || project.status === filter;
+    const haystack = `${project.name} ${project.summary} ${project.family}`.toLowerCase();
+    return matchesFilter && haystack.includes(query.trim().toLowerCase());
+  });
+  const counts = portfolioProjects.reduce<Record<ProjectStatus, number>>((result, project) => {
+    result[project.status] += 1;
+    return result;
+  }, { connected: 0, "evidence-ready": 0, "needs-evidence": 0, learning: 0, infrastructure: 0 });
+  const report = useMemo(() => makeReport(
+    "project-portfolio",
+    `GitHub portfolio snapshot · ${portfolioProjects.length} repositories`,
+    { owner: "Ayush210895", filter },
+    { total: portfolioProjects.length, ...counts },
+    { status: "Portfolio mapped", next: "Import evidence-ready artifacts with repository-specific adapters" },
+  ), [filter]);
+  useReport(report, onReport);
+
+  return <Workspace controls={<ControlPanel eyebrow="GitHub portfolio" title="Project connections" intro="Every public repository is mapped to its evidence state and the evaluation workspace that fits its model family.">
+    <label className="relative block">
+      <Search className="pointer-events-none absolute left-3 top-3 text-slate-400" size={16} />
+      <span className="sr-only">Search projects</span>
+      <input className="h-10 w-full rounded-[6px] border border-line bg-white pl-9 pr-3 text-sm" type="search" value={query} placeholder="Search projects" onChange={(event) => setQuery(event.target.value)} />
+    </label>
+    <div className="mt-5 space-y-1" aria-label="Filter projects">
+      {(["all", "connected", "evidence-ready", "needs-evidence", "learning", "infrastructure"] as PortfolioFilter[]).map((status) => {
+        const label = status === "all" ? "All projects" : STATUS_DETAILS[status].label;
+        const count = status === "all" ? portfolioProjects.length : counts[status];
+        return <button key={status} type="button" className={`flex min-h-9 w-full items-center justify-between rounded-[6px] px-3 text-left text-xs font-bold ${filter === status ? "bg-navy text-white" : "text-slate-600 hover:bg-slate-100"}`} onClick={() => setFilter(status)}><span>{label}</span><span className="tabular-nums">{count}</span></button>;
+      })}
+    </div>
+    <p className="mt-5 border-t border-line pt-4 text-xs leading-5 text-slate-500">Evidence is read from public, committed artifacts. Source repositories remain independent; the financial-document RAG project is not modified.</p>
+  </ControlPanel>}>
+    <section className="flex flex-col justify-between gap-4 border-b border-line pb-5 md:flex-row md:items-end">
+      <div><p className="text-[11px] font-extrabold uppercase text-teal">Portfolio map</p><h2 className="mt-1 text-2xl font-bold">All GitHub projects, one evaluation path</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">A connection means traceable evidence, not merely a repository link. Start with committed reports, then normalize each project into the Quality Lab evidence contract.</p></div>
+      <span className="shrink-0 text-sm font-bold tabular-nums text-slate-500">{visible.length} of {portfolioProjects.length} shown</span>
+    </section>
+    <MetricGrid metrics={[
+      { label: "Repositories mapped", value: String(portfolioProjects.length), help: "Complete public inventory" },
+      { label: "Live connection", value: String(counts.connected), help: "Interactive evidence adapter" },
+      { label: "Evidence ready", value: String(counts["evidence-ready"]), help: "Committed result available" },
+      { label: "Needs artifact", value: String(counts["needs-evidence"]), help: "Evaluation output to standardize" },
+      { label: "Learning and infrastructure", value: String(counts.learning + counts.infrastructure), help: "Tracked, not scored", accent: "border-t-[3px] border-t-sky-600" },
+    ]} />
+    <section className="grid gap-3 md:grid-cols-2 2xl:grid-cols-3" aria-label="GitHub projects">
+      {visible.map((project) => <ProjectCard key={project.name} project={project} onNavigate={onNavigate} />)}
+    </section>
+    {visible.length === 0 && <p className="py-16 text-center text-sm text-slate-500">No projects match this search and filter.</p>}
+  </Workspace>;
+}
+
+function ProjectCard({ project, onNavigate }: { project: PortfolioProject; onNavigate: (module: ModuleId) => void }) {
+  const status = STATUS_DETAILS[project.status];
+  return <article className="flex min-h-64 flex-col rounded-[6px] border border-line bg-white p-5">
+    <div className="flex items-start justify-between gap-3"><span className={`rounded-full border px-2.5 py-1 text-[11px] font-extrabold ${status.className}`}>{status.label}</span><span className="font-mono text-[11px] text-slate-400">{project.sourceCommit}</span></div>
+    <h3 className="mt-4 break-words text-base font-bold text-ink">{project.name}</h3>
+    <p className="mt-2 text-sm leading-6 text-slate-600">{project.summary}</p>
+    <dl className="mt-4 space-y-2 border-t border-line pt-4 text-xs"><div><dt className="font-bold text-slate-500">Model family</dt><dd className="mt-1 text-ink">{project.family}</dd></div><div><dt className="font-bold text-slate-500">Evidence</dt><dd className="mt-1 leading-5 text-ink">{project.evidence}</dd></div></dl>
+    <div className="mt-auto flex flex-wrap gap-2 pt-5">
+      {project.targetLab && <button className="inline-flex min-h-9 items-center gap-2 rounded-[6px] bg-navy px-3 text-xs font-bold text-white hover:bg-[#24566a]" type="button" onClick={() => onNavigate(project.targetLab!)}>{project.status === "connected" ? "Open evidence" : "Open matching lab"}</button>}
+      <a className="inline-flex min-h-9 items-center gap-2 rounded-[6px] border border-line px-3 text-xs font-bold text-navy hover:border-teal hover:text-teal" href={project.repoUrl} target="_blank" rel="noreferrer">Repository <ExternalLink size={14} /></a>
+    </div>
+  </article>;
+}
+
 function ComparisonLab({ onReport }: { onReport: (report: Report) => void }) {
   const evaluation = travelEvaluation;
   const baseline = evaluation.finalTest.baseline;
@@ -489,7 +571,7 @@ function Workspace({ controls, children }: { controls: ReactNode; children: Reac
 }
 
 export default function App() {
-  const [active, setActive] = useState<ModuleId>("classification");
+  const [active, setActive] = useState<ModuleId>("portfolio");
   const [resetKey, setResetKey] = useState(0);
   const [report, setReport] = useState<Report | null>(null);
   const activeModule = MODULES.find((module) => module.id === active)!;
@@ -498,7 +580,8 @@ export default function App() {
     const valid = reportSchema.parse({ ...report, generatedAt: new Date().toISOString() });
     download(`ai-quality-lab-${active}-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(valid, null, 2));
   };
-  const lab = active === "classification" ? <ClassificationLab onReport={setReport} /> : active === "comparison" ? <ComparisonLab onReport={setReport} /> : active === "regression" ? <RegressionLab onReport={setReport} /> : active === "ranking" ? <RankingLab onReport={setReport} /> : active === "llm" ? <LlmLab onReport={setReport} /> : <MonitoringLab onReport={setReport} />;
+  const navigate = (module: ModuleId) => { setActive(module); setReport(null); };
+  const lab = active === "portfolio" ? <PortfolioLab onReport={setReport} onNavigate={navigate} /> : active === "classification" ? <ClassificationLab onReport={setReport} /> : active === "comparison" ? <ComparisonLab onReport={setReport} /> : active === "regression" ? <RegressionLab onReport={setReport} /> : active === "ranking" ? <RankingLab onReport={setReport} /> : active === "llm" ? <LlmLab onReport={setReport} /> : <MonitoringLab onReport={setReport} />;
   return (
     <div className="min-h-screen bg-canvas text-ink">
       <header className="flex min-h-[74px] flex-col justify-between gap-4 bg-ink px-4 py-3 text-white sm:flex-row sm:items-center md:px-6 xl:px-8">
@@ -510,7 +593,7 @@ export default function App() {
         </div>
       </header>
       <nav className="scrollbar-thin flex min-h-14 gap-1 overflow-x-auto border-b border-[#34484f] bg-[#213037] px-2 md:px-5" aria-label="Model evaluation workspaces" role="tablist">
-        {MODULES.map((module) => { const Icon = module.icon; const selected = module.id === active; return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`flex min-w-max items-center gap-2 border-b-[3px] px-3 text-xs font-bold transition-colors ${selected ? "border-[#72d6c7] bg-[#293b42] text-white" : "border-transparent text-slate-300 hover:bg-[#293b42] hover:text-white"}`} onClick={() => { setActive(module.id); setReport(null); }}><Icon size={16} /><span className="hidden sm:inline">{module.label}</span><span className="sm:hidden">{module.short}</span></button>; })}
+        {MODULES.map((module) => { const Icon = module.icon; const selected = module.id === active; return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`flex min-w-max items-center gap-2 border-b-[3px] px-3 text-xs font-bold transition-colors ${selected ? "border-[#72d6c7] bg-[#293b42] text-white" : "border-transparent text-slate-300 hover:bg-[#293b42] hover:text-white"}`} onClick={() => navigate(module.id)}><Icon size={16} /><span className="hidden sm:inline">{module.label}</span><span className="sm:hidden">{module.short}</span></button>; })}
       </nav>
       <div key={`${active}-${resetKey}`}>{lab}</div>
       <footer className="flex flex-col justify-between gap-2 border-t border-line bg-white px-5 py-4 text-xs text-slate-500 sm:flex-row"><span>All evaluation runs locally in your browser.</span><span>Generic evaluation suite · no external RAG project dependency</span></footer>
