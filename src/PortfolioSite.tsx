@@ -21,6 +21,7 @@ import {
   MapPin,
   Play,
   RotateCcw,
+  Rows3,
   Search,
   Scale,
   Sparkles,
@@ -274,7 +275,32 @@ function SiteHeader({ onHome, onProjects, onOpenLab, subtitle = "AI/ML Project A
         <button className="inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d]" type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
       </nav>
     </div>
+    <ScrollProgress />
   </header>;
+}
+
+export function ScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const available = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(available > 0 ? Math.min(1, window.scrollY / available) : 0);
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+  return <span className="page-progress" aria-hidden="true" style={{ transform: `scaleX(${progress})` }} />;
 }
 
 export function ConstellationField() {
@@ -567,12 +593,26 @@ function HomeProof({ value, label, accent }: { value: string; label: string; acc
 function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onHome" | "onProjects" | "onOpenLab" | "onSelectProject">) {
   const [group, setGroup] = useState<ProjectGroup>("Featured");
   const [query, setQuery] = useState("");
+  const [viewMode, setViewMode] = useState<"cards" | "index">("cards");
+  const searchRef = useRef<HTMLInputElement>(null);
   const reducedMotion = useReducedMotion();
   const visible = useMemo(() => projectStories.filter((project) => {
     const matchesGroup = group === "All" || (group === "Featured" ? project.featured : projectGroup(project) === group);
     const text = `${project.displayName} ${project.name} ${project.summary} ${project.problem} ${project.decision} ${project.stack.join(" ")}`.toLowerCase();
     return matchesGroup && text.includes(query.trim().toLowerCase());
   }), [group, query]);
+
+  useEffect(() => {
+    const focusSearch = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (event.key === "/" && !["INPUT", "TEXTAREA", "SELECT"].includes(target?.tagName ?? "")) {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", focusSearch);
+    return () => window.removeEventListener("keydown", focusSearch);
+  }, []);
 
   return <div className="atlas-page relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]">
     <ConstellationField />
@@ -606,19 +646,39 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
           <div className="scrollbar-thin flex gap-1 overflow-x-auto" aria-label="Project categories">
             {GROUPS.map((item) => <button key={item} type="button" className={`min-h-9 shrink-0 rounded-[6px] px-3 text-xs font-bold ${group === item ? "bg-[#64e8ff] text-[#07101d]" : "text-[#aebed6] hover:bg-white/10 hover:text-white"}`} onClick={() => setGroup(item)}>{item}</button>)}
           </div>
-          <label className="relative block w-full lg:w-72"><Search className="pointer-events-none absolute left-3 top-2.5 text-[#8296b5]" size={16} /><span className="sr-only">Search project atlas</span><input className="h-9 w-full rounded-[6px] border border-[#324667] bg-[#0b1425] pl-9 pr-3 text-sm text-white placeholder:text-[#7184a2]" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search models, tools, methods" /></label>
+          <div className="flex w-full items-center gap-2 lg:w-auto">
+            <div className="flex shrink-0 rounded-[6px] border border-[#324667] bg-[#0b1425] p-1" role="group" aria-label="Project view">
+              <button type="button" className={`grid h-7 w-8 place-items-center rounded-[4px] ${viewMode === "cards" ? "bg-[#64e8ff] text-[#07101d]" : "text-[#8296b5] hover:text-white"}`} onClick={() => setViewMode("cards")} aria-label="Visual grid" aria-pressed={viewMode === "cards"}><LayoutGrid size={14} /></button>
+              <button type="button" className={`grid h-7 w-8 place-items-center rounded-[4px] ${viewMode === "index" ? "bg-[#64e8ff] text-[#07101d]" : "text-[#8296b5] hover:text-white"}`} onClick={() => setViewMode("index")} aria-label="Decision index" aria-pressed={viewMode === "index"}><Rows3 size={14} /></button>
+            </div>
+            <label className="relative block min-w-0 flex-1 lg:w-72"><Search className="pointer-events-none absolute left-3 top-2.5 text-[#8296b5]" size={16} /><span className="sr-only">Search project atlas</span><input ref={searchRef} className="h-9 w-full rounded-[6px] border border-[#324667] bg-[#0b1425] pl-9 pr-12 text-sm text-white placeholder:text-[#7184a2]" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search models, tools, methods" /><kbd className="pointer-events-none absolute right-2 top-2 rounded-[3px] border border-[#324667] px-1.5 py-0.5 font-mono text-[9px] text-[#8296b5]">/</kbd></label>
+          </div>
         </div>
       </section>
 
       <section id="project-explorer" className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-12">
         <div className="mb-7 flex items-end justify-between gap-4 border-b border-[#263657] pb-6"><div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Project explorer</p><h2 className="portfolio-display mt-2 text-4xl">{group === "All" ? "The complete atlas" : group === "Featured" ? "Featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#8ea4c2]">{visible.length} projects</span></div>
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {visible.map((item) => <ProjectTile key={item.name} project={item} onSelect={() => onSelectProject(item)} />)}
-        </div>
+        <AnimatePresence mode="wait" initial={false}>
+          {viewMode === "cards" ? <motion.div key="cards" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+            {visible.map((item) => <ProjectTile key={item.name} project={item} onSelect={() => onSelectProject(item)} />)}
+          </motion.div> : <motion.div key="index" className="border-t border-[#263657]" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+            {visible.map((item, index) => <ProjectIndexRow key={item.name} project={item} index={index} onSelect={() => onSelectProject(item)} />)}
+          </motion.div>}
+        </AnimatePresence>
         {visible.length === 0 && <div className="border-y border-[#cbd6d4] py-20 text-center"><strong>No matching project</strong><p className="mt-2 text-sm text-[#687579]">Try a different technology, domain, or category.</p></div>}
       </section>
     </main></div>
   </div>;
+}
+
+function ProjectIndexRow({ project, index, onSelect }: { project: ProjectStory; index: number; onSelect: () => void }) {
+  return <button type="button" className="project-index-row group grid w-full gap-4 border-b border-[#263657] px-1 py-5 text-left sm:grid-cols-[52px_minmax(210px,.8fr)_minmax(260px,1.25fr)_150px_24px] sm:items-center" onClick={onSelect}>
+    <span className="font-mono text-xs font-bold text-[#7184a2]">{String(index + 1).padStart(2, "0")}</span>
+    <span><span className="block text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><strong className="mt-1 block text-base text-white">{project.displayName}</strong></span>
+    <span className="text-xs leading-5 text-[#aebed6]">{businessQuestion(project)}</span>
+    <span><strong className="block text-xl tabular-nums" style={{ color: project.accent }}>{project.metrics[0].value}</strong><small className="text-[9px] font-bold uppercase text-[#8296b5]">{project.metrics[0].label}</small></span>
+    <ArrowRight className="hidden transition-transform group-hover:translate-x-1 sm:block" size={17} />
+  </button>;
 }
 
 function FlagshipProjects({ onSelectProject }: { onSelectProject: (project: ProjectStory) => void }) {

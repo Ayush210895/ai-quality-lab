@@ -5,6 +5,7 @@ import {
   BrainCircuit,
   Check,
   CircleAlert,
+  Command,
   Download,
   ExternalLink,
   FileUp,
@@ -66,7 +67,7 @@ import {
 import { travelEvaluation } from "./data/travelEvaluation";
 import { portfolioProjects, type PortfolioProject, type ProjectStatus } from "./data/projectRegistry";
 import { projectBySlug, type ProjectStory } from "./data/projectStories";
-import PortfolioSite, { ConstellationField } from "./PortfolioSite";
+import PortfolioSite, { ConstellationField, ScrollProgress } from "./PortfolioSite";
 
 type ModuleId = "portfolio" | "classification" | "comparison" | "regression" | "ranking" | "llm" | "monitoring";
 type Tone = "pass" | "conditional" | "stop" | "neutral";
@@ -581,13 +582,28 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
   const [active, setActive] = useState<ModuleId>("classification");
   const [resetKey, setResetKey] = useState(0);
   const [report, setReport] = useState<Report | null>(null);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteQuery, setPaletteQuery] = useState("");
   const activeModule = MODULES.find((module) => module.id === active)!;
   const exportReport = () => {
     if (!report) return;
     const valid = reportSchema.parse({ ...report, generatedAt: new Date().toISOString() });
     download(`ai-quality-lab-${active}-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(valid, null, 2));
   };
-  const navigate = (module: ModuleId) => { setActive(module); setReport(null); };
+  const navigate = (module: ModuleId) => { setActive(module); setReport(null); setPaletteOpen(false); setPaletteQuery(""); };
+  const visibleModules = useMemo(() => MODULES.filter((module) => `${module.label} ${module.short} ${module.description}`.toLowerCase().includes(paletteQuery.trim().toLowerCase())), [paletteQuery]);
+  const evaluationStatus = typeof report?.assessment.status === "string" ? report.assessment.status : report ? "Evidence ready" : "Evaluating";
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setPaletteOpen((open) => !open);
+      }
+      if (event.key === "Escape") setPaletteOpen(false);
+    };
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
   const lab = active === "portfolio" ? <PortfolioLab onReport={setReport} onNavigate={navigate} /> : active === "classification" ? <ClassificationLab onReport={setReport} /> : active === "comparison" ? <ComparisonLab onReport={setReport} /> : active === "regression" ? <RegressionLab onReport={setReport} /> : active === "ranking" ? <RankingLab onReport={setReport} /> : active === "llm" ? <LlmLab onReport={setReport} /> : <MonitoringLab onReport={setReport} />;
   return (
     <div className="quality-lab relative min-h-screen overflow-hidden bg-[#050814] text-ink" style={{ "--lab-accent": activeModule.color, "--lab-tint": activeModule.tint } as React.CSSProperties}>
@@ -601,10 +617,12 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
           </button>
           <div className="flex items-center gap-2">
             <span className="mr-1 hidden max-w-56 truncate text-xs text-[#9fb0c8] lg:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
+            <button className="hidden h-9 items-center gap-2 rounded-[6px] border border-[#324667] bg-[#0b1425] px-3 text-xs font-bold text-[#c8d4e6] hover:border-[#64e8ff] hover:text-white sm:inline-flex" type="button" onClick={() => setPaletteOpen(true)}><Command size={14} /> Workspaces <kbd className="rounded-[3px] border border-[#435777] px-1.5 py-0.5 font-mono text-[9px]">⌘K</kbd></button>
             <button className="lab-icon-button" type="button" title="Reset active workspace" aria-label="Reset" onClick={() => setResetKey((value) => value + 1)}><RefreshCw size={16} /></button>
             <button className="inline-flex h-9 items-center gap-2 rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d] disabled:cursor-not-allowed disabled:opacity-50" type="button" title="Download JSON evidence report" onClick={exportReport} disabled={!report}><Download size={15} /> Export evidence</button>
           </div>
         </div>
+        <ScrollProgress />
       </header>
 
       <section className="border-b border-[#263657] bg-[#08111f]/88 text-white backdrop-blur-[2px]">
@@ -623,11 +641,23 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
               </button>;
             })}
           </nav>
+          <div className="lab-telemetry mt-5 grid gap-px overflow-hidden rounded-[6px] border border-[#263657] bg-[#263657] sm:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1.5fr_1fr]">
+            <div><span>Workspace</span><strong>{activeModule.short}</strong></div>
+            <div><span>Decision state</span><strong>{evaluationStatus}</strong></div>
+            <div className="min-w-0"><span>Evidence source</span><strong className="truncate" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</strong></div>
+            <div className="relative overflow-hidden"><span>Runtime</span><strong>Browser local</strong><i className="signal-sweep" aria-hidden="true" /></div>
+          </div>
         </div>
       </section>
 
       <div className="lab-workspace" key={`${active}-${resetKey}`}>{lab}</div>
       <footer className="border-t border-[#263657] bg-[#07101d]/95"><div className="mx-auto flex max-w-[1500px] flex-col justify-between gap-2 px-5 py-4 text-xs text-[#8ea4c2] sm:flex-row md:px-7"><span>Evaluation runs locally in your browser.</span><span>Independent evaluation suite · source projects remain unchanged</span></div></footer>
+      {paletteOpen && <div className="fixed inset-0 z-50 flex justify-center bg-[#010309]/82 px-4 pt-[12svh] backdrop-blur-md" role="dialog" aria-modal="true" aria-label="Switch Quality Lab workspace" onClick={() => setPaletteOpen(false)}>
+        <section className="h-fit max-h-[72svh] w-full max-w-2xl overflow-hidden rounded-[8px] border border-[#324667] bg-[#08111f] text-white shadow-[0_32px_100px_rgba(0,0,0,.65)]" onClick={(event) => event.stopPropagation()}>
+          <label className="flex items-center gap-3 border-b border-[#263657] px-5 py-4"><Search className="text-[#64e8ff]" size={19} /><span className="sr-only">Search workspaces</span><input autoFocus className="min-w-0 flex-1 bg-transparent text-base text-white outline-none placeholder:text-[#7184a2]" value={paletteQuery} onChange={(event) => setPaletteQuery(event.target.value)} placeholder="Choose an evaluation workspace" /><kbd className="rounded-[4px] border border-[#324667] px-2 py-1 font-mono text-[10px] text-[#8296b5]">ESC</kbd></label>
+          <div className="max-h-[58svh] overflow-y-auto p-2">{visibleModules.map((module) => { const Icon = module.icon; return <button key={module.id} type="button" className={`group grid w-full grid-cols-[38px_1fr_auto] items-center gap-3 rounded-[6px] px-3 py-3 text-left ${module.id === active ? "bg-[#12213a]" : "hover:bg-white/5"}`} onClick={() => navigate(module.id)}><span className="grid h-9 w-9 place-items-center rounded-[5px]" style={{ backgroundColor: module.color }}><Icon size={17} /></span><span><strong className="block text-sm">{module.label}</strong><small className="mt-1 block text-xs text-[#8296b5]">{module.description}</small></span><span className="text-[10px] font-bold uppercase text-[#64e8ff]">{module.id === active ? "Active" : "Open"}</span></button>; })}{visibleModules.length === 0 && <p className="px-4 py-10 text-center text-sm text-[#8296b5]">No matching workspace.</p>}</div>
+        </section>
+      </div>}
       </div>
     </div>
   );
