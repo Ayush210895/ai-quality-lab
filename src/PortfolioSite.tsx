@@ -161,31 +161,84 @@ const EXPERIENCE = [
     years: "2024 - Present",
     company: "DISH / EchoStar",
     role: "Senior Data Scientist",
-    summary: "Building causal measurement, forecasting, and GenAI workflows that connect pricing, promotions, inventory, and subscriber data to business decisions.",
-    proof: "Snowflake Cortex, Text2SQL, SARIMAX, XGBoost, Tableau",
+    bullets: [
+      "Built a Snowflake Cortex AI promotional-effectiveness agent that accepts natural-language inputs, runs statistical decomposition in Python, and returns structured pre-, promo-, and post-period lift insights.",
+      "Designed quasi-experimental pricing analyses that isolate incremental promotional lift after adjusting for weekday mix, seasonality, trend, and device-launch effects.",
+      "Deployed a Text2SQL natural-language query layer using Snowflake Cortex AI for product, pricing, inventory, and subscriber data.",
+      "Developed a causal demand-planning system using SARIMAX and XGBoost across Indirect, Web, and Walmart channels, exceeding a 75% N-4 forecast-accuracy target.",
+      "Architected a centralized causal feature layer integrating Snowflake pricing and promotion data for elasticity-aware forecasting and pricing strategy.",
+      "Built an executive analytics platform with Tableau and Snowflake, accelerating decision-making by 30% and reducing manual reporting effort by 40%.",
+    ],
   },
   {
     years: "2024",
     company: "The Partnership Center",
     role: "Data Scientist",
-    summary: "Delivered forecasting, Snowflake data workflows, and portfolio-performance reporting for operational planning.",
-    proof: "20% lower forecast error; 40% operational-efficiency improvement",
+    bullets: [
+      "Deployed ML regression models that reduced forecast error by 20% and improved operational efficiency by 40%.",
+      "Migrated enterprise data to Snowflake and automated repeatable ETL workflows for portfolio-performance monitoring.",
+      "Built Power BI dashboards with advanced DAX calculations for investment-portfolio performance trends.",
+      "Partnered with operations teams to translate model outputs into resource-planning workflows.",
+    ],
   },
   {
     years: "2023 - 2024",
     company: "UBS",
     role: "Data Scientist - Quant Research and NLP/AI",
-    summary: "Developed market-prediction, financial-sentiment, and research automation pipelines using Bloomberg data.",
-    proof: "62.4% weekly hit rate; 87% FinBERT accuracy",
+    bullets: [
+      "Built XGBoost market-prediction pipelines on Bloomberg time-series data, reaching a 62.4% weekly hit rate for bond-market forecasting.",
+      "Developed a FinBERT sentiment engine with 87% accuracy for credit-risk, research, and investment-decision workflows.",
+      "Designed Python and SQL predictive pipelines to model equity performance and support quantitative research.",
+      "Improved global mutual-fund forecasting accuracy by 33% through feature engineering and Bloomberg-data validation.",
+      "Automated Bloomberg and YODA reporting pipelines across research and risk reporting.",
+    ],
   },
   {
     years: "2018 - 2021",
     company: "Accenture",
     role: "Data Analyst - Banking Analytics",
-    summary: "Built credit-limit optimization, churn, segmentation, experimentation, and cloud-migration analytics for financial-services clients.",
-    proof: "23% revenue growth; 40% efficiency improvement",
+    bullets: [
+      "Built ML credit- and debit-limit optimization for OP Financial, driving 23% revenue growth and a 40% efficiency improvement.",
+      "Developed XGBoost churn and segmentation models for Allianz Bank with Tableau and Power BI decision dashboards.",
+      "Ran A/B tests and statistical inference across credit and debit portfolios to improve segmentation and campaign response.",
+      "Migrated DB2 and Teradata workloads to AWS and standardized validation practices.",
+    ],
   },
 ] as const;
+
+const PROFESSIONAL_SYSTEMS = [
+  { id: "01", name: "Financial Document Intelligence Agent", tag: "Agentic RAG - Text2SQL - Evaluation", description: "Reranked retrieval over filings, read-only Text2SQL, tool calling, evaluation cases, FastAPI, Docker, and Streamlit. Runs locally; cloud deployment remains planned.", accent: "#c8a2ff" },
+  { id: "02", name: "GenAI Data Layer", tag: "GenAI - Natural Language SQL", description: "Natural-language access to enterprise data through Snowflake Cortex AI and Databricks-hosted LLM workflows, connecting schema-grounded SQL with stakeholder-facing answers.", accent: "#5fe0bd" },
+  { id: "03", name: "Forecasting and Price Elasticity", tag: "Time Series - ML - Optimization", description: "Forecasting and elasticity systems supporting pricing, inventory, promotional measurement, and ROI decisions across commercial channels.", accent: "#ff765c" },
+  { id: "04", name: "Bond Market Predictor", tag: "Quant ML - Finance", description: "XGBoost modeling on rolling Bloomberg time-series data, reaching a 62.4% weekly hit rate for fixed-income research.", accent: "#72b7ff" },
+  { id: "05", name: "FinBERT Sentiment Engine", tag: "NLP - Credit Risk", description: "Domain-specific financial-news sentiment modeling integrated into credit-risk and investment-research workflows, with 87% reported accuracy.", accent: "#ffc159" },
+] as const;
+
+const STACK_GROUPS = [
+  { title: "Programming and data", items: ["Python", "SQL", "R", "PySpark", "DAX", "Power Query"] },
+  { title: "AI and ML", items: ["XGBoost", "SARIMAX", "PyTorch", "FinBERT", "Causal inference", "Forecasting", "Recommenders"] },
+  { title: "GenAI and MLOps", items: ["Snowflake Cortex", "Text2SQL", "Tool calling", "RAG", "LLM evaluation", "MLflow", "Docker", "Airflow"] },
+  { title: "BI and engineering", items: ["Tableau", "Power BI", "Alteryx", "ETL / ELT", "Bloomberg", "Git / CI/CD"] },
+] as const;
+
+const CREDENTIALS = {
+  education: [
+    "Northeastern University - M.S. Data Analytics, 2021-2023",
+    "NMIMS University - B.Tech Computer Science, 2014-2018",
+  ],
+  certifications: [
+    "Meta Data Analyst",
+    "Google Advanced Data Analytics",
+    "Data Visualization in Tableau and Power BI",
+    "Machine Learning Coursework Recognition",
+  ],
+  recognition: [
+    "Ace Award",
+    "Top SQL 50",
+    "Beijing AQI Project Recognition",
+    "Accenture Q2 FY20 Team Award",
+  ],
+} as const;
 
 const CAPABILITIES = [
   { title: "Applied ML", detail: "Classification, forecasting, optimization, causal inference, experimentation, and decision thresholds." },
@@ -201,12 +254,12 @@ export default function PortfolioSite({ project, view, onHome, onProjects, onOpe
       : <UnifiedHome onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />;
 }
 
-function SiteHeader({ onHome, onProjects, onOpenLab, light = false }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean }) {
+function SiteHeader({ onHome, onProjects, onOpenLab, light = false, subtitle = "AI/ML Project Atlas" }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean; subtitle?: string }) {
   return <header className={`sticky top-0 z-30 border-b ${light ? "border-white/20 bg-[#142126] text-white" : "border-[#d7dfdf] bg-[#f7f9f8]/95 text-[#142126]"}`}>
     <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-4 px-4 md:px-7">
       <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={onHome}>
         <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-[6px] ${light ? "bg-[#73dbcb] text-[#142126]" : "bg-[#142126] text-white"}`}><ChartNoAxesCombined size={19} /></span>
-        <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className={`block truncate text-[11px] font-bold uppercase ${light ? "text-[#9edfd5]" : "text-[#34766d]"}`}>AI/ML Project Atlas</span></span>
+        <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className={`block truncate text-[11px] font-bold uppercase ${light ? "text-[#9edfd5]" : "text-[#34766d]"}`}>{subtitle}</span></span>
       </button>
       <nav className="flex items-center gap-2" aria-label="Portfolio navigation">
         <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold ${light ? "hover:bg-white/10" : "hover:bg-white"}`} type="button" title="Browse all projects" onClick={onProjects}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
@@ -217,6 +270,102 @@ function SiteHeader({ onHome, onProjects, onOpenLab, light = false }: { onHome: 
   </header>;
 }
 
+function ConstellationField() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+    let width = 0;
+    let height = 0;
+    let pointerX = -9999;
+    let pointerY = -9999;
+    type Particle = { x: number; y: number; vx: number; vy: number; radius: number; phase: number };
+    let particles: Particle[] = [];
+
+    const resize = () => {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * ratio);
+      canvas.height = Math.floor(height * ratio);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const count = Math.max(34, Math.min(95, Math.floor(width * height * .000085)));
+      particles = Array.from({ length: count }, (_, index) => ({
+        x: (index * 83 + Math.random() * width) % width,
+        y: (index * 47 + Math.random() * height) % height,
+        vx: (Math.random() - .5) * .18,
+        vy: (Math.random() - .5) * .18,
+        radius: Math.random() * 1.2 + .7,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    };
+
+    const move = (event: MouseEvent) => { pointerX = event.clientX; pointerY = event.clientY; };
+    const leave = () => { pointerX = -9999; pointerY = -9999; };
+
+    const draw = () => {
+      context.clearRect(0, 0, width, height);
+      for (let index = 0; index < particles.length; index += 1) {
+        const particle = particles[index];
+        if (!reduced) {
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.phase += .012;
+          if (particle.x < 0 || particle.x > width) particle.vx *= -1;
+          if (particle.y < 0 || particle.y > height) particle.vy *= -1;
+        }
+        for (let next = index + 1; next < particles.length; next += 1) {
+          const other = particles[next];
+          const distance = Math.hypot(particle.x - other.x, particle.y - other.y);
+          if (distance < 145) {
+            context.strokeStyle = `rgba(77, 142, 255, ${(1 - distance / 145) * .24})`;
+            context.lineWidth = .65;
+            context.beginPath();
+            context.moveTo(particle.x, particle.y);
+            context.lineTo(other.x, other.y);
+            context.stroke();
+          }
+        }
+        const pointerDistance = Math.hypot(particle.x - pointerX, particle.y - pointerY);
+        if (pointerDistance < 180) {
+          context.strokeStyle = `rgba(0, 224, 255, ${(1 - pointerDistance / 180) * .52})`;
+          context.beginPath();
+          context.moveTo(particle.x, particle.y);
+          context.lineTo(pointerX, pointerY);
+          context.stroke();
+        }
+        const pulse = .48 + (Math.sin(particle.phase) + 1) * .18;
+        context.fillStyle = `rgba(147, 190, 255, ${pulse})`;
+        context.beginPath();
+        context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        context.fill();
+      }
+      if (!reduced) frame = window.requestAnimationFrame(draw);
+    };
+
+    resize();
+    draw();
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseleave", leave);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseleave", leave);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="constellation-field" aria-hidden="true" />;
+}
+
 function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onHome" | "onProjects" | "onOpenLab" | "onSelectProject">) {
   const reducedMotion = useReducedMotion();
   const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
@@ -224,94 +373,140 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
   const activeProject = flagships.find((project) => project.name === activeName) ?? flagships[0];
   const assetBase = import.meta.env.BASE_URL;
 
-  return <div className="unified-home min-h-screen bg-[#eef3f1] text-[#142126]">
-    <SiteHeader onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} />
+  return <div className="unified-home relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]">
+    <ConstellationField />
+    <div className="relative z-10">
+    <SiteHeader onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} light subtitle="Senior Data Scientist" />
     <main>
-      <section className="unified-hero relative isolate min-h-[680px] overflow-hidden bg-[#09171d] text-white">
+      <section className="unified-hero relative isolate min-h-[720px] overflow-hidden border-b border-[#213050] bg-[#050814]/35 text-white">
         <div className="absolute inset-0 unified-hero-grid" aria-hidden="true" />
-        <div className="relative z-10 mx-auto grid min-h-[680px] max-w-[1500px] gap-8 px-4 py-10 md:px-7 lg:grid-cols-[minmax(0,.9fr)_minmax(520px,1.1fr)] lg:items-center lg:gap-14 lg:py-14">
-          <motion.div initial={reducedMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
-            <div className="flex items-center gap-4">
-              <img className="h-20 w-16 rounded-[20px_7px_20px_7px] object-cover object-top ring-1 ring-white/25" src={`${assetBase}assets/ayush-soni-headshot.jpg`} alt="Ayush Soni" />
-              <span><span className="block text-[10px] font-extrabold uppercase text-[#67dcc7]">Senior Data Scientist</span><span className="mt-1 inline-flex items-center gap-1.5 text-xs text-[#aec2bf]"><MapPin size={13} /> Denver, Colorado</span></span>
+        <motion.div className="relative z-10 mx-auto flex min-h-[720px] max-w-[1220px] flex-col justify-center px-4 py-12 md:px-7 lg:py-14" initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
+          <div className="mx-auto grid w-full gap-8 lg:grid-cols-[230px_minmax(0,1fr)] lg:items-center lg:gap-10">
+            <img className="mx-auto aspect-square w-44 rounded-full object-cover object-top ring-[5px] ring-[#2386d9] shadow-[0_0_48px_rgba(43,145,255,.34)] sm:w-52 lg:w-[230px]" src={`${assetBase}assets/ayush-soni-headshot.jpg`} alt="Ayush Soni" />
+            <div>
+              <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[.08em] text-[#75a7ff]"><span className="status-pulse h-2 w-2 rounded-full bg-[#2ee5c2] shadow-[0_0_16px_#2ee5c2]" /> status: open_to_opportunities <span className="status-cursor">|</span></span>
+              <h1 aria-label="Ayush Soni" className="portfolio-display mt-3 text-[64px] leading-[.92] text-[#f0f4ff] sm:text-[88px] lg:text-[112px]">Ayush Soni</h1>
+              <p className="mt-4 max-w-3xl text-xl font-bold leading-8 text-white sm:text-3xl">Senior Data Scientist - Causal Inference and GenAI Agentic Systems</p>
+              <div className="mt-5 flex flex-wrap gap-2"><span className="border border-[#31507e] px-3 py-2 font-mono text-[10px] font-bold uppercase text-[#75a7ff]">Production ML</span><span className="border border-[#31507e] px-3 py-2 font-mono text-[10px] font-bold uppercase text-[#75a7ff]">Causal AI</span><span className="border border-[#31507e] px-3 py-2 font-mono text-[10px] font-bold uppercase text-[#75a7ff]">GenAI</span></div>
             </div>
-            <h1 aria-label="Ayush Soni" className="mt-6 text-6xl font-black leading-[.92] sm:text-7xl lg:text-[92px]">Ayush<br />Soni</h1>
-            <p className="mt-6 max-w-2xl text-xl font-bold leading-8 text-white sm:text-2xl">Applied AI and ML systems for decisions that need evidence.</p>
-            <p className="mt-4 max-w-xl text-sm leading-7 text-[#b7c9c6] sm:text-base">I connect causal inference, forecasting, production ML, and grounded GenAI with operating decisions people can inspect, challenge, and adopt.</p>
-            <div className="mt-7 flex flex-wrap gap-2">
-              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#67dcc7] px-4 text-sm font-black text-[#09171d]" onClick={onProjects}><LayoutGrid size={17} /> Explore selected work</button>
-              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-white/30 bg-white/5 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Open Quality Lab</button>
-              <a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-white/20 px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a>
-            </div>
-          </motion.div>
+          </div>
+          <div className="mt-9 grid gap-7 lg:grid-cols-[1fr_320px] lg:items-end">
+            <div><p className="text-base font-black text-white">Applied AI and ML systems for decisions that need evidence.</p><p className="mt-2 max-w-3xl text-base font-semibold leading-8 text-[#cad5e8]">I build causal inference systems and GenAI agents that defend the number behind the answer, connecting experimentation, Snowflake and Databricks LLM workflows, forecasting, NLP, and production ML with decisions that can survive scrutiny.</p><div className="mt-6 flex flex-wrap gap-2"><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] bg-[#2d92ff] px-4 text-sm font-black text-white" onClick={onProjects}><LayoutGrid size={17} /> Explore selected work</button><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] bg-[#0b1425]/80 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Quality Lab</button><a className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a></div></div>
+            <div className="space-y-2 border-l border-[#263d65] pl-5 font-mono text-[10px] font-bold uppercase tracking-[.12em] text-[#8ba7d1]"><p><span className="text-[#ff765c]">01</span> United States</p><p><span className="text-[#5fe0bd]">02</span> DISH / EchoStar</p><p><span className="text-[#c8a2ff]">03</span> Northeastern - M.S. Data Analytics</p><p><span className="text-[#ffc159]">04</span> Open to relocate</p></div>
+          </div>
+          <div className="capability-rail mt-10 grid grid-cols-2 border border-[#263657] md:grid-cols-4"><div><strong>AI/ML</strong><span>Model development</span></div><div><strong>GenAI</strong><span>Enterprise agents</span></div><div><strong>Causal</strong><span>Lift and forecasting</span></div><div><strong>MLOps</strong><span>Production systems</span></div></div>
+        </motion.div>
+      </section>
 
-          <motion.div className="unified-artifact overflow-hidden" initial={reducedMotion ? false : { opacity: 0, x: 36 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .72, delay: .08, ease: [0.22, 1, 0.36, 1] }}>
+      <section className="border-b border-[#213050] bg-[#09101e]/90">
+        <div className="mx-auto grid max-w-[1500px] grid-cols-1 md:grid-cols-3 md:px-7">
+          <HomeProof value="75%+" label="N-4 forecast accuracy target exceeded" accent="#5fe0bd" />
+          <HomeProof value="30%" label="Faster executive decision-making" accent="#ff765c" />
+          <HomeProof value="40%" label="Less manual reporting effort" accent="#c8a2ff" />
+        </div>
+      </section>
+
+      <section className="decision-console border-b border-[#263657] bg-[#0a1425]/92 py-16 lg:py-24">
+        <div className="mx-auto grid max-w-[1500px] gap-10 px-4 md:px-7 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-center">
+          <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Interactive decision console</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Touch the evidence.<br />Change the system.</h2><p className="mt-5 text-sm leading-7 text-[#aebed6]">Switch between three flagship systems to see how the business question, technical signal, and operating proof change together.</p><div className="mt-7 space-y-2">{flagships.map((project, index) => <button key={project.name} type="button" aria-pressed={project.name === activeName} className={`flex min-h-14 w-full items-center justify-between border px-4 text-left text-xs font-extrabold uppercase transition-all ${project.name === activeName ? "translate-x-2 border-white bg-white text-[#07101d]" : "border-[#324667] bg-[#09111f]/70 text-[#9fb4d1] hover:border-[#64e8ff]"}`} onClick={() => setActiveName(project.name as (typeof FLAGSHIP_NAMES)[number])}><span><span className="mr-3 font-mono" style={{ color: project.accent }}>0{index + 1}</span>{project.displayName}</span><ArrowRight size={15} /></button>)}</div></div>
+          <motion.div key={activeProject.name} className="unified-artifact overflow-hidden" initial={reducedMotion ? false : { opacity: 0, scale: .98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .32 }}>
             <div className="flex items-center justify-between gap-4 border-b border-white/15 bg-[#112830] px-5 py-4">
               <span><span className="block text-[9px] font-extrabold uppercase text-[#67dcc7]">Live evidence object</span><strong className="mt-1 block text-sm">{activeProject.displayName}</strong></span>
               <span className="font-mono text-[10px] text-[#9fb4b1]">{activeProject.sourceCommit}</span>
             </div>
-            <div className="h-[330px]"><VisualStage project={activeProject} /></div>
-            <div className="grid grid-cols-3 border-t border-white/15 bg-[#112830]">
-              {flagships.map((project) => <button key={project.name} type="button" aria-pressed={project.name === activeName} className={`min-h-16 border-r border-white/10 px-3 text-left text-[10px] font-extrabold uppercase last:border-r-0 ${project.name === activeName ? "bg-white text-[#142126]" : "text-[#a9bcba] hover:bg-white/5"}`} onClick={() => setActiveName(project.name as (typeof FLAGSHIP_NAMES)[number])}>{project.displayName}</button>)}
-            </div>
+            <div className="h-[430px]"><VisualStage project={activeProject} /></div>
           </motion.div>
         </div>
       </section>
 
-      <section className="border-b border-[#c8d4d1] bg-white">
-        <div className="mx-auto grid max-w-[1500px] grid-cols-1 md:grid-cols-3 md:px-7">
-          <HomeProof value="75%+" label="N-4 forecast accuracy target exceeded" accent="#087e72" />
-          <HomeProof value="30%" label="Faster executive decision-making" accent="#d84b37" />
-          <HomeProof value="40%" label="Less manual reporting effort" accent="#6b48a8" />
-        </div>
-      </section>
-
-      <section className="bg-[#eef3f1] py-16 lg:py-24">
+      <section className="border-b border-[#213050] bg-[#070d19]/90 py-16 lg:py-24" id="systems">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
-          <div className="grid gap-8 border-b border-[#bfcfcb] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-            <div><p className="text-xs font-extrabold uppercase text-[#087e72]">Selected systems</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Evidence first.<br />Then the decision.</h2></div>
-            <p className="max-w-2xl text-base leading-7 text-[#536166]">Each case connects a business constraint to model evidence, an operating choice, and the boundary that still requires human judgment.</p>
+          <div className="grid gap-8 border-b border-[#263657] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Professional systems</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">What I build<br />in the real world.</h2></div>
+            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Production-minded systems spanning grounded AI, forecasting, causal measurement, financial NLP, and decision intelligence.</p>
           </div>
           <div>
-            {flagships.map((project, index) => <article key={project.name} className="grid gap-6 border-b border-[#bfcfcb] py-9 lg:grid-cols-[80px_minmax(0,.72fr)_minmax(320px,1fr)_auto] lg:items-center">
-              <span className="font-mono text-sm font-bold" style={{ color: project.accent }}>0{index + 1}</span>
-              <div><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]].role}</span><h3 className="mt-2 text-2xl font-black">{project.displayName}</h3></div>
-              <div><p className="text-sm font-bold leading-6">{businessQuestion(project)}</p><p className="mt-2 text-sm leading-6 text-[#687579]">{project.outcome}</p></div>
-              <button type="button" className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-[6px] border border-[#9baba8] px-4 text-sm font-black hover:bg-white" onClick={() => onSelectProject(project)}>Open case <ArrowRight size={16} /></button>
+            {PROFESSIONAL_SYSTEMS.map((system) => <article key={system.id} className="group grid gap-5 border-b border-[#263657] py-8 md:grid-cols-[70px_minmax(240px,.8fr)_minmax(0,1.2fr)] md:items-start md:gap-9">
+              <span className="font-mono text-sm font-black" style={{ color: system.accent }}>{system.id}</span>
+              <div><span className="text-[10px] font-extrabold uppercase" style={{ color: system.accent }}>{system.tag}</span><h3 className="mt-2 text-2xl font-black text-white">{system.name}</h3></div>
+              <p className="border-l border-[#34476d] pl-5 text-sm leading-7 text-[#b9c7db] transition-colors group-hover:border-white/40">{system.description}</p>
             </article>)}
           </div>
-          <button type="button" className="mt-8 inline-flex min-h-11 items-center gap-2 text-sm font-black text-[#087e72]" onClick={onProjects}>Explore all 17 projects <ArrowRight size={17} /></button>
         </div>
       </section>
 
-      <section className="bg-[#142126] py-16 text-white lg:py-24" id="experience">
+      <section className="border-b border-[#213050] bg-[#0a1120]/92 py-16 lg:py-24">
+        <div className="mx-auto max-w-[1500px] px-4 md:px-7">
+          <div className="grid gap-8 border-b border-[#263657] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Public case studies</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Evidence first.<br />Then the decision.</h2></div>
+            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Each case connects a business constraint to model evidence, an operating choice, and the boundary that still requires human judgment.</p>
+          </div>
+          <div>
+            {flagships.map((project, index) => <article key={project.name} className="grid gap-6 border-b border-[#263657] py-9 lg:grid-cols-[80px_minmax(0,.72fr)_minmax(320px,1fr)_auto] lg:items-center">
+              <span className="font-mono text-sm font-bold" style={{ color: project.accent }}>0{index + 1}</span>
+              <div><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]].role}</span><h3 className="mt-2 text-2xl font-black">{project.displayName}</h3></div>
+              <div><p className="text-sm font-bold leading-6 text-white">{businessQuestion(project)}</p><p className="mt-2 text-sm leading-6 text-[#aebed6]">{project.outcome}</p></div>
+              <button type="button" className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-[6px] border border-[#526789] px-4 text-sm font-black hover:bg-white/10" onClick={() => onSelectProject(project)}>Open case <ArrowRight size={16} /></button>
+            </article>)}
+          </div>
+          <button type="button" className="mt-8 inline-flex min-h-11 items-center gap-2 text-sm font-black text-[#64e8ff]" onClick={onProjects}>Explore all 17 projects <ArrowRight size={17} /></button>
+        </div>
+      </section>
+
+      <section className="border-b border-[#213050] bg-[#050814]/94 py-16 text-white lg:py-24" id="experience">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 lg:grid-cols-[.6fr_1.4fr]"><div><p className="text-xs font-extrabold uppercase text-[#67dcc7]">Experience</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Built across product, finance, and operations.</h2></div><p className="max-w-2xl text-base leading-7 text-[#b9cac7]">The common thread is not a particular algorithm. It is turning uncertain data into a decision, earning stakeholder trust, and building the path from analysis to use.</p></div>
-          <div className="mt-12 border-t border-white/15">
-            {EXPERIENCE.map((item) => <article key={`${item.company}-${item.years}`} className="grid gap-4 border-b border-white/15 py-7 md:grid-cols-[150px_260px_1fr] md:gap-8"><span className="font-mono text-xs font-bold text-[#67dcc7]">{item.years}</span><span><strong className="block text-lg">{item.company}</strong><small className="mt-1 block text-xs text-[#91a8a5]">{item.role}</small></span><span><p className="text-sm leading-6 text-[#c8d5d3]">{item.summary}</p><strong className="mt-3 block text-xs text-[#ffc159]">{item.proof}</strong></span></article>)}
+          <div className="mt-12 border-t border-[#263657]">
+            {EXPERIENCE.map((item) => <article key={`${item.company}-${item.years}`} className="grid gap-5 border-b border-[#263657] py-9 md:grid-cols-[150px_260px_1fr] md:gap-8"><span className="font-mono text-xs font-bold text-[#64e8ff]">{item.years}</span><span><strong className="block text-lg">{item.company}</strong><small className="mt-1 block text-xs text-[#91a7c5]">{item.role}</small></span><ul className="space-y-3">{item.bullets.map((bullet) => <li key={bullet} className="relative pl-5 text-sm leading-6 text-[#c8d4e6] before:absolute before:left-0 before:top-[9px] before:h-1.5 before:w-1.5 before:rounded-full before:bg-[#5fe0bd]">{bullet}</li>)}</ul></article>)}
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-16 lg:py-24">
+      <section className="border-b border-[#213050] bg-[#0a1120]/92 py-16 lg:py-24">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
-          <p className="text-xs font-extrabold uppercase text-[#087e72]">Capability map</p>
-          <div className="mt-4 grid gap-8 border-y border-[#c8d4d1] py-10 md:grid-cols-3">
-            {CAPABILITIES.map((item, index) => <div key={item.title} className="md:border-r md:border-[#d7dfdd] md:pr-8 md:last:border-r-0"><span className="font-mono text-xs font-bold text-[#d84b37]">0{index + 1}</span><h3 className="mt-3 text-2xl font-black">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#687579]">{item.detail}</p></div>)}
+          <p className="text-xs font-extrabold uppercase text-[#64e8ff]">Capability map</p>
+          <div className="mt-4 grid gap-8 border-y border-[#263657] py-10 md:grid-cols-3">
+            {CAPABILITIES.map((item, index) => <div key={item.title} className="md:border-r md:border-[#263657] md:pr-8 md:last:border-r-0"><span className="font-mono text-xs font-bold text-[#ff765c]">0{index + 1}</span><h3 className="mt-3 text-2xl font-black">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#aebed6]">{item.detail}</p></div>)}
           </div>
-          <div className="mt-12 grid gap-8 bg-[#e7efed] p-6 sm:p-9 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div><div className="flex items-center gap-2 text-[#087e72]"><Sparkles size={18} /><span className="text-xs font-extrabold uppercase">Current direction</span></div><h2 className="mt-3 text-3xl font-black">Applied Scientist and AI/ML leadership work.</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-[#536166]">Focused on production-oriented modeling, causal measurement, GenAI evaluation, and systems that make evidence understandable to technical and business partners.</p></div>
-            <div className="flex flex-wrap gap-2 lg:justify-end"><a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#142126] px-4 text-sm font-bold text-white" href="mailto:ayush.so2156@gmail.com"><Mail size={16} /> Contact</a><a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold" href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer">LinkedIn <ExternalLink size={15} /></a></div>
+          <div className="mt-14 grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+            {STACK_GROUPS.map((group, index) => <div key={group.title} className="border-t-2 pt-5" style={{ borderColor: ["#5fe0bd", "#ff765c", "#c8a2ff", "#72b7ff"][index] }}><h3 className="text-base font-black">{group.title}</h3><div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">{group.items.map((item) => <span key={item} className="font-mono text-xs text-[#b9c7db]">{item}</span>)}</div></div>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-[#213050] bg-[#070d19]/94 py-16 lg:py-24">
+        <div className="mx-auto grid max-w-[1500px] gap-12 px-4 md:grid-cols-3 md:px-7">
+          {[{ label: "Education", items: CREDENTIALS.education, color: "#5fe0bd" }, { label: "Certifications", items: CREDENTIALS.certifications, color: "#72b7ff" }, { label: "Recognition", items: CREDENTIALS.recognition, color: "#ffc159" }].map((group) => <section key={group.label}><p className="text-xs font-extrabold uppercase" style={{ color: group.color }}>{group.label}</p><div className="mt-5 border-t border-[#263657]">{group.items.map((item) => <p key={item} className="border-b border-[#263657] py-4 text-sm font-bold leading-6 text-[#d7e0ef]">{item}</p>)}</div></section>)}
+        </div>
+      </section>
+
+      <section className="bg-[#03050b]/96 py-16 lg:py-24" id="contact">
+        <div className="mx-auto max-w-[1100px] px-4 md:px-7">
+          <div className="overflow-hidden rounded-[8px] border border-[#2a3c61] bg-[#080e1b] shadow-[0_30px_90px_rgba(0,0,0,.45)]">
+            <div className="flex items-center justify-between border-b border-[#263657] bg-[#0d1729] px-5 py-3"><span className="font-mono text-xs text-[#93a9c7]">ayush@portfolio: ~/next-opportunity</span><span className="font-mono text-[10px] text-[#5fe0bd]">CONNECTED</span></div>
+            <div className="p-5 font-mono text-sm leading-7 sm:p-8">
+              <p><span className="text-[#5fe0bd]">$</span> current_focus</p><p className="mb-6 pl-4 text-[#c7d4e7]">Applied Scientist and AI/ML leadership roles spanning production ML, causal measurement, and grounded GenAI.</p>
+              <div className="grid gap-x-10 gap-y-2 sm:grid-cols-2">
+                <a className="text-[#aebed6] hover:text-white" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><span className="text-[#72b7ff]">resume:</span> download PDF</a>
+                <a className="text-[#aebed6] hover:text-white" href="mailto:ayush.so2156@gmail.com"><span className="text-[#72b7ff]">email:</span> ayush.so2156@gmail.com</a>
+                <a className="text-[#aebed6] hover:text-white" href="tel:+18577019173"><span className="text-[#72b7ff]">phone:</span> +1 857-701-9173</a>
+                <a className="text-[#aebed6] hover:text-white" href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><span className="text-[#72b7ff]">github:</span> Ayush210895</a>
+                <a className="text-[#aebed6] hover:text-white" href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer"><span className="text-[#72b7ff]">linkedin:</span> ayush218</a>
+                <span className="text-[#aebed6]"><span className="text-[#72b7ff]">location:</span> United States - Open to relocate</span>
+              </div>
+              <p className="mt-7 text-[#ffc159]"><span className="text-[#5fe0bd]">$</span> Let&apos;s build systems people can trust.</p>
+            </div>
           </div>
         </div>
       </section>
     </main>
-    <footer className="border-t border-white/10 bg-[#09171d] text-white"><div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-8 sm:flex-row sm:items-center sm:justify-between md:px-7"><span><strong className="block">Ayush Soni</strong><small className="mt-1 block text-[#8fa6a3]">Senior Data Scientist - Applied AI and ML</small></span><div className="flex flex-wrap gap-4 text-xs font-bold"><a href="mailto:ayush.so2156@gmail.com">Email</a><a href="https://github.com/Ayush210895" target="_blank" rel="noreferrer">GitHub</a><a href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer">LinkedIn</a></div></div></footer>
+    <footer className="border-t border-[#213050] bg-[#03050b] text-white"><div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-8 sm:flex-row sm:items-center sm:justify-between md:px-7"><span><strong className="block">Ayush Soni</strong><small className="mt-1 block text-[#8fa6c2]">Senior Data Scientist - Applied AI and ML</small></span><div className="flex flex-wrap gap-4 text-xs font-bold"><a href="mailto:ayush.so2156@gmail.com">Email</a><a href="https://github.com/Ayush210895" target="_blank" rel="noreferrer">GitHub</a><a href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer">LinkedIn</a></div></div></footer>
+    </div>
   </div>;
 }
 
 function HomeProof({ value, label, accent }: { value: string; label: string; accent: string }) {
-  return <div className="border-b border-[#d7dfdd] px-5 py-7 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"><strong className="block text-3xl font-black tabular-nums" style={{ color: accent }}>{value}</strong><span className="mt-2 block text-xs font-bold uppercase text-[#687579]">{label}</span></div>;
+  return <div className="border-b border-[#213050] px-5 py-7 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"><strong className="block text-3xl font-black tabular-nums" style={{ color: accent }}>{value}</strong><span className="mt-2 block text-xs font-bold uppercase text-[#9fb0c8]">{label}</span></div>;
 }
 
 function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onHome" | "onProjects" | "onOpenLab" | "onSelectProject">) {
