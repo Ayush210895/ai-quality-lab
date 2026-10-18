@@ -13,6 +13,10 @@ export default defineConfig({
   build: {
     sourcemap: true,
     rollupOptions: {
+      input: {
+        main: "index.html",
+        qualityLab: "quality-lab/index.html",
+      },
       output: {
         manualChunks(id) {
           if (id.includes("recharts") || id.includes("d3-")) return "charts";

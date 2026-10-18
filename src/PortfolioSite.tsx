@@ -267,7 +267,7 @@ export default function PortfolioSite({ project, view, onHome, onProjects, onOpe
       : <UnifiedHome onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />;
 }
 
-function SiteHeader({ onHome, onProjects, onOpenLab, subtitle = "AI/ML Project Atlas" }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean; subtitle?: string }) {
+function SiteHeader({ onHome, onProjects, onOpenLab, subtitle = "AI/ML Project Atlas", active = "projects" }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean; subtitle?: string; active?: "home" | "projects" }) {
   const assetBase = import.meta.env.BASE_URL;
   return <header className="sticky top-0 z-30 border-b border-white/15 bg-[#07101d]/95 text-white backdrop-blur-xl">
     <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-4 px-4 md:px-7">
@@ -280,9 +280,9 @@ function SiteHeader({ onHome, onProjects, onOpenLab, subtitle = "AI/ML Project A
         <span className="hidden font-mono text-[10px] font-bold uppercase text-[#8296b5] sm:block">{subtitle}</span>
       </div>
       <nav className="flex items-center gap-2" aria-label="Portfolio navigation">
-        <button className="inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold hover:bg-white/10" type="button" title="Browse all projects" onClick={onProjects}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
+        <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold ${active === "projects" ? "bg-white text-[#07101d]" : "hover:bg-white/10"}`} type="button" title="Browse all projects" onClick={onProjects}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
         <a className="hidden min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold hover:bg-white/10 sm:inline-flex" href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><Code2 size={15} /> GitHub</a>
-        <button className="inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d]" type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
+        <button className="inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-[6px] border border-[#435777] bg-[#0b1425]/80 px-3 text-xs font-bold text-white hover:border-[#64e8ff] hover:bg-[#12213a]" type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
       </nav>
     </div>
     <ScrollProgress />
@@ -449,7 +449,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
   return <div className="unified-home relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]">
     <ConstellationField />
     <div className="relative z-10">
-    <SiteHeader onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} light subtitle="Senior Data Scientist" />
+    <SiteHeader onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} light subtitle="Senior Data Scientist" active="home" />
     <main>
       <section className="unified-hero relative isolate min-h-[640px] overflow-hidden border-b border-[#213050] bg-[#050814]/35 text-white">
         <div className="absolute inset-0 unified-hero-grid" aria-hidden="true" />

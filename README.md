@@ -4,6 +4,8 @@ This site is a unified professional portfolio for Ayush Soni's applied AI, machi
 
 **Live product:** [ayush210895.github.io/ai-quality-lab](https://ayush210895.github.io/ai-quality-lab/)
 
+**Direct Quality Lab:** [ayush210895.github.io/ai-quality-lab/quality-lab](https://ayush210895.github.io/ai-quality-lab/quality-lab/)
+
 ## Unified portfolio experience
 
 - Professional homepage with verified experience, selected outcomes, current role direction, resume, and contact paths.

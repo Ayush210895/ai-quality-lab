@@ -578,8 +578,9 @@ function Workspace({ controls, children }: { controls: ReactNode; children: Reac
   return <main className="mx-auto grid w-full max-w-[1500px] gap-5 px-4 py-5 md:px-7 lg:grid-cols-[310px_minmax(0,1fr)] lg:py-7"><>{controls}</><section className="min-w-0 space-y-4" aria-live="polite">{children}</section></main>;
 }
 
-function QualityLabApp({ onExit }: { onExit: () => void }) {
+function QualityLabApp({ onHome, onProjects }: { onHome: () => void; onProjects: () => void }) {
   const assetBase = import.meta.env.BASE_URL;
+  const directLabUrl = `${assetBase}quality-lab/`;
   const [active, setActive] = useState<ModuleId>("classification");
   const [resetKey, setResetKey] = useState(0);
   const [report, setReport] = useState<Report | null>(null);
@@ -622,7 +623,7 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
       <header className="sticky top-0 z-40 border-b border-white/15 bg-[#07101d]/95 text-white backdrop-blur-xl">
         <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-3 px-4 md:px-7">
           <div className="flex min-w-0 items-center gap-3">
-            <button className="creator-home-link flex min-w-0 items-center gap-2.5 text-left" type="button" title="Open Ayush Soni portfolio home" onClick={onExit}>
+            <button className="creator-home-link flex min-w-0 items-center gap-2.5 text-left" type="button" title="Open Ayush Soni portfolio home" onClick={onHome}>
               <img className="h-9 w-9 shrink-0 rounded-full border-2 border-[#2d92ff] object-cover object-top" src={`${assetBase}assets/ayush-soni-headshot.jpg`} alt="" />
               <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className="block truncate text-[10px] font-extrabold uppercase text-[#75a7ff]">Portfolio home</span></span>
             </button>
@@ -631,6 +632,7 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
           </div>
           <div className="flex items-center gap-2">
             <span className="mr-1 hidden max-w-56 truncate text-xs text-[#9fb0c8] lg:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
+            <a className="hidden h-9 items-center gap-2 rounded-[6px] border border-[#324667] bg-[#0b1425] px-3 text-xs font-bold text-[#c8d4e6] hover:border-[#64e8ff] hover:text-white md:inline-flex" href={directLabUrl} target="_blank" rel="noreferrer" title="Open the standalone Quality Lab URL"><ExternalLink size={14} /> Direct link</a>
             <button className="hidden h-9 items-center gap-2 rounded-[6px] border border-[#324667] bg-[#0b1425] px-3 text-xs font-bold text-[#c8d4e6] hover:border-[#64e8ff] hover:text-white sm:inline-flex" type="button" onClick={() => setPaletteOpen(true)}><Command size={14} /> Workspaces <kbd className="rounded-[3px] border border-[#435777] px-1.5 py-0.5 font-mono text-[9px]">⌘K</kbd></button>
             <button className="lab-icon-button" type="button" title="Reset active workspace" aria-label="Reset" onClick={() => setResetKey((value) => value + 1)}><RefreshCw size={16} /></button>
             <button className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d] disabled:cursor-not-allowed disabled:opacity-50" type="button" title="Download JSON evidence report" aria-label="Export evidence" onClick={exportReport} disabled={!report}><Download size={15} /><span className="hidden sm:inline">Export evidence</span><span className="sm:hidden">Export</span></button>
@@ -645,7 +647,7 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
         <div className="relative mx-auto max-w-[1500px] px-4 pb-4 pt-5 md:px-7">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div><p className="text-[10px] font-extrabold uppercase text-[#64e8ff]">Interactive evaluation studio</p><h1 className="portfolio-display mt-1 text-3xl sm:text-4xl">{activeModule.label}</h1><p className="mt-1 text-sm text-[#aebed6]">{activeModule.description}</p></div>
-            <button className="inline-flex min-h-9 w-fit items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#aebed6] hover:bg-white/10 hover:text-white" type="button" onClick={onExit}><FolderGit2 size={15} /> Back to all projects</button>
+            <button className="inline-flex min-h-9 w-fit items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#aebed6] hover:bg-white/10 hover:text-white" type="button" onClick={onProjects}><FolderGit2 size={15} /> Back to all projects</button>
           </div>
           <nav className="scrollbar-thin mt-4 flex gap-2 overflow-x-auto pb-1" aria-label="Model evaluation workspaces" role="tablist">
             {MODULES.map((module) => {
@@ -677,6 +679,7 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
 }
 
 function currentHash() {
+  if (window.location.pathname.endsWith("/quality-lab/")) return "#/lab";
   return window.location.hash || "#/";
 }
 
@@ -689,11 +692,20 @@ export default function App() {
   }, []);
 
   const navigate = (target: string) => {
+    const base = import.meta.env.BASE_URL;
+    if (target === "#/lab") {
+      window.location.assign(`${base}quality-lab/`);
+      return;
+    }
+    if (window.location.pathname.endsWith("/quality-lab/")) {
+      window.location.assign(`${base}${target}`);
+      return;
+    }
     setRoute(target);
     if (window.location.hash !== target) window.location.hash = target;
     if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: "auto" });
   };
-  if (route.startsWith("#/lab")) return <QualityLabApp onExit={() => navigate("#/")} />;
+  if (route.startsWith("#/lab")) return <QualityLabApp onHome={() => navigate("#/")} onProjects={() => navigate("#/projects")} />;
   const slug = route.startsWith("#/projects/") ? decodeURIComponent(route.slice("#/projects/".length)) : "";
   const project = slug ? projectBySlug.get(slug) : undefined;
   const selectProject = (selected: ProjectStory) => navigate(`#/projects/${selected.slug}`);
