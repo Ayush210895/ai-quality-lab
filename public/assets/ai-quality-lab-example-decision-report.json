@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "1.0",
+  "example": true,
+  "module": "classification",
+  "dataset": "Synthetic evaluation - 10,000 rows",
+  "purpose": "Demonstrate the structure of an exported AI Quality Lab decision record. These values are synthetic and are not production-model results.",
+  "settings": {
+    "positivePrevalence": 0.01,
+    "decisionThreshold": 0.5,
+    "falsePositiveCost": 10,
+    "falseNegativeCost": 1000,
+    "maximumReviewRate": 0.15
+  },
+  "metrics": {
+    "accuracy": 0.8625,
+    "precision": 0.0477548111,
+    "recall": 0.6320754717,
+    "f1": 0.0888005302,
+    "prAuc": 0.4517985495,
+    "alertRate": 0.1403,
+    "expectedCostPerThousand": 5236
+  },
+  "decision": {
+    "status": "Conditional pass",
+    "summary": "The operating point shows economic value and stays within review capacity, but recall remains below the launch target.",
+    "gates": [
+      {
+        "name": "Minority-class recall",
+        "value": 0.6320754717,
+        "target": 0.7,
+        "pass": false
+      },
+      {
+        "name": "Cost improvement",
+        "value": 0.5060377358,
+        "target": 0.15,
+        "pass": true
+      },
+      {
+        "name": "Review capacity",
+        "value": 0.1403,
+        "target": 0.15,
+        "pass": true
+      }
+    ],
+    "requiredAction": "Improve or explicitly mitigate minority-class recall before a controlled launch."
+  }
+}

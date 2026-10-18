@@ -19,6 +19,11 @@ export type ProjectStory = PortfolioProject & {
   metrics: ProjectMetric[];
   pipeline: string[];
   boundary: string;
+  primaryUser?: string;
+  businessValue?: string;
+  architectureDetail?: string;
+  evidenceDetail?: string;
+  limitationDetail?: string;
 };
 
 type StoryDetails = Omit<ProjectStory, keyof PortfolioProject | "slug" | "decision" | "decisionOwner" | "nextStep">;
@@ -285,10 +290,15 @@ const details: Record<string, StoryDetails> = {
     metrics: [
       { label: "Model workspaces", value: "6", note: "Applied model families" },
       { label: "Metric tests", value: "21", note: "Core evaluation logic" },
-      { label: "UI tests", value: "11", note: "Navigation and workflows" },
+      { label: "UI tests", value: "14", note: "Navigation and workflows" },
     ],
     pipeline: ["Model evidence", "Operating policy", "Quality metrics", "Production gates", "Decision export"],
     boundary: "The browser suite evaluates supplied evidence; it does not execute arbitrary Python model binaries.",
+    primaryUser: "ML product owners, model reviewers, and practitioners deciding whether a model is ready for controlled use.",
+    businessValue: "Moves launch conversations beyond one headline metric by putting quality, economics, operating capacity, reliability, and monitoring evidence into one reviewable decision record.",
+    architectureDetail: "A browser-local React and TypeScript application validates uploaded CSV evidence, calculates model-family metrics, applies configurable launch gates, renders decision views, and exports a structured report without sending data to a backend.",
+    evidenceDetail: "Six workspaces cover classification, forecasting, ranking, LLM systems, monitoring, and connected repository evidence. The current suite passes 21 metric tests and 14 UI workflow tests.",
+    limitationDetail: "The suite evaluates evidence supplied in the browser. It does not run arbitrary model binaries, persist evaluation history, or replace domain-specific review and approval controls.",
   },
 };
 

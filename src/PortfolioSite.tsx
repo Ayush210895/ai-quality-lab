@@ -800,6 +800,7 @@ function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { 
   const related = projectStories.filter((candidate) => candidate.name !== project.name && (projectGroup(candidate) === projectGroup(project) || candidate.visual === project.visual)).slice(0, 3);
   const assetBase = import.meta.env.BASE_URL;
   const cover = PROJECT_COVERS[project.name];
+  const isQualityLab = project.name === "ai-quality-lab";
   return <div className="project-page relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]" style={{ "--project-accent": project.accent, "--project-soft": project.soft } as CSSProperties}>
     <ConstellationField />
     <div className="relative z-10">
@@ -815,7 +816,7 @@ function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { 
               <div className="mt-4 flex flex-wrap items-center gap-3"><span className="inline-flex w-fit items-center border border-white/20 px-3 py-2 text-[10px] font-extrabold uppercase text-[#b9cac8]"><span className="mr-2 h-2 w-2" style={{ backgroundColor: project.accent }} />{THEME_LABELS[project.visual]}</span></div>
               <h1 className="portfolio-display mt-3 break-words text-4xl leading-[1.04] sm:text-5xl">{project.displayName}</h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-[#b9cac8]">{project.problem}</p><div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why this project is different</span><p className="mt-1 text-sm font-bold leading-6 text-white">{projectDifferentiator(project)}</p></div>
-              <div className="mt-6 flex flex-wrap gap-2"><a className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white" style={{ backgroundColor: project.accent }} href={project.repoUrl} target="_blank" rel="noreferrer"><Code2 size={16} /> Repository <ArrowUpRight size={15} /></a><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("architecture")}><Layers3 size={15} /> Architecture</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("evidence")}><Database size={15} /> Evidence</button>{project.name === "ai-quality-lab" && <button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold text-[#142126]" onClick={onOpenLab}><FlaskConical size={16} /> Live demo</button>}</div>
+              <div className="mt-6 flex flex-wrap gap-2">{isQualityLab && <button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onOpenLab}><Play size={16} /> Try the live lab</button>}<a className={`inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white ${isQualityLab ? "border border-white/25 hover:bg-white/10" : ""}`} style={isQualityLab ? undefined : { backgroundColor: project.accent }} href={project.repoUrl} target="_blank" rel="noreferrer"><Code2 size={16} /> Repository <ArrowUpRight size={15} /></a>{isQualityLab && <a className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" href={`${assetBase}assets/ai-quality-lab-example-decision-report.json`} download><FileJson2 size={15} /> Example decision report</a>}<button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("architecture")}><Layers3 size={15} /> Architecture</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("evidence")}><Database size={15} /> Evidence</button></div>
             </div>
             <CaseArtifactDeck project={project} />
           </div>
@@ -966,11 +967,11 @@ function ProjectBriefItem({ label, value, detail }: { label: string; value: stri
 function StorySection({ project }: { project: ProjectStory }) {
   const tradeoffs = TRADEOFFS[project.name] ?? [project.boundary];
   return <div className="space-y-6">
-    <section className="grid overflow-hidden rounded-[6px] border border-[#d4dddc] bg-white lg:grid-cols-3">
+    {project.businessValue ? <FlagshipCaseBrief project={project} /> : <section className="grid overflow-hidden rounded-[6px] border border-[#d4dddc] bg-white lg:grid-cols-3">
       <QuickReadStep number="01" label="Challenge" body={project.problem} accent={project.accent} />
       <QuickReadStep number="02" label="System" body={project.approach} accent={project.accent} />
       <QuickReadStep number="03" label="Evidence" body={project.outcome} accent={project.accent} />
-    </section>
+    </section>}
     <div className="grid gap-5 lg:grid-cols-[1.08fr_.92fr]">
       <section className="rounded-[6px] bg-[#142126] p-6 text-white">
         <p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>Design decisions</p>
@@ -983,6 +984,24 @@ function StorySection({ project }: { project: ProjectStory }) {
       </div>
     </div>
   </div>;
+}
+
+function FlagshipCaseBrief({ project }: { project: ProjectStory }) {
+  const items: { label: string; value: ReactNode }[] = [
+    { label: "Problem", value: project.problem },
+    { label: "Primary user", value: project.primaryUser },
+    { label: "Business value", value: project.businessValue },
+    { label: "Architecture", value: project.architectureDetail ?? project.approach },
+    { label: "Decision", value: project.decision },
+    { label: "Evidence", value: project.evidenceDetail ?? project.outcome },
+    { label: "Limitations", value: project.limitationDetail ?? project.boundary },
+    { label: "Repository", value: <a className="inline-flex items-center gap-2 font-bold hover:underline" href={project.repoUrl} target="_blank" rel="noreferrer">Inspect the source and artifacts <ExternalLink size={15} /></a> },
+    { label: "Next production step", value: project.nextStep },
+  ];
+  return <section className="overflow-hidden rounded-[6px] border border-[#d4dddc] bg-white">
+    <div className="border-b border-[#d4dddc] px-5 py-5 md:px-7"><p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>Complete case brief</p><h2 className="mt-1 text-2xl font-black">From business problem to production decision</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-[#687579]">A consistent review of who needs the system, how it works, what the evidence supports, and where the claims stop.</p></div>
+    <div className="grid md:grid-cols-2 xl:grid-cols-3">{items.map((item, index) => <div key={item.label} className="border-b border-[#dfe6e5] p-5 md:border-r md:[&:nth-child(2n)]:border-r-0 xl:[&:nth-child(2n)]:border-r xl:[&:nth-child(3n)]:border-r-0 xl:[&:nth-last-child(-n+3)]:border-b-0"><span className="font-mono text-[10px] font-black" style={{ color: project.accent }}>{String(index + 1).padStart(2, "0")}</span><h3 className="mt-2 text-xs font-extrabold uppercase text-[#536166]">{item.label}</h3><div className="mt-3 text-sm leading-7 text-[#425156]">{item.value}</div></div>)}</div>
+  </section>;
 }
 
 function QuickReadStep({ number, label, body, accent }: { number: string; label: string; body: string; accent: string }) {

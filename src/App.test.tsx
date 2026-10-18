@@ -112,4 +112,21 @@ describe("workspace navigation", () => {
     expect(projectStories.every((project) => project.decision.trim().length > 40)).toBe(true);
     expect(projectStories.every((project) => project.nextStep.trim().length > 40)).toBe(true);
   });
+
+  it("gives AI Quality Lab a complete production case brief", () => {
+    const qualityLab = projectStories.find((project) => project.name === "ai-quality-lab");
+
+    expect(qualityLab).toBeDefined();
+    expect([qualityLab?.primaryUser, qualityLab?.businessValue, qualityLab?.architectureDetail, qualityLab?.evidenceDetail, qualityLab?.limitationDetail].every((value) => value && value.length > 60)).toBe(true);
+  });
+
+  it("offers a live path and example report from the AI Quality Lab case", async () => {
+    window.location.hash = "#/projects/ai-quality-lab";
+    render(<App />);
+
+    expect(await screen.findByRole("button", { name: "Try the live lab" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Example decision report" })).toHaveAttribute("href", expect.stringContaining("ai-quality-lab-example-decision-report.json"));
+    expect(screen.getByRole("heading", { name: "From business problem to production decision" })).toBeInTheDocument();
+  });
+
 });
