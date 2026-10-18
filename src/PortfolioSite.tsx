@@ -28,6 +28,7 @@ import {
   Cell,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -84,6 +85,37 @@ const TRADEOFFS: Record<string, string[]> = {
   "Space-Race-Visualisation": ["Historical breadth versus source freshness", "Visual simplicity versus analytical nuance", "Descriptive comparison versus causal interpretation"],
   "ai-quality-lab": ["Broad model coverage versus model-specific depth", "Browser portability versus executing arbitrary models", "Simple launch gates versus domain-specific governance"],
 };
+
+const BUSINESS_QUESTIONS: Record<VisualKind, string> = {
+  risk: "Who should receive limited review capacity?",
+  fraud: "Which cases deserve investigator time first?",
+  air: "When does a forecast require an operational response?",
+  ranking: "Which option creates the strongest customer relevance?",
+  language: "Can this signal support a grounded decision?",
+  clusters: "Which segments meaningfully change the action?",
+  signals: "Which patterns should trigger attention?",
+  regression: "How much prediction error is acceptable?",
+  space: "Where are activity and investment concentrated?",
+  agents: "Where should automation stop for human review?",
+  portfolio: "What is driving risk and diversification?",
+  learning: "Can the method be explained, tested, and trusted?",
+};
+
+const PROJECT_BUSINESS_QUESTIONS: Record<string, string> = {
+  "travel-marketplace-harm-risk": "Who should receive limited review capacity?",
+  "Credit-Risk-MLOps-AWS": "Which applications clear the risk and approval policy?",
+  "Credit-Card-Anomaly-Detection": "Which transactions deserve investigator time first?",
+  "Beijing-AQI-Prediction": "When should operations issue an air-quality alert?",
+  "Amazon-Recommendation-System": "Which ranking earns attention without losing coverage?",
+  "financial-doc-agent": "Can an analyst trust this answer enough to act?",
+  "multi-agent-dev-system": "Which delivery steps can be automated with review?",
+  "Space-Race-Visualisation": "How have capability and investment shifted over time?",
+  "ai-quality-lab": "Is this model ready for a production decision?",
+};
+
+function businessQuestion(project: ProjectStory) {
+  return PROJECT_BUSINESS_QUESTIONS[project.name] ?? BUSINESS_QUESTIONS[project.visual];
+}
 
 export default function PortfolioSite({ project, onHome, onOpenLab, onSelectProject }: PortfolioSiteProps) {
   return project
@@ -161,13 +193,13 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
 }
 
 function AtlasStat({ value, label, color }: { value: string; label: string; color: string }) {
-  return <div className="border-r border-[#d8e0df] p-4 last:border-r-0" style={{ borderTop: `4px solid ${color}` }}><strong className="block text-3xl font-black tabular-nums">{value}</strong><span className="mt-1 block text-xs leading-5 text-[#687579]">{label}</span></div>;
+  return <div className="border-r border-[#d8e0df] p-4 last:border-r-0" style={{ borderTop: `4px solid ${color}`, backgroundColor: `${color}10` }}><strong className="block text-3xl font-black tabular-nums">{value}</strong><span className="mt-1 block text-xs leading-5 text-[#687579]">{label}</span></div>;
 }
 
 function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: () => void }) {
   return <article className="group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] border border-[#d1dcda] bg-white transition-transform hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(20,33,38,.12)]" style={{ borderTop: `4px solid ${project.accent}` }}>
     <button type="button" className="block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.name}`}>
-      <VisualStage kind={project.visual} accent={project.accent} soft={project.soft} compact />
+      <VisualStage project={project} compact />
     </button>
     <div className="flex flex-1 flex-col p-5">
       <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[9px] font-extrabold uppercase text-[#536166]">{STATUS_COPY[project.status].label}</span></div>
@@ -198,7 +230,7 @@ function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project:
               <div className="mt-5 border-l-4 bg-white/75 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>The result in one sentence</span><p className="mt-1 text-sm font-bold leading-6 text-[#26383d]">{project.outcome}</p></div>
               <div className="mt-6 flex flex-wrap gap-2"><a className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white" style={{ backgroundColor: project.accent }} href={project.repoUrl} target="_blank" rel="noreferrer"><Code2 size={16} /> View repository <ArrowUpRight size={15} /></a>{project.name === "ai-quality-lab" && <button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={16} /> Open live lab</button>}</div>
             </div>
-            <div className="min-h-[340px] overflow-hidden rounded-[6px] border border-white/70 bg-white/60 shadow-[0_18px_45px_rgba(20,33,38,.12)]"><VisualStage kind={project.visual} accent={project.accent} soft={project.soft} /></div>
+            <div className="min-h-[560px] overflow-hidden rounded-[6px] border border-white/70 bg-white/60 shadow-[0_18px_45px_rgba(20,33,38,.12)] lg:min-h-[390px]"><VisualStage project={project} /></div>
           </div>
         </div>
       </section>
@@ -321,19 +353,27 @@ function ContentBlock({ icon, eyebrow, title, body, accent }: { icon: ReactNode;
 
 const tooltipStyle = { border: "1px solid #d4dddc", borderRadius: 6, fontSize: 11, boxShadow: "0 8px 22px rgba(20,33,38,.12)" };
 
-function VisualStage({ kind, accent, soft, compact = false }: { kind: VisualKind; accent: string; soft: string; compact?: boolean }) {
-  const height = compact ? 192 : 340;
-  const common = <CartesianGrid stroke="#ffffff" strokeOpacity={0.75} vertical={false} />;
+function VisualStage({ project, compact = false }: { project: ProjectStory; compact?: boolean }) {
+  const { visual: kind, accent, soft } = project;
+  const question = businessQuestion(project);
+  const common = <CartesianGrid stroke={accent} strokeOpacity={0.16} vertical={false} />;
   const label = visualLabel(kind);
-  return <div className="relative h-full w-full overflow-hidden p-4" style={{ backgroundColor: soft }}>
-    <div className="absolute left-4 top-4 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-extrabold uppercase text-[#536166]">{label}</div>
-    <div style={{ height: `${height}px`, paddingTop: compact ? 22 : 30 }}>
-      {kind === "fraud" || kind === "clusters" ? <ScatterVisual kind={kind} accent={accent} common={common} />
-        : kind === "ranking" || kind === "language" || kind === "portfolio" || kind === "space" ? <BarVisual kind={kind} accent={accent} common={common} />
-          : kind === "agents" || kind === "learning" ? <FlowVisual kind={kind} accent={accent} />
-            : kind === "air" ? <AreaVisual accent={accent} common={common} />
-              : <LineVisual kind={kind} accent={accent} common={common} />}
+  const chart = kind === "fraud" || kind === "clusters" ? <ScatterVisual kind={kind} accent={accent} common={common} />
+    : kind === "ranking" || kind === "language" || kind === "portfolio" || kind === "space" ? <BarVisual kind={kind} accent={accent} common={common} />
+      : kind === "agents" || kind === "learning" ? <FlowVisual kind={kind} accent={accent} />
+        : kind === "air" ? <AreaVisual accent={accent} common={common} />
+          : <LineVisual kind={kind} accent={accent} common={common} />;
+  return <div className="flex h-full w-full flex-col overflow-hidden" style={{ backgroundColor: soft }}>
+    <div className="flex items-center justify-between gap-3 px-4 pt-4"><span className="rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-extrabold uppercase text-[#536166]">{label}</span><span className="text-[9px] font-extrabold uppercase" style={{ color: accent }}>Technical signal</span></div>
+    <div className={compact ? "px-3" : "grid flex-1 grid-rows-[220px_1fr] lg:grid-cols-[minmax(0,1fr)_230px] lg:grid-rows-1"}>
+      <div className={`min-w-0 px-1 ${compact ? "h-[118px]" : "h-full"}`}>{chart}</div>
+      {!compact && <aside className="business-visual-panel flex flex-col justify-between border-t border-white/30 p-5 text-white lg:border-l lg:border-t-0">
+        <div><p className="text-[10px] font-extrabold uppercase text-[#ffd475]">Business question</p><p className="mt-2 text-lg font-black leading-6">{question}</p></div>
+        <div className="mt-5 border-t border-white/20 pt-4"><span className="text-[10px] font-extrabold uppercase text-[#9edfd5]">Decision owner</span><strong className="mt-1 block text-sm leading-5">{project.decisionOwner}</strong></div>
+        <div className="mt-4 border-t border-white/20 pt-4"><span className="text-[10px] font-extrabold uppercase text-[#9edfd5]">Proof point</span><strong className="mt-1 block text-2xl tabular-nums">{project.metrics[0].value}</strong><small className="mt-1 block text-xs text-[#d6e0df]">{project.metrics[0].label}</small></div>
+      </aside>}
     </div>
+    {compact && <div className="grid min-h-[46px] grid-cols-[1fr_auto] items-center gap-3 border-t border-white/60 bg-white/75 px-4 py-2"><span><span className="block text-[8px] font-extrabold uppercase" style={{ color: accent }}>Business lens</span><strong className="mt-0.5 line-clamp-1 block text-[10px] text-[#26383d]">{question}</strong></span><span className="text-right"><strong className="block text-sm tabular-nums text-[#142126]">{project.metrics[0].value}</strong><small className="block text-[8px] text-[#687579]">{project.metrics[0].label}</small></span></div>}
   </div>;
 }
 
@@ -343,17 +383,17 @@ function visualLabel(kind: VisualKind) {
 }
 
 function LineVisual({ kind, accent, common }: { kind: VisualKind; accent: string; common: ReactNode }) {
-  const data = kind === "signals"
-    ? Array.from({ length: 24 }, (_, i) => ({ x: i, a: Math.sin(i * 0.72) * 32 + Math.cos(i * 0.21) * 10 + 50 }))
+  const data: Array<{ x: string; a: number; b?: number }> = kind === "signals"
+    ? Array.from({ length: 24 }, (_, i) => ({ x: String(i + 1), a: Math.sin(i * 0.72) * 32 + Math.cos(i * 0.21) * 10 + 50 }))
     : kind === "risk"
-      ? [{ x: 1, a: 18, b: 12 }, { x: 2, a: 23, b: 19 }, { x: 3, a: 28, b: 24 }, { x: 4, a: 37, b: 29 }, { x: 5, a: 46, b: 34 }, { x: 6, a: 58, b: 43 }]
-      : [{ x: 1, a: 32, b: 30 }, { x: 2, a: 43, b: 46 }, { x: 3, a: 38, b: 41 }, { x: 4, a: 58, b: 54 }, { x: 5, a: 65, b: 68 }, { x: 6, a: 73, b: 71 }];
-  return <ResponsiveContainer width="100%" height="100%"><LineChart data={data} margin={{ top: 16, right: 12, left: -24, bottom: 0 }}>{common}<XAxis dataKey="x" tick={false} axisLine={false} /><YAxis tick={false} axisLine={false} /><Tooltip contentStyle={tooltipStyle} /><Line type="monotone" dataKey="a" stroke={accent} strokeWidth={3} dot={false} /><Line type="monotone" dataKey="b" stroke="#758488" strokeWidth={2} strokeDasharray="5 5" dot={false} /></LineChart></ResponsiveContainer>;
+      ? [{ x: "1%", a: 18, b: 12 }, { x: "2%", a: 23, b: 19 }, { x: "3%", a: 28, b: 24 }, { x: "4%", a: 37, b: 29 }, { x: "5%", a: 46, b: 34 }, { x: "6%", a: 58, b: 43 }]
+      : [{ x: "P1", a: 32, b: 30 }, { x: "P2", a: 43, b: 46 }, { x: "P3", a: 38, b: 41 }, { x: "P4", a: 58, b: 54 }, { x: "P5", a: 65, b: 68 }, { x: "P6", a: 73, b: 71 }];
+  return <ResponsiveContainer width="100%" height="100%"><LineChart data={data} margin={{ top: 16, right: 12, left: 0, bottom: 0 }}>{common}<XAxis dataKey="x" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} /><YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={32} /><Tooltip contentStyle={tooltipStyle} /><ReferenceLine y={kind === "signals" ? 50 : 40} stroke="#a85f00" strokeDasharray="4 4" /><Line type="monotone" dataKey="a" name="Primary" stroke={accent} strokeWidth={3} dot={false} /><Line type="monotone" dataKey="b" name="Baseline" stroke="#2878a5" strokeWidth={2} strokeDasharray="5 5" dot={false} /></LineChart></ResponsiveContainer>;
 }
 
 function AreaVisual({ accent, common }: { accent: string; common: ReactNode }) {
   const data = [{ x: "Mon", a: 42 }, { x: "Tue", a: 63 }, { x: "Wed", a: 118 }, { x: "Thu", a: 86 }, { x: "Fri", a: 154 }, { x: "Sat", a: 101 }, { x: "Sun", a: 72 }];
-  return <ResponsiveContainer width="100%" height="100%"><AreaChart data={data} margin={{ top: 16, right: 12, left: -22, bottom: 0 }}>{common}<XAxis dataKey="x" tick={{ fontSize: 10 }} axisLine={false} /><YAxis tick={{ fontSize: 10 }} axisLine={false} /><Tooltip contentStyle={tooltipStyle} /><Area type="monotone" dataKey="a" stroke={accent} fill={accent} fillOpacity={0.26} strokeWidth={3} /></AreaChart></ResponsiveContainer>;
+  return <ResponsiveContainer width="100%" height="100%"><AreaChart data={data} margin={{ top: 16, right: 12, left: 0, bottom: 0 }}>{common}<XAxis dataKey="x" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} /><YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={34} /><Tooltip contentStyle={tooltipStyle} /><ReferenceLine y={100} stroke="#a85f00" strokeDasharray="4 4" /><Area type="monotone" dataKey="a" name="AQI" stroke={accent} fill={accent} fillOpacity={0.34} strokeWidth={3} /></AreaChart></ResponsiveContainer>;
 }
 
 function BarVisual({ kind, accent, common }: { kind: VisualKind; accent: string; common: ReactNode }) {
@@ -361,13 +401,14 @@ function BarVisual({ kind, accent, common }: { kind: VisualKind; accent: string;
     : kind === "space" ? [{ name: "60s", value: 420 }, { name: "70s", value: 1038 }, { name: "80s", value: 964 }, { name: "90s", value: 890 }, { name: "00s", value: 632 }, { name: "10s", value: 380 }]
       : kind === "portfolio" ? [{ name: "AAPL", value: 60 }, { name: "MSFT", value: 47 }, { name: "JPM", value: 48 }, { name: "TLT", value: -44 }, { name: "GLD", value: -10 }]
         : [{ name: "Positive", value: 84 }, { name: "Neutral", value: 57 }, { name: "Negative", value: 29 }];
-  return <ResponsiveContainer width="100%" height="100%"><BarChart data={data} margin={{ top: 16, right: 12, left: -24, bottom: 0 }}>{common}<XAxis dataKey="name" tick={{ fontSize: 10 }} axisLine={false} /><YAxis tick={false} axisLine={false} /><Tooltip contentStyle={tooltipStyle} /><Bar dataKey="value" radius={[4, 4, 0, 0]}>{data.map((entry, index) => <Cell key={entry.name} fill={index === 2 ? accent : `${accent}${index % 2 ? "99" : "cc"}`} />)}</Bar></BarChart></ResponsiveContainer>;
+  const colors = [accent, "#2878a5", "#e29a24", "#398064", "#7656a5", "#d75b4d"];
+  return <ResponsiveContainer width="100%" height="100%"><BarChart data={data} margin={{ top: 16, right: 12, left: 0, bottom: 0 }}>{common}<XAxis dataKey="name" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} /><YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={34} tickFormatter={(value: number) => kind === "ranking" ? value.toFixed(1) : String(Math.round(value))} /><Tooltip contentStyle={tooltipStyle} /><Bar dataKey="value" radius={[4, 4, 0, 0]}>{data.map((entry, index) => <Cell key={entry.name} fill={colors[index % colors.length]} />)}</Bar></BarChart></ResponsiveContainer>;
 }
 
 function ScatterVisual({ kind, accent, common }: { kind: VisualKind; accent: string; common: ReactNode }) {
   const normal = Array.from({ length: 26 }, (_, i) => ({ x: (i * 17) % 83 + (kind === "clusters" && i > 12 ? 48 : 5), y: (i * 29) % 70 + (kind === "clusters" && i > 12 ? 18 : 4), z: 55 }));
   const flagged = kind === "fraud" ? [{ x: 18, y: 88, z: 100 }, { x: 77, y: 82, z: 100 }, { x: 91, y: 31, z: 100 }] : Array.from({ length: 12 }, (_, i) => ({ x: 65 + (i * 13) % 32, y: 45 + (i * 19) % 45, z: 65 }));
-  return <ResponsiveContainer width="100%" height="100%"><ScatterChart margin={{ top: 16, right: 12, left: -22, bottom: 0 }}>{common}<XAxis type="number" dataKey="x" tick={false} axisLine={false} /><YAxis type="number" dataKey="y" tick={false} axisLine={false} /><ZAxis type="number" dataKey="z" range={[35, 100]} /><Tooltip contentStyle={tooltipStyle} /><Scatter data={normal} fill={kind === "clusters" ? "#4f6ecb" : "#9aa8aa"} fillOpacity={0.68} /><Scatter data={flagged} fill={accent} /></ScatterChart></ResponsiveContainer>;
+  return <ResponsiveContainer width="100%" height="100%"><ScatterChart margin={{ top: 16, right: 12, left: 0, bottom: 0 }}>{common}<XAxis type="number" dataKey="x" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} /><YAxis type="number" dataKey="y" tick={{ fontSize: 9 }} axisLine={false} tickLine={false} width={32} /><ZAxis type="number" dataKey="z" range={[35, 100]} /><Tooltip contentStyle={tooltipStyle} /><Scatter name="Population" data={normal} fill={kind === "clusters" ? "#2878a5" : "#718487"} fillOpacity={0.68} /><Scatter name={kind === "fraud" ? "Priority review" : "Segment B"} data={flagged} fill={kind === "fraud" ? "#d84b37" : "#e29a24"} /></ScatterChart></ResponsiveContainer>;
 }
 
 function FlowVisual({ kind, accent }: { kind: VisualKind; accent: string }) {

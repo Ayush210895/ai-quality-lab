@@ -56,6 +56,11 @@ input[type="range"] { accent-color: #087e72; }
 .recharts-cartesian-axis-tick-value { fill: #687579; font-size: 11px; }
 .recharts-tooltip-wrapper { outline: none; }
 
+.business-visual-panel {
+  background: #20343a;
+  border-bottom: 5px solid #e3a32b;
+}
+
 .architecture-stage[aria-pressed="true"] {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--project-accent) 72%, white);
   transform: translateY(-3px);

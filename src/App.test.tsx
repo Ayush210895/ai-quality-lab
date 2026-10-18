@@ -82,6 +82,8 @@ describe("workspace navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Explore travel-marketplace-harm-risk" }));
 
     expect(await screen.findByText("The result in one sentence")).toBeInTheDocument();
+    expect(screen.getByText("Who should receive limited review capacity?")).toBeInTheDocument();
+    expect(screen.getByText("Business question")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "What had to be balanced" })).toBeInTheDocument();
     expect(screen.getByText("Harm value captured versus incident recall")).toBeInTheDocument();
 
