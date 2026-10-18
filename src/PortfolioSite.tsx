@@ -25,6 +25,7 @@ import {
   Scale,
   Sparkles,
   UserRound,
+  X,
 } from "lucide-react";
 import {
   Area,
@@ -123,6 +124,12 @@ const PROJECT_BUSINESS_QUESTIONS: Record<string, string> = {
 };
 
 const FLAGSHIP_NAMES = ["travel-marketplace-harm-risk", "Credit-Risk-MLOps-AWS", "financial-doc-agent"] as const;
+
+const FLAGSHIP_COVERS: Record<(typeof FLAGSHIP_NAMES)[number], string> = {
+  "travel-marketplace-harm-risk": "assets/travel-harm-risk-cover.jpg",
+  "Credit-Risk-MLOps-AWS": "assets/credit-mlops-cover.jpg",
+  "financial-doc-agent": "assets/financial-doc-agent-cover.jpg",
+};
 
 const FLAGSHIP_META: Record<(typeof FLAGSHIP_NAMES)[number], { role: string; differentiator: string }> = {
   "travel-marketplace-harm-risk": {
@@ -276,6 +283,7 @@ function ConstellationField() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (window.navigator.userAgent.includes("jsdom")) return;
     const context = canvas.getContext("2d");
     if (!context) return;
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -296,13 +304,13 @@ function ConstellationField() {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      const count = Math.max(34, Math.min(95, Math.floor(width * height * .000085)));
+      const count = Math.max(44, Math.min(112, Math.floor(width * height * .00011)));
       particles = Array.from({ length: count }, (_, index) => ({
         x: (index * 83 + Math.random() * width) % width,
         y: (index * 47 + Math.random() * height) % height,
-        vx: (Math.random() - .5) * .18,
-        vy: (Math.random() - .5) * .18,
-        radius: Math.random() * 1.2 + .7,
+        vx: (Math.random() - .5) * .38,
+        vy: (Math.random() - .5) * .38,
+        radius: Math.random() * 1.45 + .85,
         phase: Math.random() * Math.PI * 2,
       }));
     };
@@ -310,7 +318,7 @@ function ConstellationField() {
     const move = (event: MouseEvent) => { pointerX = event.clientX; pointerY = event.clientY; };
     const leave = () => { pointerX = -9999; pointerY = -9999; };
 
-    const draw = () => {
+    const draw = (time = 0) => {
       context.clearRect(0, 0, width, height);
       for (let index = 0; index < particles.length; index += 1) {
         const particle = particles[index];
@@ -324,13 +332,26 @@ function ConstellationField() {
         for (let next = index + 1; next < particles.length; next += 1) {
           const other = particles[next];
           const distance = Math.hypot(particle.x - other.x, particle.y - other.y);
-          if (distance < 145) {
-            context.strokeStyle = `rgba(77, 142, 255, ${(1 - distance / 145) * .24})`;
-            context.lineWidth = .65;
+          if (distance < 165) {
+            context.strokeStyle = `rgba(77, 142, 255, ${(1 - distance / 165) * .42})`;
+            context.lineWidth = .8;
             context.beginPath();
             context.moveTo(particle.x, particle.y);
             context.lineTo(other.x, other.y);
             context.stroke();
+            if (!reduced && (index + next) % 19 === 0) {
+              const progress = (time / 1900 + index * .073) % 1;
+              const packetX = particle.x + (other.x - particle.x) * progress;
+              const packetY = particle.y + (other.y - particle.y) * progress;
+              context.save();
+              context.shadowColor = "#64e8ff";
+              context.shadowBlur = 12;
+              context.fillStyle = "rgba(129, 239, 255, .95)";
+              context.beginPath();
+              context.arc(packetX, packetY, 1.8, 0, Math.PI * 2);
+              context.fill();
+              context.restore();
+            }
           }
         }
         const pointerDistance = Math.hypot(particle.x - pointerX, particle.y - pointerY);
@@ -342,10 +363,14 @@ function ConstellationField() {
           context.stroke();
         }
         const pulse = .48 + (Math.sin(particle.phase) + 1) * .18;
-        context.fillStyle = `rgba(147, 190, 255, ${pulse})`;
+        context.save();
+        context.shadowColor = index % 6 === 0 ? "#2ee5c2" : "#4d8eff";
+        context.shadowBlur = index % 6 === 0 ? 16 : 9;
+        context.fillStyle = index % 6 === 0 ? `rgba(74, 242, 207, ${pulse + .12})` : `rgba(147, 190, 255, ${pulse})`;
         context.beginPath();
         context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
         context.fill();
+        context.restore();
       }
       if (!reduced) frame = window.requestAnimationFrame(draw);
     };
@@ -370,8 +395,22 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
   const reducedMotion = useReducedMotion();
   const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
   const [activeName, setActiveName] = useState<(typeof FLAGSHIP_NAMES)[number]>(FLAGSHIP_NAMES[0]);
+  const [previewName, setPreviewName] = useState<(typeof FLAGSHIP_NAMES)[number] | null>(null);
   const activeProject = flagships.find((project) => project.name === activeName) ?? flagships[0];
+  const previewProject = flagships.find((project) => project.name === previewName);
   const assetBase = import.meta.env.BASE_URL;
+
+  useEffect(() => {
+    if (!previewProject) return;
+    const previousOverflow = document.body.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setPreviewName(null); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [previewProject]);
 
   return <div className="unified-home relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]">
     <ConstellationField />
@@ -398,7 +437,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         </motion.div>
       </section>
 
-      <section className="border-b border-[#213050] bg-[#09101e]/90">
+      <section className="border-b border-[#213050] bg-[#09101e]/78 backdrop-blur-[2px]">
         <div className="mx-auto grid max-w-[1500px] grid-cols-1 md:grid-cols-3 md:px-7">
           <HomeProof value="75%+" label="N-4 forecast accuracy target exceeded" accent="#5fe0bd" />
           <HomeProof value="30%" label="Faster executive decision-making" accent="#ff765c" />
@@ -406,7 +445,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         </div>
       </section>
 
-      <section className="decision-console border-b border-[#263657] bg-[#0a1425]/92 py-16 lg:py-24">
+      <section className="decision-console border-b border-[#263657] bg-[#0a1425]/82 py-16 backdrop-blur-[2px] lg:py-24">
         <div className="mx-auto grid max-w-[1500px] gap-10 px-4 md:px-7 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-center">
           <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Interactive decision console</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Touch the evidence.<br />Change the system.</h2><p className="mt-5 text-sm leading-7 text-[#aebed6]">Switch between three flagship systems to see how the business question, technical signal, and operating proof change together.</p><div className="mt-7 space-y-2">{flagships.map((project, index) => <button key={project.name} type="button" aria-pressed={project.name === activeName} className={`flex min-h-14 w-full items-center justify-between border px-4 text-left text-xs font-extrabold uppercase transition-all ${project.name === activeName ? "translate-x-2 border-white bg-white text-[#07101d]" : "border-[#324667] bg-[#09111f]/70 text-[#9fb4d1] hover:border-[#64e8ff]"}`} onClick={() => setActiveName(project.name as (typeof FLAGSHIP_NAMES)[number])}><span><span className="mr-3 font-mono" style={{ color: project.accent }}>0{index + 1}</span>{project.displayName}</span><ArrowRight size={15} /></button>)}</div></div>
           <motion.div key={activeProject.name} className="unified-artifact overflow-hidden" initial={reducedMotion ? false : { opacity: 0, scale: .98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .32 }}>
@@ -419,7 +458,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         </div>
       </section>
 
-      <section className="border-b border-[#213050] bg-[#070d19]/90 py-16 lg:py-24" id="systems">
+      <section className="border-b border-[#213050] bg-[#070d19]/82 py-16 backdrop-blur-[2px] lg:py-24" id="systems">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 border-b border-[#263657] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
             <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Professional systems</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">What I build<br />in the real world.</h2></div>
@@ -435,25 +474,24 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         </div>
       </section>
 
-      <section className="border-b border-[#213050] bg-[#0a1120]/92 py-16 lg:py-24">
+      <section className="border-b border-[#213050] bg-[#0a1120]/82 py-16 backdrop-blur-[2px] lg:py-24" id="featured-work">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
-          <div className="grid gap-8 border-b border-[#263657] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Public case studies</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Evidence first.<br />Then the decision.</h2></div>
-            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Each case connects a business constraint to model evidence, an operating choice, and the boundary that still requires human judgment.</p>
+          <div className="grid gap-8 pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Featured work</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Choose a system.<br />Inspect the evidence.</h2></div>
+            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Three distinct business problems, each with its own visual world. Open a preview for the decision, proof, trade-offs, and path into the complete case study.</p>
           </div>
-          <div>
-            {flagships.map((project, index) => <article key={project.name} className="grid gap-6 border-b border-[#263657] py-9 lg:grid-cols-[80px_minmax(0,.72fr)_minmax(320px,1fr)_auto] lg:items-center">
-              <span className="font-mono text-sm font-bold" style={{ color: project.accent }}>0{index + 1}</span>
-              <div><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]].role}</span><h3 className="mt-2 text-2xl font-black">{project.displayName}</h3></div>
-              <div><p className="text-sm font-bold leading-6 text-white">{businessQuestion(project)}</p><p className="mt-2 text-sm leading-6 text-[#aebed6]">{project.outcome}</p></div>
-              <button type="button" className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-[6px] border border-[#526789] px-4 text-sm font-black hover:bg-white/10" onClick={() => onSelectProject(project)}>Open case <ArrowRight size={16} /></button>
-            </article>)}
+          <div className="featured-shelf scrollbar-thin flex snap-x snap-mandatory gap-4 overflow-x-auto pb-5">
+            {flagships.map((project, index) => <button key={project.name} type="button" className="project-cover group relative aspect-[16/10] min-w-[86%] snap-start overflow-hidden rounded-[8px] border border-white/15 text-left sm:min-w-[68%] lg:min-w-[calc(33.333%-11px)]" onClick={() => setPreviewName(project.name as (typeof FLAGSHIP_NAMES)[number])} aria-label={`Preview ${project.displayName}`}>
+              <img className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.035]" src={`${assetBase}${FLAGSHIP_COVERS[project.name as (typeof FLAGSHIP_NAMES)[number]]}`} alt="" />
+              <span className="project-cover-shade absolute inset-0" aria-hidden="true" />
+              <span className="absolute inset-x-0 bottom-0 p-5 sm:p-6"><span className="font-mono text-[10px] font-black uppercase" style={{ color: project.accent }}>0{index + 1} / {FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]].role}</span><strong className="mt-2 block max-w-md text-2xl font-black text-white sm:text-3xl">{project.displayName}</strong><span className="mt-3 flex items-center justify-between gap-4 text-xs font-bold text-white/85"><span>{businessQuestion(project)}</span><ArrowUpRight className="shrink-0 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" size={20} /></span></span>
+            </button>)}
           </div>
-          <button type="button" className="mt-8 inline-flex min-h-11 items-center gap-2 text-sm font-black text-[#64e8ff]" onClick={onProjects}>Explore all 17 projects <ArrowRight size={17} /></button>
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-4 border-t border-[#263657] pt-6"><p className="font-mono text-[10px] font-bold uppercase text-[#8ea4c2]">Drag or scroll the shelf - select a cover for the fast preview</p><button type="button" className="inline-flex min-h-11 items-center gap-2 text-sm font-black text-[#64e8ff]" onClick={onProjects}>Explore all 17 projects <ArrowRight size={17} /></button></div>
         </div>
       </section>
 
-      <section className="border-b border-[#213050] bg-[#050814]/94 py-16 text-white lg:py-24" id="experience">
+      <section className="border-b border-[#213050] bg-[#050814]/84 py-16 text-white backdrop-blur-[2px] lg:py-24" id="experience">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 lg:grid-cols-[.6fr_1.4fr]"><div><p className="text-xs font-extrabold uppercase text-[#67dcc7]">Experience</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Built across product, finance, and operations.</h2></div><p className="max-w-2xl text-base leading-7 text-[#b9cac7]">The common thread is not a particular algorithm. It is turning uncertain data into a decision, earning stakeholder trust, and building the path from analysis to use.</p></div>
           <div className="mt-12 border-t border-[#263657]">
@@ -462,7 +500,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         </div>
       </section>
 
-      <section className="border-b border-[#213050] bg-[#0a1120]/92 py-16 lg:py-24">
+      <section className="border-b border-[#213050] bg-[#0a1120]/82 py-16 backdrop-blur-[2px] lg:py-24">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <p className="text-xs font-extrabold uppercase text-[#64e8ff]">Capability map</p>
           <div className="mt-4 grid gap-8 border-y border-[#263657] py-10 md:grid-cols-3">
@@ -474,13 +512,13 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         </div>
       </section>
 
-      <section className="border-b border-[#213050] bg-[#070d19]/94 py-16 lg:py-24">
+      <section className="border-b border-[#213050] bg-[#070d19]/84 py-16 backdrop-blur-[2px] lg:py-24">
         <div className="mx-auto grid max-w-[1500px] gap-12 px-4 md:grid-cols-3 md:px-7">
           {[{ label: "Education", items: CREDENTIALS.education, color: "#5fe0bd" }, { label: "Certifications", items: CREDENTIALS.certifications, color: "#72b7ff" }, { label: "Recognition", items: CREDENTIALS.recognition, color: "#ffc159" }].map((group) => <section key={group.label}><p className="text-xs font-extrabold uppercase" style={{ color: group.color }}>{group.label}</p><div className="mt-5 border-t border-[#263657]">{group.items.map((item) => <p key={item} className="border-b border-[#263657] py-4 text-sm font-bold leading-6 text-[#d7e0ef]">{item}</p>)}</div></section>)}
         </div>
       </section>
 
-      <section className="bg-[#03050b]/96 py-16 lg:py-24" id="contact">
+      <section className="bg-[#03050b]/88 py-16 backdrop-blur-[2px] lg:py-24" id="contact">
         <div className="mx-auto max-w-[1100px] px-4 md:px-7">
           <div className="overflow-hidden rounded-[8px] border border-[#2a3c61] bg-[#080e1b] shadow-[0_30px_90px_rgba(0,0,0,.45)]">
             <div className="flex items-center justify-between border-b border-[#263657] bg-[#0d1729] px-5 py-3"><span className="font-mono text-xs text-[#93a9c7]">ayush@portfolio: ~/next-opportunity</span><span className="font-mono text-[10px] text-[#5fe0bd]">CONNECTED</span></div>
@@ -502,6 +540,17 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
     </main>
     <footer className="border-t border-[#213050] bg-[#03050b] text-white"><div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-8 sm:flex-row sm:items-center sm:justify-between md:px-7"><span><strong className="block">Ayush Soni</strong><small className="mt-1 block text-[#8fa6c2]">Senior Data Scientist - Applied AI and ML</small></span><div className="flex flex-wrap gap-4 text-xs font-bold"><a href="mailto:ayush.so2156@gmail.com">Email</a><a href="https://github.com/Ayush210895" target="_blank" rel="noreferrer">GitHub</a><a href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer">LinkedIn</a></div></div></footer>
     </div>
+    <AnimatePresence>
+      {previewProject && <motion.div className="fixed inset-0 z-50 grid place-items-center bg-[#010309]/85 p-3 backdrop-blur-md sm:p-6" role="dialog" aria-modal="true" aria-labelledby="project-preview-title" initial={reducedMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setPreviewName(null)}>
+        <motion.article className="max-h-[92svh] w-full max-w-5xl overflow-y-auto rounded-[8px] border border-white/20 bg-[#080d17] shadow-[0_30px_100px_rgba(0,0,0,.7)]" initial={reducedMotion ? false : { opacity: 0, y: 28, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 18, scale: .98 }} transition={{ duration: .28 }} onClick={(event) => event.stopPropagation()}>
+          <div className="relative h-[250px] overflow-hidden sm:h-auto sm:aspect-[16/7]"><img className="absolute inset-0 h-full w-full object-cover" src={`${assetBase}${FLAGSHIP_COVERS[previewProject.name as (typeof FLAGSHIP_NAMES)[number]]}`} alt="" /><span className="project-cover-shade absolute inset-0" aria-hidden="true" /><button type="button" className="absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full border border-white/30 bg-black/50 text-white backdrop-blur-md hover:bg-black/80" onClick={() => setPreviewName(null)} aria-label="Close project preview"><X size={19} /></button><div className="absolute inset-x-0 bottom-0 p-6 sm:p-9"><span className="text-[10px] font-extrabold uppercase" style={{ color: previewProject.accent }}>{FLAGSHIP_META[previewProject.name as (typeof FLAGSHIP_NAMES)[number]].role}</span><h2 id="project-preview-title" className="mt-2 max-w-3xl break-words text-3xl font-black text-white sm:text-5xl">{previewProject.displayName}</h2></div></div>
+          <div className="grid gap-8 p-6 sm:p-9 lg:grid-cols-[1.2fr_.8fr]">
+            <div><p className="text-xs font-extrabold uppercase" style={{ color: previewProject.accent }}>The decision</p><p className="mt-2 text-xl font-black leading-8 text-white">{businessQuestion(previewProject)}</p><p className="mt-5 text-sm leading-7 text-[#b9c7db]">{previewProject.outcome}</p><div className="mt-7 border-l-4 pl-4" style={{ borderColor: previewProject.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: previewProject.accent }}>Why this case matters</span><p className="mt-2 text-sm leading-6 text-[#d1dbea]">{projectDifferentiator(previewProject)}</p></div></div>
+            <aside className="border-t border-[#263657] pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"><span className="text-[10px] font-extrabold uppercase text-[#8ea4c2]">Proof snapshot</span><div className="mt-3 grid grid-cols-2 gap-3">{previewProject.metrics.slice(0, 2).map((metric) => <div key={metric.label} className="border-t-2 pt-3" style={{ borderColor: previewProject.accent }}><strong className="block text-2xl font-black text-white">{metric.value}</strong><span className="mt-1 block text-[10px] font-bold uppercase text-[#8ea4c2]">{metric.label}</span></div>)}</div><span className="mt-7 block text-[10px] font-extrabold uppercase text-[#8ea4c2]">Key trade-off</span><p className="mt-2 text-sm leading-6 text-[#c7d3e5]">{TRADEOFFS[previewProject.name]?.[0]}</p><button type="button" className="mt-7 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[5px] px-4 text-sm font-black text-[#07101d]" style={{ backgroundColor: previewProject.accent }} onClick={() => onSelectProject(previewProject)}>Open full case study <ArrowRight size={16} /></button></aside>
+          </div>
+        </motion.article>
+      </motion.div>}
+    </AnimatePresence>
   </div>;
 }
 

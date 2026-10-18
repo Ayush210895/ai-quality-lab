@@ -100,3 +100,59 @@ Repository names remain technical identifiers. Every public title should use a d
 ## Decision rule
 
 The unified site should feel impressive because a visitor can inspect real work, understand the decision it supports, and verify the evidence. Visual novelty should amplify that proof, not compete with it.
+
+## Second reference pass: portfolio storytelling and discovery
+
+Reviewed October 18, 2026 against Elementor's 20 named portfolio examples, the live Netflix-style portfolio by Asim Adnan Eijaz, Brittany Chiang's live portfolio, Bruno Simon's live portfolio, and Ayush's original one-page portfolio.
+
+### What each Elementor example contributes
+
+| Example | Transferable pattern | Decision for Ayush's site |
+| --- | --- | --- |
+| Jina Kim | Quiet visual hierarchy and detailed case-study process | Keep case pages easy to scan even when the homepage is expressive |
+| MDZ Designs | Confident color and responsive hover motion | Use project-specific accents and purposeful hover states |
+| Active Theory | The experience itself demonstrates technical craft | Keep the interactive neural field and evidence console as working proof |
+| Locomotive | Motion guides attention between sections | Use short state transitions, never constant decorative movement |
+| Stefanie Brueckler | Editorial typography and large imagery | Preserve the serif identity and give flagship work image-led treatment |
+| Bruno Simon | One unforgettable interaction makes the portfolio memorable | Use one signature interaction: the responsive neural system, not a separate game |
+| Jack Jeznach | Dark single-page flow and interactive experience history | Keep the complete career story on the main page with clear anchors |
+| Brittany Chiang | Sticky orientation, dense evidence, excellent scanning | Preserve recruiter-readable experience, stack, links, and concise project metadata |
+| Jacek Hirsz | Typographic focus and a restrained typing effect | Keep the status cursor as a small signature, not a dominant animation |
+| Lynn Fisher | Personality and recurring visual surprises | Give projects different visual worlds without weakening the shared identity |
+| Ann Friedman | Content-first organization | Make writing and future insights discoverable without visual clutter |
+| Gari Cruze | A distinctive personal voice | Use direct, specific copy instead of generic AI claims |
+| David Grann | Timeless hierarchy and featured work as credibility | Lead with a few flagship cases, then expose the full archive |
+| Todd Clarke | Process-led case studies | Show problem, role, decision, evidence, trade-off, and next validation step |
+| The Sartorialist | Strong visual consistency | Keep cover art coherent even when subjects and accent colors differ |
+| Jingna Zhang | Atmospheric full-screen imagery | Use immersive imagery for flagship projects, balanced by readable evidence |
+| Mike Kelley | Structured galleries | Treat the Project Atlas as the full searchable archive |
+| Fantasy | Premium motion and media | Use cinematic visuals selectively; avoid video weight without a clear purpose |
+| Stink Studios | Energetic color and playful layout | Introduce rhythm changes rather than repeating identical dark bands |
+| Red Antler | Strategic, story-driven cases | Make the business decision and impact the center of each case study |
+
+### Netflix-style portfolio: adopt selectively
+
+The live implementation uses a cinematic hero, horizontal shelves, poster-like project artwork, and modal previews. The discovery model is engaging, but repeating every project in multiple shelves creates duplication and several live images were unavailable during review.
+
+Adopt:
+
+- A curated flagship shelf with high-quality, project-specific cover art
+- Fast previews that expose the decision, outcome, metrics, and trade-off
+- A clear route from the preview into the full case study
+- Touch-friendly horizontal browsing on smaller screens
+
+Avoid:
+
+- Cloning Netflix branding or navigation
+- Repeating the same project in several rows
+- Hiding important evidence behind imagery
+- Treating every repository as equally important
+- Large media assets without optimization or fallbacks
+
+### Implemented from this pass
+
+- Three original cinematic flagship covers: marketplace harm risk, credit-risk MLOps, and financial-document intelligence
+- A responsive, scrollable featured-work shelf
+- An accessible evidence-preview dialog with Escape and backdrop close behavior
+- Decision, outcome, differentiator, metrics, trade-off, and full-case navigation in every preview
+- The original neural-network identity remains the site's signature interaction
