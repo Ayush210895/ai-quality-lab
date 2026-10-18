@@ -13,9 +13,10 @@ import {
   FlaskConical,
   Layers3,
   LayoutGrid,
+  Play,
+  RotateCcw,
   Search,
   Scale,
-  ShieldCheck,
   UserRound,
 } from "lucide-react";
 import {
@@ -56,6 +57,34 @@ function projectGroup(project: ProjectStory): Exclude<ProjectGroup, "All" | "Fea
   return "Applied ML";
 }
 
+const STATUS_COPY: Record<ProjectStory["status"], { label: string; detail: string }> = {
+  connected: { label: "Interactive evidence", detail: "Connected to the Quality Lab" },
+  "evidence-ready": { label: "Evidence ready", detail: "Results committed and traceable" },
+  "needs-evidence": { label: "Validation next", detail: "System built; proof gap is explicit" },
+  learning: { label: "Exploration", detail: "Learning or analytical artifact" },
+  infrastructure: { label: "Platform", detail: "Portfolio-wide operating layer" },
+};
+
+const TRADEOFFS: Record<string, string[]> = {
+  "travel-marketplace-harm-risk": ["Harm value captured versus incident recall", "Review capacity versus marketplace coverage", "Locked future performance versus repeated tuning"],
+  "Credit-Risk-MLOps-AWS": ["Recall versus false-positive review load", "Model performance versus interpretability", "Automated promotion versus approval control"],
+  "Credit-Card-Anomaly-Detection": ["Fraud recall versus investigator capacity", "Transparent anomaly logic versus supervised-model ceiling", "Benchmark quality versus temporal production drift"],
+  "Beijing-AQI-Prediction": ["Interpretable baseline versus nonlinear accuracy", "Imputation coverage versus signal distortion", "Random evaluation versus true temporal generalization"],
+  "Amazon-Recommendation-System": ["Prediction error versus ranking usefulness", "Personalization versus cold-start coverage", "Offline gains versus online user response"],
+  "financial-doc-agent": ["Semantic retrieval versus exact calculation", "Answer coverage versus abstention", "Agent autonomy versus financial-review control"],
+  "FinBERT-Financial-News-Sentiment": ["Fast pretrained inference versus domain calibration", "Headline sentiment versus issuer-level context", "Signal coverage versus regime drift"],
+  Clustering: ["Compact clusters versus label recovery", "Global geometry versus local density", "Stable segments versus actionable segments"],
+  "Portfolio-Risk-PCA-From-Scratch": ["Dimensional simplicity versus factor detail", "Short-sample clarity versus regime stability", "Risk explanation versus allocation advice"],
+  "Human-Activity-Monitoring": ["Rich nonlinear features versus inference cost", "Participant-specific patterns versus generalization", "Activity characterization versus deployed classification"],
+  "Linear-Regression": ["Transparency versus predictive flexibility", "Optimization simplicity versus convergence speed", "Learning value versus production performance"],
+  "Logistic-Regression": ["Interpretability versus nonlinear separation", "Recall versus precision at the threshold", "Synthetic clarity versus domain validity"],
+  "Naive-Bayes": ["Simple likelihoods versus feature dependence", "Fast training versus probability calibration", "Synthetic strength versus real-data evidence"],
+  "multi-agent-dev-system": ["Agent specialization versus coordination overhead", "Traceability versus execution speed", "Autonomy versus human intervention"],
+  "Machine-Learning-From-Scratch": ["Implementation depth versus project breadth", "Mathematical clarity versus library efficiency", "Learning evidence versus deployment evidence"],
+  "Space-Race-Visualisation": ["Historical breadth versus source freshness", "Visual simplicity versus analytical nuance", "Descriptive comparison versus causal interpretation"],
+  "ai-quality-lab": ["Broad model coverage versus model-specific depth", "Browser portability versus executing arbitrary models", "Simple launch gates versus domain-specific governance"],
+};
+
 export default function PortfolioSite({ project, onHome, onOpenLab, onSelectProject }: PortfolioSiteProps) {
   return project
     ? <ProjectPage project={project} onBack={onHome} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />
@@ -72,14 +101,14 @@ function SiteHeader({ onHome, onOpenLab, light = false }: { onHome: () => void; 
       <nav className="flex items-center gap-2" aria-label="Portfolio navigation">
         <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold ${light ? "hover:bg-white/10" : "hover:bg-white"}`} type="button" title="Browse all projects" onClick={onHome}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
         <a className={`hidden min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold sm:inline-flex ${light ? "hover:bg-white/10" : "hover:bg-white"}`} href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><Code2 size={15} /> GitHub</a>
-        <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold ${light ? "bg-white text-[#142126]" : "bg-[#142126] text-white"}`} type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
+        <button className={`inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-[6px] px-3 text-xs font-bold ${light ? "bg-white text-[#142126]" : "bg-[#142126] text-white"}`} type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
       </nav>
     </div>
   </header>;
 }
 
 function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onOpenLab" | "onSelectProject">) {
-  const [group, setGroup] = useState<ProjectGroup>("All");
+  const [group, setGroup] = useState<ProjectGroup>("Featured");
   const [query, setQuery] = useState("");
   const visible = useMemo(() => projectStories.filter((project) => {
     const matchesGroup = group === "All" || (group === "Featured" ? project.featured : projectGroup(project) === group);
@@ -121,7 +150,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
       </section>
 
       <section id="project-explorer" className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-10">
-        <div className="mb-5 flex items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase text-[#087e72]">Project explorer</p><h2 className="mt-1 text-2xl font-black">{group === "All" ? "The complete atlas" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#687579]">{visible.length} projects</span></div>
+        <div className="mb-5 flex items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase text-[#087e72]">Project explorer</p><h2 className="mt-1 text-2xl font-black">{group === "All" ? "The complete atlas" : group === "Featured" ? "Featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#687579]">{visible.length} projects</span></div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {visible.map((item) => <ProjectTile key={item.name} project={item} onSelect={() => onSelectProject(item)} />)}
         </div>
@@ -141,11 +170,11 @@ function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: (
       <VisualStage kind={project.visual} accent={project.accent} soft={project.soft} compact />
     </button>
     <div className="flex flex-1 flex-col p-5">
-      <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="font-mono text-[10px] text-[#8a989b]">{project.sourceCommit}</span></div>
+      <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[9px] font-extrabold uppercase text-[#536166]">{STATUS_COPY[project.status].label}</span></div>
       <h3 className="mt-3 break-words text-xl font-black leading-tight">{project.name}</h3>
       <p className="mt-3 text-sm leading-6 text-[#5b696d]">{project.summary}</p>
       <div className="mt-4 flex flex-wrap gap-1.5">{project.stack.slice(0, 4).map((item) => <span key={item} className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[10px] font-bold text-[#536166]">{item}</span>)}</div>
-      <div className="mt-4 rounded-[6px] p-3" style={{ backgroundColor: project.soft }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Decision</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#48565a]">{project.decision}</p></div>
+      <div className="mt-4 rounded-[6px] p-3" style={{ backgroundColor: project.soft }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why it matters</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#48565a]">{project.outcome}</p></div>
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#e0e7e6] pt-4"><span className="text-xs font-bold text-[#687579]">{project.metrics[0].label}: <strong className="text-[#142126]">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-9 shrink-0 items-center gap-2 rounded-[6px] px-3 text-xs font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onSelect}>Case study <ArrowRight size={15} /></button></div>
     </div>
   </article>;
@@ -166,10 +195,19 @@ function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project:
               <p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)} · {project.family}</p>
               <h1 className="mt-3 break-words text-4xl font-black leading-[1.04] sm:text-5xl">{project.name}</h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-[#48565a]">{project.problem}</p>
+              <div className="mt-5 border-l-4 bg-white/75 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>The result in one sentence</span><p className="mt-1 text-sm font-bold leading-6 text-[#26383d]">{project.outcome}</p></div>
               <div className="mt-6 flex flex-wrap gap-2"><a className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white" style={{ backgroundColor: project.accent }} href={project.repoUrl} target="_blank" rel="noreferrer"><Code2 size={16} /> View repository <ArrowUpRight size={15} /></a>{project.name === "ai-quality-lab" && <button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={16} /> Open live lab</button>}</div>
             </div>
             <div className="min-h-[340px] overflow-hidden rounded-[6px] border border-white/70 bg-white/60 shadow-[0_18px_45px_rgba(20,33,38,.12)]"><VisualStage kind={project.visual} accent={project.accent} soft={project.soft} /></div>
           </div>
+        </div>
+      </section>
+
+      <section className="border-b border-[#d4dddc] bg-[#f7f9f8]">
+        <div className="mx-auto grid max-w-[1500px] grid-cols-1 md:grid-cols-3">
+          <ProjectBriefItem label="Project state" value={STATUS_COPY[project.status].label} detail={STATUS_COPY[project.status].detail} />
+          <ProjectBriefItem label="Built for" value={project.decisionOwner} detail="The person or team this evidence supports" />
+          <ProjectBriefItem label="Strongest proof" value={`${project.metrics[0].label}: ${project.metrics[0].value}`} detail={project.metrics[0].note} />
         </div>
       </section>
 
@@ -201,20 +239,70 @@ function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project:
   </div>;
 }
 
+function ProjectBriefItem({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return <div className="border-b border-[#dfe6e5] px-5 py-5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 lg:px-7"><span className="text-[10px] font-extrabold uppercase text-[#687579]">{label}</span><strong className="mt-1 block text-sm leading-6 text-[#142126]">{value}</strong><small className="mt-1 block text-xs leading-5 text-[#687579]">{detail}</small></div>;
+}
+
 function StorySection({ project }: { project: ProjectStory }) {
-  return <div className="grid gap-5 lg:grid-cols-2"><ContentBlock icon={<ShieldCheck size={18} />} eyebrow="Problem" title="Why this project matters" body={project.problem} accent={project.accent} /><ContentBlock icon={<Layers3 size={18} />} eyebrow="Approach" title="How the project works" body={project.approach} accent={project.accent} /><ContentBlock icon={<ChartNoAxesCombined size={18} />} eyebrow="Outcome" title="What the evidence shows" body={project.outcome} accent={project.accent} /><ContentBlock icon={<ArrowRight size={18} />} eyebrow="Next validation" title="What should happen next" body={project.nextStep} accent={project.accent} /><div className="lg:col-span-2"><ContentBlock icon={<FlaskConical size={18} />} eyebrow="Honest boundary" title="How to interpret it" body={project.boundary} accent={project.accent} /></div></div>;
+  const tradeoffs = TRADEOFFS[project.name] ?? [project.boundary];
+  return <div className="space-y-6">
+    <section className="grid overflow-hidden rounded-[6px] border border-[#d4dddc] bg-white lg:grid-cols-3">
+      <QuickReadStep number="01" label="Challenge" body={project.problem} accent={project.accent} />
+      <QuickReadStep number="02" label="System" body={project.approach} accent={project.accent} />
+      <QuickReadStep number="03" label="Evidence" body={project.outcome} accent={project.accent} />
+    </section>
+    <div className="grid gap-5 lg:grid-cols-[1.08fr_.92fr]">
+      <section className="rounded-[6px] bg-[#142126] p-6 text-white">
+        <p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>Design decisions</p>
+        <h2 className="mt-1 text-2xl font-black">What had to be balanced</h2>
+        <div className="mt-6 space-y-3">{tradeoffs.map((tradeoff, index) => <div key={tradeoff} className="grid grid-cols-[32px_1fr] gap-3 border-t border-white/15 pt-3"><span className="font-mono text-xs font-bold" style={{ color: project.accent }}>0{index + 1}</span><p className="text-sm leading-6 text-[#d6e0df]">{tradeoff}</p></div>)}</div>
+      </section>
+      <div className="grid gap-5">
+        <ContentBlock icon={<FlaskConical size={18} />} eyebrow="Failure boundary" title="Where this can fail" body={project.boundary} accent={project.accent} />
+        <ContentBlock icon={<ArrowRight size={18} />} eyebrow="Next validation" title="What happens next" body={project.nextStep} accent={project.accent} />
+      </div>
+    </div>
+  </div>;
+}
+
+function QuickReadStep({ number, label, body, accent }: { number: string; label: string; body: string; accent: string }) {
+  return <div className="border-b border-[#dfe6e5] p-5 last:border-b-0 lg:border-b-0 lg:border-r lg:last:border-r-0"><div className="flex items-center gap-3"><span className="font-mono text-xs font-black" style={{ color: accent }}>{number}</span><span className="text-[11px] font-extrabold uppercase text-[#536166]">{label}</span></div><p className="mt-4 text-sm leading-7 text-[#425156]">{body}</p></div>;
 }
 
 function ArchitectureSection({ project }: { project: ProjectStory }) {
   const stageLabels = ["Input", "Preparation", "Model or engine", "Policy", "Decision"];
   const stageIcons = [Database, Layers3, Cpu, Scale, CheckCircle2];
+  const [activeStage, setActiveStage] = useState(-1);
+  const [running, setRunning] = useState(false);
+  useEffect(() => { setActiveStage(-1); setRunning(false); }, [project.slug]);
+  useEffect(() => {
+    if (!running) return;
+    if (activeStage >= project.pipeline.length - 1) {
+      setRunning(false);
+      return;
+    }
+    const timer = window.setTimeout(() => setActiveStage((value) => value + 1), 850);
+    return () => window.clearTimeout(timer);
+  }, [activeStage, project.pipeline.length, running]);
+  const selectedIndex = activeStage < 0 ? 0 : activeStage;
+  const selectedStep = project.pipeline[selectedIndex];
+  const stageNarratives = [
+    `The system starts with ${selectedStep.toLowerCase()}. Input quality and scope define every downstream claim.`,
+    `${selectedStep} turns raw evidence into a stable representation the model can use and reviewers can inspect.`,
+    `${selectedStep} is where the core intelligence produces a score, prediction, retrieval result, or structured analysis.`,
+    `${selectedStep} converts model output into an operating rule, constraint, or ranked queue instead of stopping at a metric.`,
+    `${selectedStep} is the accountable end state: a person or system receives evidence it can act on and monitor.`,
+  ];
   return <div className="space-y-8">
     <section className="overflow-hidden rounded-[6px] bg-[#142126] text-white">
-      <div className="border-b border-white/15 px-5 py-5 md:px-7"><p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>System architecture</p><h2 className="mt-1 text-2xl font-black">From raw input to an accountable decision</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-[#b9c8c7]">Each stage exposes what enters the system, where intelligence is applied, and how evidence becomes an operating action.</p></div>
+      <div className="flex flex-col gap-4 border-b border-white/15 px-5 py-5 md:flex-row md:items-end md:justify-between md:px-7"><div><p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>Interactive system trace</p><h2 className="mt-1 text-2xl font-black">From raw input to an accountable decision</h2><p className="mt-2 max-w-3xl text-sm leading-6 text-[#b9c8c7]">Run the flow or select a stage to inspect what it contributes to the decision.</p></div><button type="button" className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-[6px] bg-white px-4 text-xs font-extrabold text-[#142126]" onClick={() => { setActiveStage(0); setRunning(true); }}>{running ? <RotateCcw size={15} /> : <Play size={15} />}{running ? "Restart flow" : "Run system flow"}</button></div>
       <div className="scrollbar-thin overflow-x-auto px-5 py-7 md:px-7"><div className="flex flex-col items-stretch gap-2 md:min-w-[920px] md:flex-row md:gap-0">{project.pipeline.map((step, index) => {
         const Icon = stageIcons[index] ?? Cpu;
-        return <div key={step} className="contents"><div className="flex w-full shrink-0 flex-col rounded-[6px] border border-white/20 bg-white/5 p-4 md:w-[160px]"><span className="grid h-9 w-9 place-items-center rounded-[6px] text-white" style={{ backgroundColor: project.accent }}><Icon size={17} /></span><span className="mt-5 text-[10px] font-extrabold uppercase text-[#9edfd5]">0{index + 1} · {stageLabels[index]}</span><strong className="mt-2 text-sm leading-5">{step}</strong></div>{index < project.pipeline.length - 1 && <div className="grid h-[30px] w-full shrink-0 rotate-90 place-items-center text-[#79908e] md:h-auto md:w-[34px] md:rotate-0"><ArrowRight size={18} /></div>}</div>;
+        const active = index === activeStage;
+        const complete = activeStage > index;
+        return <div key={step} className="contents"><button type="button" aria-label={`Inspect ${stageLabels[index]} stage`} aria-pressed={active} className={`architecture-stage flex w-full shrink-0 flex-col rounded-[6px] border p-4 text-left transition-colors md:w-[160px] ${active ? "border-white bg-white text-[#142126]" : complete ? "border-white/40 bg-white/15" : "border-white/20 bg-white/5"}`} onClick={() => { setActiveStage(index); setRunning(false); }}><span className="grid h-9 w-9 place-items-center rounded-[6px] text-white" style={{ backgroundColor: project.accent }}><Icon size={17} /></span><span className={`mt-5 text-[10px] font-extrabold uppercase ${active ? "text-[#536166]" : "text-[#9edfd5]"}`}>0{index + 1} · {stageLabels[index]}</span><strong className="mt-2 text-sm leading-5">{step}</strong></button>{index < project.pipeline.length - 1 && <div className={`grid h-[30px] w-full shrink-0 rotate-90 place-items-center md:h-auto md:w-[34px] md:rotate-0 ${complete ? "text-white" : "text-[#79908e]"}`}><ArrowRight size={18} /></div>}</div>;
       })}</div></div>
+      <div className="grid gap-3 border-t border-white/15 bg-black/10 px-5 py-5 md:grid-cols-[170px_1fr] md:px-7"><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Stage {selectedIndex + 1} · {stageLabels[selectedIndex]}</span><p className="text-sm leading-6 text-[#d6e0df]">{stageNarratives[selectedIndex]}</p></div>
     </section>
     <div className="grid gap-6 lg:grid-cols-[1fr_.8fr]">
       <section><p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>Technology layer</p><h2 className="mt-1 text-2xl font-black">Stack and methods</h2><div className="mt-5 flex flex-wrap gap-2">{project.stack.map((item) => <span key={item} className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-[#d4dddc] bg-white px-3 text-xs font-bold"><Code2 size={14} style={{ color: project.accent }} />{item}</span>)}</div></section>

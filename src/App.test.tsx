@@ -76,6 +76,21 @@ describe("workspace navigation", () => {
     expect(window.location.hash).toBe("#/projects/travel-marketplace-harm-risk");
   });
 
+  it("shows the case-study hook, tradeoffs, and interactive architecture", async () => {
+    window.location.hash = "#/";
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "Explore travel-marketplace-harm-risk" }));
+
+    expect(await screen.findByText("The result in one sentence")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "What had to be balanced" })).toBeInTheDocument();
+    expect(screen.getByText("Harm value captured versus incident recall")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "architecture" }));
+    fireEvent.click(screen.getByRole("button", { name: "Run system flow" }));
+    expect(screen.getByRole("button", { name: "Inspect Input stage" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Restart flow" })).toBeInTheDocument();
+  });
+
   it("defines a decision for every public-facing case study", () => {
     expect(projectStories).toHaveLength(17);
     expect(projectStories.every((project) => project.decision.trim().length > 40)).toBe(true);
