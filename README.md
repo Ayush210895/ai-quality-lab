@@ -1,8 +1,15 @@
-# AI/ML Project Atlas and Quality Lab
+# Ayush Soni | Applied AI and ML Portfolio
 
-This site is an interactive portfolio for Ayush Soni's public AI, machine-learning, GenAI, analytics, and production-system work. Its Project Atlas presents 17 technical repositories as visual, themed case studies; the embedded evidence registry still tracks all 19 public repositories. The AI Quality Lab remains a browser-based decision-support suite for evaluating whether an AI or ML system is ready to launch and healthy in production.
+This site is a unified professional portfolio for Ayush Soni's applied AI, machine-learning, causal inference, GenAI, analytics, and production-system work. The homepage combines verified professional experience with live project evidence. Its Project Atlas presents 17 technical repositories as visual, themed case studies; the embedded evidence registry still tracks all 19 public repositories. The AI Quality Lab remains a browser-based decision-support suite for evaluating whether an AI or ML system is ready to launch and healthy in production.
 
 **Live product:** [ayush210895.github.io/ai-quality-lab](https://ayush210895.github.io/ai-quality-lab/)
+
+## Unified portfolio experience
+
+- Professional homepage with verified experience, selected outcomes, current role direction, resume, and contact paths.
+- Live first-viewport evidence object that switches among applied ML, production MLOps, and grounded GenAI systems.
+- One navigation system connecting professional context, project cases, source repositories, and the Quality Lab.
+- Responsive desktop and mobile layouts with reduced-motion support.
 
 ## Project Atlas experience
 

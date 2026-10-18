@@ -68,6 +68,9 @@ describe("workspace navigation", () => {
     window.location.hash = "#/";
     render(<App />);
 
+    expect(screen.getByRole("heading", { name: "Ayush Soni" })).toBeInTheDocument();
+    expect(screen.getByText("Applied AI and ML systems for decisions that need evidence.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Explore selected work" }));
     expect(screen.getByRole("heading", { name: /Systems you can inspect, question, and operate/ })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Three systems\. Three kinds of leadership/ })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Open case" })).toHaveLength(3);
@@ -79,7 +82,7 @@ describe("workspace navigation", () => {
   });
 
   it("shows the case-study hook, tradeoffs, and interactive architecture", async () => {
-    window.location.hash = "#/";
+    window.location.hash = "#/projects";
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Explore Travel Marketplace Harm Risk" }));
 

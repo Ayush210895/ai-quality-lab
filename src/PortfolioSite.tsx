@@ -10,16 +10,20 @@ import {
   Code2,
   Cpu,
   Database,
+  Download,
   ExternalLink,
   FileJson2,
   FlaskConical,
   ImageIcon,
   Layers3,
   LayoutGrid,
+  Mail,
+  MapPin,
   Play,
   RotateCcw,
   Search,
   Scale,
+  Sparkles,
   UserRound,
 } from "lucide-react";
 import {
@@ -44,7 +48,9 @@ import { projectStories, type ProjectStory, type VisualKind } from "./data/proje
 
 type PortfolioSiteProps = {
   project?: ProjectStory;
+  view: "home" | "projects";
   onHome: () => void;
+  onProjects: () => void;
   onOpenLab: () => void;
   onSelectProject: (project: ProjectStory) => void;
 };
@@ -150,13 +156,52 @@ function businessQuestion(project: ProjectStory) {
   return PROJECT_BUSINESS_QUESTIONS[project.name] ?? BUSINESS_QUESTIONS[project.visual];
 }
 
-export default function PortfolioSite({ project, onHome, onOpenLab, onSelectProject }: PortfolioSiteProps) {
+const EXPERIENCE = [
+  {
+    years: "2024 - Present",
+    company: "DISH / EchoStar",
+    role: "Senior Data Scientist",
+    summary: "Building causal measurement, forecasting, and GenAI workflows that connect pricing, promotions, inventory, and subscriber data to business decisions.",
+    proof: "Snowflake Cortex, Text2SQL, SARIMAX, XGBoost, Tableau",
+  },
+  {
+    years: "2024",
+    company: "The Partnership Center",
+    role: "Data Scientist",
+    summary: "Delivered forecasting, Snowflake data workflows, and portfolio-performance reporting for operational planning.",
+    proof: "20% lower forecast error; 40% operational-efficiency improvement",
+  },
+  {
+    years: "2023 - 2024",
+    company: "UBS",
+    role: "Data Scientist - Quant Research and NLP/AI",
+    summary: "Developed market-prediction, financial-sentiment, and research automation pipelines using Bloomberg data.",
+    proof: "62.4% weekly hit rate; 87% FinBERT accuracy",
+  },
+  {
+    years: "2018 - 2021",
+    company: "Accenture",
+    role: "Data Analyst - Banking Analytics",
+    summary: "Built credit-limit optimization, churn, segmentation, experimentation, and cloud-migration analytics for financial-services clients.",
+    proof: "23% revenue growth; 40% efficiency improvement",
+  },
+] as const;
+
+const CAPABILITIES = [
+  { title: "Applied ML", detail: "Classification, forecasting, optimization, causal inference, experimentation, and decision thresholds." },
+  { title: "GenAI systems", detail: "RAG, reranking, Text2SQL, tool calling, grounded evaluation, and human-review boundaries." },
+  { title: "Production practice", detail: "Snowflake, Databricks, MLflow, FastAPI, Docker, CI/CD, monitoring, and stakeholder adoption." },
+] as const;
+
+export default function PortfolioSite({ project, view, onHome, onProjects, onOpenLab, onSelectProject }: PortfolioSiteProps) {
   return project
-    ? <ProjectPage project={project} onBack={onHome} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />
-    : <ProjectExplorer onOpenLab={onOpenLab} onSelectProject={onSelectProject} />;
+    ? <ProjectPage project={project} onHome={onHome} onBack={onProjects} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />
+    : view === "projects"
+      ? <ProjectExplorer onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />
+      : <UnifiedHome onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />;
 }
 
-function SiteHeader({ onHome, onOpenLab, light = false }: { onHome: () => void; onOpenLab: () => void; light?: boolean }) {
+function SiteHeader({ onHome, onProjects, onOpenLab, light = false }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean }) {
   return <header className={`sticky top-0 z-30 border-b ${light ? "border-white/20 bg-[#142126] text-white" : "border-[#d7dfdf] bg-[#f7f9f8]/95 text-[#142126]"}`}>
     <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-4 px-4 md:px-7">
       <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={onHome}>
@@ -164,7 +209,7 @@ function SiteHeader({ onHome, onOpenLab, light = false }: { onHome: () => void; 
         <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className={`block truncate text-[11px] font-bold uppercase ${light ? "text-[#9edfd5]" : "text-[#34766d]"}`}>AI/ML Project Atlas</span></span>
       </button>
       <nav className="flex items-center gap-2" aria-label="Portfolio navigation">
-        <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold ${light ? "hover:bg-white/10" : "hover:bg-white"}`} type="button" title="Browse all projects" onClick={onHome}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
+        <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold ${light ? "hover:bg-white/10" : "hover:bg-white"}`} type="button" title="Browse all projects" onClick={onProjects}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
         <a className={`hidden min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold sm:inline-flex ${light ? "hover:bg-white/10" : "hover:bg-white"}`} href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><Code2 size={15} /> GitHub</a>
         <button className={`inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-[6px] px-3 text-xs font-bold ${light ? "bg-white text-[#142126]" : "bg-[#142126] text-white"}`} type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
       </nav>
@@ -172,7 +217,104 @@ function SiteHeader({ onHome, onOpenLab, light = false }: { onHome: () => void; 
   </header>;
 }
 
-function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onOpenLab" | "onSelectProject">) {
+function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onHome" | "onProjects" | "onOpenLab" | "onSelectProject">) {
+  const reducedMotion = useReducedMotion();
+  const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
+  const [activeName, setActiveName] = useState<(typeof FLAGSHIP_NAMES)[number]>(FLAGSHIP_NAMES[0]);
+  const activeProject = flagships.find((project) => project.name === activeName) ?? flagships[0];
+  const assetBase = import.meta.env.BASE_URL;
+
+  return <div className="unified-home min-h-screen bg-[#eef3f1] text-[#142126]">
+    <SiteHeader onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} />
+    <main>
+      <section className="unified-hero relative isolate min-h-[680px] overflow-hidden bg-[#09171d] text-white">
+        <div className="absolute inset-0 unified-hero-grid" aria-hidden="true" />
+        <div className="relative z-10 mx-auto grid min-h-[680px] max-w-[1500px] gap-8 px-4 py-10 md:px-7 lg:grid-cols-[minmax(0,.9fr)_minmax(520px,1.1fr)] lg:items-center lg:gap-14 lg:py-14">
+          <motion.div initial={reducedMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
+            <div className="flex items-center gap-4">
+              <img className="h-20 w-16 rounded-[20px_7px_20px_7px] object-cover object-top ring-1 ring-white/25" src={`${assetBase}assets/ayush-soni-headshot.jpg`} alt="Ayush Soni" />
+              <span><span className="block text-[10px] font-extrabold uppercase text-[#67dcc7]">Senior Data Scientist</span><span className="mt-1 inline-flex items-center gap-1.5 text-xs text-[#aec2bf]"><MapPin size={13} /> Denver, Colorado</span></span>
+            </div>
+            <h1 aria-label="Ayush Soni" className="mt-6 text-6xl font-black leading-[.92] sm:text-7xl lg:text-[92px]">Ayush<br />Soni</h1>
+            <p className="mt-6 max-w-2xl text-xl font-bold leading-8 text-white sm:text-2xl">Applied AI and ML systems for decisions that need evidence.</p>
+            <p className="mt-4 max-w-xl text-sm leading-7 text-[#b7c9c6] sm:text-base">I connect causal inference, forecasting, production ML, and grounded GenAI with operating decisions people can inspect, challenge, and adopt.</p>
+            <div className="mt-7 flex flex-wrap gap-2">
+              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#67dcc7] px-4 text-sm font-black text-[#09171d]" onClick={onProjects}><LayoutGrid size={17} /> Explore selected work</button>
+              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-white/30 bg-white/5 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Open Quality Lab</button>
+              <a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-white/20 px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a>
+            </div>
+          </motion.div>
+
+          <motion.div className="unified-artifact overflow-hidden" initial={reducedMotion ? false : { opacity: 0, x: 36 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .72, delay: .08, ease: [0.22, 1, 0.36, 1] }}>
+            <div className="flex items-center justify-between gap-4 border-b border-white/15 bg-[#112830] px-5 py-4">
+              <span><span className="block text-[9px] font-extrabold uppercase text-[#67dcc7]">Live evidence object</span><strong className="mt-1 block text-sm">{activeProject.displayName}</strong></span>
+              <span className="font-mono text-[10px] text-[#9fb4b1]">{activeProject.sourceCommit}</span>
+            </div>
+            <div className="h-[330px]"><VisualStage project={activeProject} /></div>
+            <div className="grid grid-cols-3 border-t border-white/15 bg-[#112830]">
+              {flagships.map((project) => <button key={project.name} type="button" aria-pressed={project.name === activeName} className={`min-h-16 border-r border-white/10 px-3 text-left text-[10px] font-extrabold uppercase last:border-r-0 ${project.name === activeName ? "bg-white text-[#142126]" : "text-[#a9bcba] hover:bg-white/5"}`} onClick={() => setActiveName(project.name as (typeof FLAGSHIP_NAMES)[number])}>{project.displayName}</button>)}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="border-b border-[#c8d4d1] bg-white">
+        <div className="mx-auto grid max-w-[1500px] grid-cols-1 md:grid-cols-3 md:px-7">
+          <HomeProof value="75%+" label="N-4 forecast accuracy target exceeded" accent="#087e72" />
+          <HomeProof value="30%" label="Faster executive decision-making" accent="#d84b37" />
+          <HomeProof value="40%" label="Less manual reporting effort" accent="#6b48a8" />
+        </div>
+      </section>
+
+      <section className="bg-[#eef3f1] py-16 lg:py-24">
+        <div className="mx-auto max-w-[1500px] px-4 md:px-7">
+          <div className="grid gap-8 border-b border-[#bfcfcb] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+            <div><p className="text-xs font-extrabold uppercase text-[#087e72]">Selected systems</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Evidence first.<br />Then the decision.</h2></div>
+            <p className="max-w-2xl text-base leading-7 text-[#536166]">Each case connects a business constraint to model evidence, an operating choice, and the boundary that still requires human judgment.</p>
+          </div>
+          <div>
+            {flagships.map((project, index) => <article key={project.name} className="grid gap-6 border-b border-[#bfcfcb] py-9 lg:grid-cols-[80px_minmax(0,.72fr)_minmax(320px,1fr)_auto] lg:items-center">
+              <span className="font-mono text-sm font-bold" style={{ color: project.accent }}>0{index + 1}</span>
+              <div><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]].role}</span><h3 className="mt-2 text-2xl font-black">{project.displayName}</h3></div>
+              <div><p className="text-sm font-bold leading-6">{businessQuestion(project)}</p><p className="mt-2 text-sm leading-6 text-[#687579]">{project.outcome}</p></div>
+              <button type="button" className="inline-flex min-h-11 items-center gap-2 justify-self-start rounded-[6px] border border-[#9baba8] px-4 text-sm font-black hover:bg-white" onClick={() => onSelectProject(project)}>Open case <ArrowRight size={16} /></button>
+            </article>)}
+          </div>
+          <button type="button" className="mt-8 inline-flex min-h-11 items-center gap-2 text-sm font-black text-[#087e72]" onClick={onProjects}>Explore all 17 projects <ArrowRight size={17} /></button>
+        </div>
+      </section>
+
+      <section className="bg-[#142126] py-16 text-white lg:py-24" id="experience">
+        <div className="mx-auto max-w-[1500px] px-4 md:px-7">
+          <div className="grid gap-8 lg:grid-cols-[.6fr_1.4fr]"><div><p className="text-xs font-extrabold uppercase text-[#67dcc7]">Experience</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Built across product, finance, and operations.</h2></div><p className="max-w-2xl text-base leading-7 text-[#b9cac7]">The common thread is not a particular algorithm. It is turning uncertain data into a decision, earning stakeholder trust, and building the path from analysis to use.</p></div>
+          <div className="mt-12 border-t border-white/15">
+            {EXPERIENCE.map((item) => <article key={`${item.company}-${item.years}`} className="grid gap-4 border-b border-white/15 py-7 md:grid-cols-[150px_260px_1fr] md:gap-8"><span className="font-mono text-xs font-bold text-[#67dcc7]">{item.years}</span><span><strong className="block text-lg">{item.company}</strong><small className="mt-1 block text-xs text-[#91a8a5]">{item.role}</small></span><span><p className="text-sm leading-6 text-[#c8d5d3]">{item.summary}</p><strong className="mt-3 block text-xs text-[#ffc159]">{item.proof}</strong></span></article>)}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white py-16 lg:py-24">
+        <div className="mx-auto max-w-[1500px] px-4 md:px-7">
+          <p className="text-xs font-extrabold uppercase text-[#087e72]">Capability map</p>
+          <div className="mt-4 grid gap-8 border-y border-[#c8d4d1] py-10 md:grid-cols-3">
+            {CAPABILITIES.map((item, index) => <div key={item.title} className="md:border-r md:border-[#d7dfdd] md:pr-8 md:last:border-r-0"><span className="font-mono text-xs font-bold text-[#d84b37]">0{index + 1}</span><h3 className="mt-3 text-2xl font-black">{item.title}</h3><p className="mt-3 text-sm leading-7 text-[#687579]">{item.detail}</p></div>)}
+          </div>
+          <div className="mt-12 grid gap-8 bg-[#e7efed] p-6 sm:p-9 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div><div className="flex items-center gap-2 text-[#087e72]"><Sparkles size={18} /><span className="text-xs font-extrabold uppercase">Current direction</span></div><h2 className="mt-3 text-3xl font-black">Applied Scientist and AI/ML leadership work.</h2><p className="mt-3 max-w-3xl text-sm leading-7 text-[#536166]">Focused on production-oriented modeling, causal measurement, GenAI evaluation, and systems that make evidence understandable to technical and business partners.</p></div>
+            <div className="flex flex-wrap gap-2 lg:justify-end"><a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#142126] px-4 text-sm font-bold text-white" href="mailto:ayush.so2156@gmail.com"><Mail size={16} /> Contact</a><a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold" href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer">LinkedIn <ExternalLink size={15} /></a></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer className="border-t border-white/10 bg-[#09171d] text-white"><div className="mx-auto flex max-w-[1500px] flex-col gap-5 px-4 py-8 sm:flex-row sm:items-center sm:justify-between md:px-7"><span><strong className="block">Ayush Soni</strong><small className="mt-1 block text-[#8fa6a3]">Senior Data Scientist - Applied AI and ML</small></span><div className="flex flex-wrap gap-4 text-xs font-bold"><a href="mailto:ayush.so2156@gmail.com">Email</a><a href="https://github.com/Ayush210895" target="_blank" rel="noreferrer">GitHub</a><a href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer">LinkedIn</a></div></div></footer>
+  </div>;
+}
+
+function HomeProof({ value, label, accent }: { value: string; label: string; accent: string }) {
+  return <div className="border-b border-[#d7dfdd] px-5 py-7 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"><strong className="block text-3xl font-black tabular-nums" style={{ color: accent }}>{value}</strong><span className="mt-2 block text-xs font-bold uppercase text-[#687579]">{label}</span></div>;
+}
+
+function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onHome" | "onProjects" | "onOpenLab" | "onSelectProject">) {
   const [group, setGroup] = useState<ProjectGroup>("Featured");
   const [query, setQuery] = useState("");
   const reducedMotion = useReducedMotion();
@@ -183,7 +325,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
   }), [group, query]);
 
   return <div className="min-h-screen bg-[#dfe9e6] text-[#142126]">
-    <SiteHeader onHome={() => window.scrollTo({ top: 0, behavior: "smooth" })} onOpenLab={onOpenLab} />
+    <SiteHeader onHome={onHome} onProjects={() => window.scrollTo({ top: 0, behavior: "smooth" })} onOpenLab={onOpenLab} />
     <main>
       <section className="atlas-hero relative isolate h-[calc(100svh-96px)] min-h-[640px] max-h-[760px] overflow-hidden bg-[#0c1a21] text-white">
         <AtlasSignalField onSelectProject={onSelectProject} />
@@ -354,7 +496,7 @@ function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: (
   </motion.article>;
 }
 
-function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project: ProjectStory; onBack: () => void; onOpenLab: () => void; onSelectProject: (project: ProjectStory) => void }) {
+function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { project: ProjectStory; onHome: () => void; onBack: () => void; onOpenLab: () => void; onSelectProject: (project: ProjectStory) => void }) {
   const [section, setSection] = useState<"overview" | "architecture" | "evidence">("overview");
   const [audience, setAudience] = useState<"recruiter" | "engineer">("recruiter");
   useEffect(() => { setSection("overview"); setAudience("recruiter"); }, [project.slug]);
@@ -365,7 +507,7 @@ function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project:
   };
   const related = projectStories.filter((candidate) => candidate.name !== project.name && (projectGroup(candidate) === projectGroup(project) || candidate.visual === project.visual)).slice(0, 3);
   return <div className="min-h-screen bg-[#f4f7f6] text-[#142126]" style={{ "--project-accent": project.accent, "--project-soft": project.soft } as CSSProperties}>
-    <SiteHeader onHome={onBack} onOpenLab={onOpenLab} light />
+    <SiteHeader onHome={onHome} onProjects={onBack} onOpenLab={onOpenLab} light />
     <main>
       <section className="case-hero border-b-4 bg-[#0f1d24] text-white" style={{ borderColor: project.accent }}>
         <div className="mx-auto max-w-[1500px] px-4 py-7 md:px-7 lg:py-10">

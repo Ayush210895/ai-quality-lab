@@ -651,5 +651,6 @@ export default function App() {
   const slug = route.startsWith("#/projects/") ? decodeURIComponent(route.slice("#/projects/".length)) : "";
   const project = slug ? projectBySlug.get(slug) : undefined;
   const selectProject = (selected: ProjectStory) => navigate(`#/projects/${selected.slug}`);
-  return <PortfolioSite project={project} onHome={() => navigate("#/")} onOpenLab={() => navigate("#/lab")} onSelectProject={selectProject} />;
+  const view = route === "#/projects" ? "projects" : "home";
+  return <PortfolioSite project={project} view={view} onHome={() => navigate("#/")} onProjects={() => navigate("#/projects")} onOpenLab={() => navigate("#/lab")} onSelectProject={selectProject} />;
 }
