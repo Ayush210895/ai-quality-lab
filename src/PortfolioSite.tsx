@@ -546,21 +546,42 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         </div>
       </section>
 
-      <section className="bg-[#03050b]/88 py-16 backdrop-blur-[2px] lg:py-24" id="contact">
-        <div className="mx-auto max-w-[1100px] px-4 md:px-7">
-          <div className="overflow-hidden rounded-[8px] border border-[#2a3c61] bg-[#080e1b] shadow-[0_30px_90px_rgba(0,0,0,.45)]">
-            <div className="flex items-center justify-between border-b border-[#263657] bg-[#0d1729] px-5 py-3"><span className="font-mono text-xs text-[#93a9c7]">ayush@portfolio: ~/next-opportunity</span><span className="font-mono text-[10px] text-[#5fe0bd]">CONNECTED</span></div>
-            <div className="p-5 font-mono text-sm leading-7 sm:p-8">
-              <p><span className="text-[#5fe0bd]">$</span> current_focus</p><p className="mb-6 pl-4 text-[#c7d4e7]">Applied Scientist and AI/ML leadership roles spanning production ML, causal measurement, and grounded GenAI.</p>
-              <div className="grid gap-x-10 gap-y-2 sm:grid-cols-2">
-                <a className="text-[#aebed6] hover:text-white" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><span className="text-[#72b7ff]">resume:</span> download PDF</a>
-                <a className="text-[#aebed6] hover:text-white" href="mailto:ayush.so2156@gmail.com"><span className="text-[#72b7ff]">email:</span> ayush.so2156@gmail.com</a>
-                <a className="text-[#aebed6] hover:text-white" href="tel:+18577019173"><span className="text-[#72b7ff]">phone:</span> +1 857-701-9173</a>
-                <a className="text-[#aebed6] hover:text-white" href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><span className="text-[#72b7ff]">github:</span> Ayush210895</a>
-                <a className="text-[#aebed6] hover:text-white" href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer"><span className="text-[#72b7ff]">linkedin:</span> ayush218</a>
-                <span className="text-[#aebed6]"><span className="text-[#72b7ff]">location:</span> United States - Open to relocate</span>
+      <section className="relative overflow-hidden border-t border-[#213050] bg-[#03050b]/90 py-16 backdrop-blur-[2px] lg:py-24" id="contact">
+        <div className="mx-auto max-w-[1500px] px-4 md:px-7">
+          <div className="grid gap-10 border-y border-[#263657] py-10 lg:grid-cols-[1.2fr_.8fr] lg:items-end lg:py-14">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#5fe0bd]">Open to the next hard problem</p>
+              <h2 className="portfolio-display mt-4 max-w-[840px] text-[clamp(2.3rem,5vw,5.4rem)] leading-[0.98] text-white">
+                Let&apos;s build AI systems people can trust and teams can operate.
+              </h2>
+              <p className="mt-6 max-w-[760px] text-base leading-7 text-[#aebed6] md:text-lg">
+                I&apos;m exploring Applied Scientist, Senior Data Scientist, and AI/ML leadership opportunities where model quality, business impact, and production discipline matter together.
+              </p>
+            </div>
+
+            <div className="lg:border-l lg:border-[#263657] lg:pl-10">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-[#c7d4e7]">
+                <MapPin className="h-4 w-4 text-[#72b7ff]" />
+                <span>United States</span>
+                <span aria-hidden="true" className="h-1 w-1 rounded-full bg-[#5fe0bd]" />
+                <span>Open to relocate</span>
               </div>
-              <p className="mt-7 text-[#ffc159]"><span className="text-[#5fe0bd]">$</span> Let&apos;s build systems people can trust.</p>
+
+              <div className="mt-7 flex flex-wrap gap-2">
+                <a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#5fe0bd] px-4 py-2.5 text-sm font-semibold text-[#04100d] transition hover:bg-[#85efd1]" href="mailto:ayush.so2156@gmail.com">
+                  <Mail className="h-4 w-4" /> Email Ayush
+                </a>
+                <a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-[#35527d] bg-[#0b1425] px-4 py-2.5 text-sm font-semibold text-white transition hover:border-[#72b7ff] hover:bg-[#12213a]" href="https://linkedin.com/in/ayush218" target="_blank" rel="noreferrer">
+                  <ArrowUpRight className="h-4 w-4" /> LinkedIn
+                </a>
+                <a className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-[#35527d] bg-[#0b1425] px-4 py-2.5 text-sm font-semibold text-white transition hover:border-[#72b7ff] hover:bg-[#12213a]" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download>
+                  <Download className="h-4 w-4" /> Resume
+                </a>
+              </div>
+
+              <a className="mt-7 inline-flex items-center gap-2 text-sm font-medium text-[#aebed6] transition hover:text-white" href="https://github.com/Ayush210895" target="_blank" rel="noreferrer">
+                <Code2 className="h-4 w-4 text-[#ffc159]" /> View GitHub profile <ArrowRight className="h-4 w-4" />
+              </a>
             </div>
           </div>
         </div>
