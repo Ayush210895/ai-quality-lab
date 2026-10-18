@@ -179,7 +179,7 @@ const EXPERIENCE = [
       "Built a Snowflake Cortex AI promotional-effectiveness agent that accepts natural-language inputs, runs statistical decomposition in Python, and returns structured pre-, promo-, and post-period lift insights.",
       "Developed a causal demand-planning system using SARIMAX and XGBoost across Indirect, Web, and Walmart channels, exceeding a 75% N-4 forecast-accuracy target.",
       "Built a Snowflake Intelligence conversational analytics layer over about 50 curated business tables from roughly 200 sources, with governed metrics, verified queries, follow-up analysis, charts, logs, and user feedback.",
-      "Built an OEM contract intelligence agent with version-aware retrieval, evidence-backed answers, citation checks, access controls, and refusal when supporting contract language is missing.",
+      "Built a governed enterprise knowledge assistant with version-aware retrieval, evidence-backed answers, citation checks, role-aware access, and abstention when approved source material is insufficient.",
       "Built an executive analytics platform with Tableau and Snowflake, accelerating decision-making by 30% and reducing manual reporting effort by 40%.",
     ],
   },
