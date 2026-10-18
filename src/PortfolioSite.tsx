@@ -92,7 +92,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
           </div>
           <div className="grid grid-cols-3 gap-2 border-t border-[#aebcba] pt-5 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
             <AtlasStat value="19" label="Public projects" />
-            <AtlasStat value="6" label="Featured systems" />
+            <AtlasStat value={String(projectStories.filter((project) => project.featured).length)} label="Featured systems" />
             <AtlasStat value="1" label="Interactive lab" />
           </div>
         </div>
