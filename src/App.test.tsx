@@ -84,18 +84,17 @@ describe("workspace navigation", () => {
   it("shows the case-study hook, tradeoffs, and interactive architecture", async () => {
     window.location.hash = "#/projects";
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "Explore Travel Marketplace Harm Risk" }));
+    fireEvent.click(screen.getByRole("button", { name: "Open case Travel Marketplace Harm Risk" }));
 
     expect(await screen.findByText("Why this project is different")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Recruiter" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.queryByRole("button", { name: "Recruiter" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Engineer" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "18 sec guided tour" })).toBeInTheDocument();
     expect(screen.getByText("Who should receive limited review capacity?")).toBeInTheDocument();
     expect(screen.getByText("Business question")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "What had to be balanced" })).toBeInTheDocument();
     expect(screen.getByText("Harm value captured versus incident recall")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Engineer" }));
-    expect(screen.getByRole("button", { name: "Engineer" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getAllByText(/Compare a logistic baseline with tuned XGBoost/).length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole("tab", { name: "artifact" }));

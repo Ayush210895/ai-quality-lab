@@ -20,7 +20,6 @@ import {
   MapPin,
   Play,
   RotateCcw,
-  Rows3,
   Search,
   Scale,
   Sparkles,
@@ -157,12 +156,6 @@ const FLAGSHIP_META: Record<(typeof FLAGSHIP_NAMES)[number], { role: string; dif
     role: "GenAI and grounded analytics",
     differentiator: "Routes narrative questions and exact calculations through separate, inspectable evidence paths.",
   },
-};
-
-const ROLE_FIT: Record<string, string[]> = {
-  "travel-marketplace-harm-risk": ["Applied ML", "Decision science", "Risk operations"],
-  "Credit-Risk-MLOps-AWS": ["MLOps", "Model governance", "API systems"],
-  "financial-doc-agent": ["GenAI", "RAG evaluation", "Agent systems"],
 };
 
 function projectDifferentiator(project: ProjectStory) {
@@ -458,23 +451,20 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
     <div className="relative z-10">
     <SiteHeader onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} light subtitle="Senior Data Scientist" />
     <main>
-      <section className="unified-hero relative isolate min-h-[720px] overflow-hidden border-b border-[#213050] bg-[#050814]/35 text-white">
+      <section className="unified-hero relative isolate min-h-[640px] overflow-hidden border-b border-[#213050] bg-[#050814]/35 text-white">
         <div className="absolute inset-0 unified-hero-grid" aria-hidden="true" />
-        <motion.div className="relative z-10 mx-auto flex min-h-[720px] max-w-[1220px] flex-col justify-center px-4 py-12 md:px-7 lg:py-14" initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
+        <motion.div className="relative z-10 mx-auto flex min-h-[640px] max-w-[1220px] flex-col justify-center px-4 py-12 md:px-7 lg:py-14" initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, ease: [0.22, 1, 0.36, 1] }}>
           <div className="mx-auto grid w-full gap-8 lg:grid-cols-[230px_minmax(0,1fr)] lg:items-center lg:gap-10">
             <img className="mx-auto aspect-square w-44 rounded-full object-cover object-top ring-[5px] ring-[#2386d9] shadow-[0_0_48px_rgba(43,145,255,.34)] sm:w-52 lg:w-[230px]" src={`${assetBase}assets/ayush-soni-headshot.jpg`} alt="Ayush Soni" />
             <div>
               <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[.08em] text-[#75a7ff]"><span className="status-pulse h-2 w-2 rounded-full bg-[#2ee5c2] shadow-[0_0_16px_#2ee5c2]" /> status: open_to_opportunities <span className="status-cursor">|</span></span>
               <h1 aria-label="Ayush Soni" className="portfolio-display mt-3 text-[64px] leading-[.92] text-[#f0f4ff] sm:text-[88px] lg:text-[112px]">Ayush Soni</h1>
               <p className="mt-4 max-w-3xl text-xl font-bold leading-8 text-white sm:text-3xl">Senior Data Scientist - Causal Inference and GenAI Agentic Systems</p>
-              <div className="mt-5 flex flex-wrap gap-2"><span className="border border-[#31507e] px-3 py-2 font-mono text-[10px] font-bold uppercase text-[#75a7ff]">Production ML</span><span className="border border-[#31507e] px-3 py-2 font-mono text-[10px] font-bold uppercase text-[#75a7ff]">Causal AI</span><span className="border border-[#31507e] px-3 py-2 font-mono text-[10px] font-bold uppercase text-[#75a7ff]">GenAI</span></div>
             </div>
           </div>
-          <div className="mt-9 grid gap-7 lg:grid-cols-[1fr_320px] lg:items-end">
-            <div><p className="text-base font-black text-white">Applied AI and ML systems for decisions that need evidence.</p><p className="mt-2 max-w-3xl text-base font-semibold leading-8 text-[#cad5e8]">I build causal inference systems and GenAI agents that defend the number behind the answer, connecting experimentation, Snowflake and Databricks LLM workflows, forecasting, NLP, and production ML with decisions that can survive scrutiny.</p><div className="mt-6 flex flex-wrap gap-2"><button type="button" className="group inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#4d6386] bg-[#0b1425]/55 px-4 text-sm font-black text-[#64e8ff] hover:border-[#64e8ff] hover:bg-[#10213c]" onClick={onProjects}>View Project Atlas <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} /></button><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] bg-[#0b1425]/80 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Quality Lab</button><a className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a></div></div>
-            <div className="space-y-2 border-l border-[#263d65] pl-5 font-mono text-[10px] font-bold uppercase tracking-[.12em] text-[#8ba7d1]"><p><span className="text-[#ff765c]">01</span> United States</p><p><span className="text-[#5fe0bd]">02</span> DISH / EchoStar</p><p><span className="text-[#c8a2ff]">03</span> Northeastern - M.S. Data Analytics</p><p><span className="text-[#ffc159]">04</span> Open to relocate</p></div>
+          <div className="mt-9 max-w-4xl">
+            <p className="text-base font-black text-white">Applied AI and ML systems for decisions that need evidence.</p><p className="mt-2 max-w-3xl text-base font-semibold leading-8 text-[#cad5e8]">I build causal inference systems and GenAI agents that connect model evidence, production discipline, and business decisions.</p><div className="mt-6 flex flex-wrap gap-2"><button type="button" className="group inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#4d6386] bg-[#0b1425]/55 px-4 text-sm font-black text-[#64e8ff] hover:border-[#64e8ff] hover:bg-[#10213c]" onClick={onProjects}>View Project Atlas <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} /></button><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] bg-[#0b1425]/80 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Quality Lab</button><a className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a></div>
           </div>
-          <div className="capability-rail mt-10 grid grid-cols-2 border border-[#263657] md:grid-cols-4"><div><strong>AI/ML</strong><span>Model development</span></div><div><strong>GenAI</strong><span>Enterprise agents</span></div><div><strong>Causal</strong><span>Lift and forecasting</span></div><div><strong>MLOps</strong><span>Production systems</span></div></div>
         </motion.div>
       </section>
 
@@ -608,12 +598,12 @@ function HomeProof({ value, label, accent }: { value: string; label: string; acc
 }
 
 function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onHome" | "onProjects" | "onOpenLab" | "onSelectProject">) {
-  const [group, setGroup] = useState<ProjectGroup>("Featured");
+  const [group, setGroup] = useState<ProjectGroup>("All");
   const [query, setQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"cards" | "index">("cards");
   const searchRef = useRef<HTMLInputElement>(null);
   const reducedMotion = useReducedMotion();
   const visible = useMemo(() => projectStories.filter((project) => {
+    if (FLAGSHIP_NAMES.includes(project.name as (typeof FLAGSHIP_NAMES)[number])) return false;
     const matchesGroup = group === "All" || (group === "Featured" ? project.featured : projectGroup(project) === group);
     const text = `${project.displayName} ${project.name} ${project.summary} ${project.problem} ${project.decision} ${project.stack.join(" ")}`.toLowerCase();
     return matchesGroup && text.includes(query.trim().toLowerCase());
@@ -636,7 +626,7 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
     <div className="relative z-10">
     <SiteHeader onHome={onHome} onProjects={() => window.scrollTo({ top: 0, behavior: "smooth" })} onOpenLab={onOpenLab} />
     <main>
-      <section className="atlas-hero relative isolate h-[calc(100svh-64px)] min-h-[650px] max-h-[820px] overflow-hidden bg-[#050814]/45 text-white">
+      <section className="atlas-hero relative isolate h-[min(72svh,700px)] min-h-[560px] overflow-hidden bg-[#050814]/45 text-white">
         <AtlasSignalField onSelectProject={onSelectProject} />
         <div className="pointer-events-none relative z-10 mx-auto flex h-full max-w-[1500px] items-start px-4 pt-8 md:px-7 md:pt-12 lg:items-center lg:pt-0">
           <motion.div className="pointer-events-auto max-w-3xl lg:max-w-[650px]" initial={reducedMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
@@ -646,11 +636,6 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
             <div className="mt-6 flex flex-wrap gap-2">
               <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#66d8c7] px-4 text-sm font-black text-[#0c1a21]" onClick={() => document.getElementById("flagship-projects")?.scrollIntoView({ behavior: "smooth" })}><LayoutGrid size={17} /> Explore flagships</button>
               <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-white/30 bg-white/5 px-4 text-sm font-bold text-white hover:bg-white/10" onClick={onOpenLab}><FlaskConical size={17} /> Test a model</button>
-            </div>
-            <div className="mt-7 grid max-w-xl grid-cols-3 border-t border-white/20 pt-4">
-              <AtlasStat value={String(projectStories.length)} label="Technical projects" color="#66d8c7" />
-              <AtlasStat value={String(projectStories.filter((item) => item.status === "evidence-ready" || item.status === "connected").length)} label="Evidence backed" color="#ff8f70" />
-              <AtlasStat value="6" label="Evaluation modes" color="#d0a8ff" />
             </div>
           </motion.div>
         </div>
@@ -664,23 +649,17 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
             {GROUPS.map((item) => <button key={item} type="button" className={`min-h-9 shrink-0 rounded-[6px] px-3 text-xs font-bold ${group === item ? "bg-[#64e8ff] text-[#07101d]" : "text-[#aebed6] hover:bg-white/10 hover:text-white"}`} onClick={() => setGroup(item)}>{item}</button>)}
           </div>
           <div className="flex w-full items-center gap-2 lg:w-auto">
-            <div className="flex shrink-0 rounded-[6px] border border-[#324667] bg-[#0b1425] p-1" role="group" aria-label="Project view">
-              <button type="button" className={`grid h-7 w-8 place-items-center rounded-[4px] ${viewMode === "cards" ? "bg-[#64e8ff] text-[#07101d]" : "text-[#8296b5] hover:text-white"}`} onClick={() => setViewMode("cards")} aria-label="Visual grid" aria-pressed={viewMode === "cards"}><LayoutGrid size={14} /></button>
-              <button type="button" className={`grid h-7 w-8 place-items-center rounded-[4px] ${viewMode === "index" ? "bg-[#64e8ff] text-[#07101d]" : "text-[#8296b5] hover:text-white"}`} onClick={() => setViewMode("index")} aria-label="Decision index" aria-pressed={viewMode === "index"}><Rows3 size={14} /></button>
-            </div>
             <label className="relative block min-w-0 flex-1 lg:w-72"><Search className="pointer-events-none absolute left-3 top-2.5 text-[#8296b5]" size={16} /><span className="sr-only">Search project atlas</span><input ref={searchRef} className="h-9 w-full rounded-[6px] border border-[#324667] bg-[#0b1425] pl-9 pr-12 text-sm text-white placeholder:text-[#7184a2]" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search models, tools, methods" /><kbd className="pointer-events-none absolute right-2 top-2 rounded-[3px] border border-[#324667] px-1.5 py-0.5 font-mono text-[9px] text-[#8296b5]">/</kbd></label>
           </div>
         </div>
       </section>
 
       <section id="project-explorer" className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-12">
-        <div className="mb-7 flex items-end justify-between gap-4 border-b border-[#263657] pb-6"><div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Project explorer</p><h2 className="portfolio-display mt-2 text-4xl">{group === "All" ? "The complete atlas" : group === "Featured" ? "Featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#8ea4c2]">{visible.length} projects</span></div>
+        <div className="mb-7 flex items-end justify-between gap-4 border-b border-[#263657] pb-6"><div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">More projects</p><h2 className="portfolio-display mt-2 text-4xl">{group === "All" ? "Explore the broader atlas" : group === "Featured" ? "More featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#8ea4c2]">{visible.length} projects</span></div>
         <AnimatePresence mode="wait" initial={false}>
-          {viewMode === "cards" ? <motion.div key="cards" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+          <motion.div key={group} className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
             {visible.map((item) => <ProjectTile key={item.name} project={item} onSelect={() => onSelectProject(item)} />)}
-          </motion.div> : <motion.div key="index" className="border-t border-[#263657]" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-            {visible.map((item, index) => <ProjectIndexRow key={item.name} project={item} index={index} onSelect={() => onSelectProject(item)} />)}
-          </motion.div>}
+          </motion.div>
         </AnimatePresence>
         {visible.length === 0 && <div className="border-y border-[#cbd6d4] py-20 text-center"><strong>No matching project</strong><p className="mt-2 text-sm text-[#687579]">Try a different technology, domain, or category.</p></div>}
       </section>
@@ -688,18 +667,9 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
   </div>;
 }
 
-function ProjectIndexRow({ project, index, onSelect }: { project: ProjectStory; index: number; onSelect: () => void }) {
-  return <button type="button" className="project-index-row group grid w-full gap-4 border-b border-[#263657] px-1 py-5 text-left sm:grid-cols-[52px_minmax(210px,.8fr)_minmax(260px,1.25fr)_150px_24px] sm:items-center" onClick={onSelect}>
-    <span className="font-mono text-xs font-bold text-[#7184a2]">{String(index + 1).padStart(2, "0")}</span>
-    <span><span className="block text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><strong className="mt-1 block text-base text-white">{project.displayName}</strong></span>
-    <span className="text-xs leading-5 text-[#aebed6]">{businessQuestion(project)}</span>
-    <span><strong className="block text-xl tabular-nums" style={{ color: project.accent }}>{project.metrics[0].value}</strong><small className="text-[9px] font-bold uppercase text-[#8296b5]">{project.metrics[0].label}</small></span>
-    <ArrowRight className="hidden transition-transform group-hover:translate-x-1 sm:block" size={17} />
-  </button>;
-}
-
 function FlagshipProjects({ onSelectProject }: { onSelectProject: (project: ProjectStory) => void }) {
   const reducedMotion = useReducedMotion();
+  const assetBase = import.meta.env.BASE_URL;
   const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
   return <section id="flagship-projects" className="flagship-band border-b border-[#263657] bg-[#09101e]/88 text-white backdrop-blur-[2px]">
     <div className="mx-auto max-w-[1500px] px-4 py-12 md:px-7 lg:py-16">
@@ -707,24 +677,18 @@ function FlagshipProjects({ onSelectProject }: { onSelectProject: (project: Proj
         <div><p className="text-xs font-extrabold uppercase text-[#66d8c7]">Flagship Three</p><h2 className="mt-1 text-3xl font-black sm:text-4xl">Three systems. Three kinds of leadership.</h2></div>
         <p className="text-sm leading-6 text-[#aebfbd]">Start here for the clearest evidence of applied modeling, production discipline, and grounded AI system design.</p>
       </div>
-      <div className="space-y-14 lg:space-y-20">
+      <div className="featured-shelf scrollbar-thin flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
         {flagships.map((project, index) => {
           const meta = FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]];
-          const visualOrder = index % 2 === 0 ? "lg:order-1" : "lg:order-2";
-          const copyOrder = index % 2 === 0 ? "lg:order-2" : "lg:order-1";
-          return <motion.article key={project.name} className="flagship-story relative grid gap-7 border-t border-white/15 pt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(360px,.88fr)] lg:items-center lg:gap-14" initial={reducedMotion ? false : { opacity: 0, y: 44 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, delay: index * .08, ease: [0.22, 1, 0.36, 1] }}>
-            <div className={`flagship-visual relative h-[640px] overflow-hidden md:h-[560px] lg:h-[360px] ${visualOrder}`} style={{ "--story-accent": project.accent } as CSSProperties}><VisualStage project={project} /><span aria-hidden="true" className="absolute right-4 top-1 font-mono text-7xl font-black text-white/10 sm:text-8xl">0{index + 1}</span></div>
-            <div className={`${copyOrder}`}><div className="flex items-center gap-3"><span className="h-px w-10" style={{ backgroundColor: project.accent }} /><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{meta.role}</span></div><h3 className="mt-4 break-words text-3xl font-black leading-tight sm:text-4xl">{project.displayName}</h3><p className="mt-4 text-base font-bold leading-7 text-white">{businessQuestion(project)}</p><div className="mt-5 border-l-4 pl-4" style={{ borderColor: project.accent }}><span className="text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>Why this is different</span><p className="mt-1 text-sm leading-6 text-[#c7d4d2]">{meta.differentiator}</p></div><div className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-3"><span><strong className="block text-3xl font-black tabular-nums" style={{ color: project.accent }}>{project.metrics[0].value}</strong><small className="text-[10px] font-bold uppercase text-[#9fb4b2]">{project.metrics[0].label}</small></span><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] px-4 text-sm font-black text-white" style={{ backgroundColor: project.accent }} onClick={() => onSelectProject(project)}>Open case <ArrowRight size={16} /></button></div></div>
+          return <motion.article key={project.name} className="project-tile group min-w-[86%] snap-start overflow-hidden rounded-[8px] bg-[#0b1425] sm:min-w-[58%] lg:min-w-0" style={{ borderTop: `4px solid ${project.accent}` }} initial={reducedMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5, delay: index * .08 }}>
+            <button type="button" className="project-media-panel relative block aspect-[16/9] w-full overflow-hidden text-left" onClick={() => onSelectProject(project)} aria-label={`Open case ${project.displayName}`}><img className="project-media-image absolute inset-0 h-full w-full object-cover" src={`${assetBase}${FLAGSHIP_COVERS[project.name as (typeof FLAGSHIP_NAMES)[number]]}`} alt="" /><span className="project-media-scrim absolute inset-0" aria-hidden="true" /><span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4"><span><span className="text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>0{index + 1} / {meta.role}</span><strong className="mt-1 block text-xl text-white">{project.displayName}</strong></span><ArrowUpRight className="shrink-0 text-white" size={20} /></span></button>
+            <div className="p-5"><p className="text-sm font-bold leading-6 text-white">{businessQuestion(project)}</p><div className="mt-5 flex items-end justify-between gap-4 border-t border-[#263657] pt-4"><span><strong className="block text-2xl font-black tabular-nums" style={{ color: project.accent }}>{project.metrics[0].value}</strong><small className="text-[9px] font-bold uppercase text-[#9fb4b2]">{project.metrics[0].label}</small></span><button type="button" className="inline-flex min-h-10 items-center gap-2 text-xs font-black text-white" onClick={() => onSelectProject(project)}>Open case <ArrowRight size={15} /></button></div></div>
           </motion.article>;
         })}
       </div>
       <button type="button" className="mt-7 inline-flex min-h-10 items-center gap-2 text-xs font-extrabold text-[#9edfd5]" onClick={() => document.getElementById("project-explorer")?.scrollIntoView({ behavior: "smooth" })}><LayoutGrid size={15} /> Browse the complete project atlas</button>
     </div>
   </section>;
-}
-
-function AtlasStat({ value, label, color }: { value: string; label: string; color: string }) {
-  return <div className="border-r border-white/20 pr-3 last:border-r-0 sm:pr-5"><strong className="block text-2xl font-black tabular-nums" style={{ color }}>{value}</strong><span className="mt-1 block text-[10px] font-bold uppercase leading-4 text-[#9fb4b2]">{label}</span></div>;
 }
 
 const SIGNAL_PROJECTS = [
@@ -812,16 +776,14 @@ function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: (
   const reducedMotion = useReducedMotion();
   const assetBase = import.meta.env.BASE_URL;
   const cover = PROJECT_COVERS[project.name];
-  return <motion.article layout className="project-tile group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] bg-[#0b1425] text-white transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(0,0,0,.35)]" style={{ borderTop: `4px solid ${project.accent}` }} initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: [0.22, 1, 0.36, 1] }}>
-    <button type="button" className="project-media-panel relative block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.displayName}`}>
+  return <motion.article layout className="project-tile group flex min-h-[400px] flex-col overflow-hidden rounded-[8px] bg-[#0b1425] text-white transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(0,0,0,.35)]" style={{ borderTop: `4px solid ${project.accent}` }} initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: [0.22, 1, 0.36, 1] }}>
+    <button type="button" className="project-media-panel relative block h-52 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.displayName}`}>
       {cover ? <><img className="project-media-image absolute inset-0 h-full w-full object-cover" src={`${assetBase}${cover}`} alt="" /><span className="project-media-scrim absolute inset-0" aria-hidden="true" /><span className="project-media-scan absolute inset-y-0 w-20" aria-hidden="true" /><span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4"><span><span className="flex items-center gap-1.5 text-[9px] font-extrabold uppercase text-[#c7d4e7]"><i className="h-1.5 w-1.5" style={{ backgroundColor: project.accent }} /> Decision system</span><strong className="mt-1 block max-w-xs text-sm leading-5 text-white">{businessQuestion(project)}</strong></span><span className="shrink-0 rounded-full border border-white/30 bg-black/45 px-2.5 py-1 text-[9px] font-bold text-white backdrop-blur-md">Explore</span></span></> : <VisualStage project={project} compact />}
     </button>
     <div className="flex flex-1 flex-col border-t border-white/15 p-5">
       <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="rounded-full border border-[#324667] px-2 py-1 text-[9px] font-extrabold uppercase text-[#9fb0c8]">{STATUS_COPY[project.status].label}</span></div>
       <h3 className="mt-3 break-words text-xl font-black leading-tight">{project.displayName}</h3>
-      <p className="mt-3 text-sm leading-6 text-[#aebed6]">{project.summary}</p>
-      <div className="mt-4 flex flex-wrap gap-1.5">{project.stack.slice(0, 4).map((item) => <span key={item} className="rounded-full border border-[#324667] px-2 py-1 text-[10px] font-bold text-[#9fb0c8]">{item}</span>)}</div>
-      <div className="mt-4 border-l-4 pl-3" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why it matters</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#b9c7db]">{project.outcome}</p></div>
+      <p className="mt-3 text-sm font-bold leading-6 text-[#cbd6e7]">{businessQuestion(project)}</p>
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#263657] pt-4"><span className="text-xs font-bold text-[#8ea4c2]">{project.metrics[0].label}: <strong className="text-white">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-9 shrink-0 items-center gap-2 rounded-[6px] px-3 text-xs font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onSelect}>Case study <ArrowRight size={15} /></button></div>
     </div>
   </motion.article>;
@@ -829,9 +791,7 @@ function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: (
 
 function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { project: ProjectStory; onHome: () => void; onBack: () => void; onOpenLab: () => void; onSelectProject: (project: ProjectStory) => void }) {
   const [section, setSection] = useState<"overview" | "architecture" | "evidence">("overview");
-  const [audience, setAudience] = useState<"recruiter" | "engineer">("recruiter");
-  useEffect(() => { setSection("overview"); setAudience("recruiter"); }, [project.slug]);
-  const roleFit = ROLE_FIT[project.name] ?? [projectGroup(project), project.family, "Decision support"];
+  useEffect(() => { setSection("overview"); }, [project.slug]);
   const openSection = (nextSection: "overview" | "architecture" | "evidence") => {
     setSection(nextSection);
     window.requestAnimationFrame(() => document.getElementById("project-detail")?.scrollIntoView({ behavior: "smooth" }));
@@ -851,9 +811,9 @@ function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { 
           <div className="mt-5 grid gap-7 lg:grid-cols-[minmax(0,.85fr)_minmax(480px,1.15fr)] lg:items-stretch">
             <div className="flex flex-col justify-center py-2">
               <p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)} · {project.family}</p>
-              <div className="mt-4 flex flex-wrap items-center gap-3"><span className="inline-flex w-fit items-center border border-white/20 px-3 py-2 text-[10px] font-extrabold uppercase text-[#b9cac8]"><span className="mr-2 h-2 w-2" style={{ backgroundColor: project.accent }} />{THEME_LABELS[project.visual]}</span><div className="flex border border-white/20 p-1" role="group" aria-label="Choose case-study audience"><button type="button" aria-pressed={audience === "recruiter"} className={`inline-flex min-h-8 items-center gap-1.5 rounded-[4px] px-2.5 text-[10px] font-extrabold uppercase ${audience === "recruiter" ? "bg-white text-[#142126]" : "text-[#aebfbd]"}`} onClick={() => setAudience("recruiter")}><UserRound size={13} /> Recruiter</button><button type="button" aria-pressed={audience === "engineer"} className={`inline-flex min-h-8 items-center gap-1.5 rounded-[4px] px-2.5 text-[10px] font-extrabold uppercase ${audience === "engineer" ? "bg-white text-[#142126]" : "text-[#aebfbd]"}`} onClick={() => setAudience("engineer")}><Code2 size={13} /> Engineer</button></div></div>
+              <div className="mt-4 flex flex-wrap items-center gap-3"><span className="inline-flex w-fit items-center border border-white/20 px-3 py-2 text-[10px] font-extrabold uppercase text-[#b9cac8]"><span className="mr-2 h-2 w-2" style={{ backgroundColor: project.accent }} />{THEME_LABELS[project.visual]}</span></div>
               <h1 className="portfolio-display mt-3 break-words text-4xl leading-[1.04] sm:text-5xl">{project.displayName}</h1>
-              {audience === "recruiter" ? <><p className="mt-5 max-w-2xl text-base leading-7 text-[#b9cac8]">{project.problem}</p><div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why this project is different</span><p className="mt-1 text-sm font-bold leading-6 text-white">{projectDifferentiator(project)}</p></div><div className="mt-4 flex flex-wrap gap-2">{roleFit.map((role) => <span key={role} className="border border-white/20 px-2.5 py-1.5 text-[10px] font-bold text-[#c9d6d4]">{role}</span>)}</div></> : <><p className="mt-5 max-w-2xl text-base leading-7 text-[#b9cac8]">{project.approach}</p><div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Engineering boundary</span><p className="mt-1 text-sm font-bold leading-6 text-white">{project.boundary}</p></div><div className="mt-4 flex flex-wrap gap-2">{project.stack.slice(0, 5).map((item) => <span key={item} className="border border-white/20 px-2.5 py-1.5 text-[10px] font-bold text-[#c9d6d4]">{item}</span>)}</div></>}
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[#b9cac8]">{project.problem}</p><div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why this project is different</span><p className="mt-1 text-sm font-bold leading-6 text-white">{projectDifferentiator(project)}</p></div>
               <div className="mt-6 flex flex-wrap gap-2"><a className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white" style={{ backgroundColor: project.accent }} href={project.repoUrl} target="_blank" rel="noreferrer"><Code2 size={16} /> Repository <ArrowUpRight size={15} /></a><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("architecture")}><Layers3 size={15} /> Architecture</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("evidence")}><Database size={15} /> Evidence</button>{project.name === "ai-quality-lab" && <button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold text-[#142126]" onClick={onOpenLab}><FlaskConical size={16} /> Live demo</button>}</div>
             </div>
             <CaseArtifactDeck project={project} />

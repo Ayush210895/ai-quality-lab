@@ -642,30 +642,24 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
       <section className="lab-cinema relative isolate overflow-hidden border-b border-[#263657] bg-[#08111f]/88 text-white backdrop-blur-[2px]">
         <img key={active} className="lab-cinema-backdrop absolute inset-0 -z-20 h-full w-full object-cover" src={`${assetBase}${moduleCover[active]}`} alt="" />
         <span className="lab-cinema-scrim absolute inset-0 -z-10" aria-hidden="true" />
-        <div className="relative mx-auto max-w-[1500px] px-4 pb-5 pt-6 md:px-7 md:pt-8">
+        <div className="relative mx-auto max-w-[1500px] px-4 pb-4 pt-5 md:px-7">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div><p className="text-[11px] font-extrabold uppercase text-[#64e8ff]">Interactive evaluation studio</p><h1 className="portfolio-display mt-2 text-4xl sm:text-5xl">{activeModule.label}</h1><p className="mt-2 text-sm text-[#aebed6]">{activeModule.description}</p></div>
+            <div><p className="text-[10px] font-extrabold uppercase text-[#64e8ff]">Interactive evaluation studio</p><h1 className="portfolio-display mt-1 text-3xl sm:text-4xl">{activeModule.label}</h1><p className="mt-1 text-sm text-[#aebed6]">{activeModule.description}</p></div>
             <button className="inline-flex min-h-9 w-fit items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#aebed6] hover:bg-white/10 hover:text-white" type="button" onClick={onExit}><FolderGit2 size={15} /> Back to all projects</button>
           </div>
-          <nav className="scrollbar-thin mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="Model evaluation workspaces" role="tablist">
+          <nav className="scrollbar-thin mt-4 flex gap-2 overflow-x-auto pb-1" aria-label="Model evaluation workspaces" role="tablist">
             {MODULES.map((module) => {
               const Icon = module.icon;
               const selected = module.id === active;
-              return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`lab-module-tab group relative isolate min-w-[150px] flex-1 overflow-hidden rounded-[6px] border p-3 text-left text-white transition-colors ${selected ? "shadow-[0_8px_20px_rgba(0,0,0,.38)]" : "border-[#324667] hover:border-[#64e8ff]"}`} style={selected ? { borderColor: module.color } : undefined} onClick={() => navigate(module.id)}>
+              return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`lab-module-tab group relative isolate min-h-16 min-w-[132px] flex-1 overflow-hidden rounded-[6px] border px-3 py-2.5 text-left text-white transition-colors ${selected ? "shadow-[0_8px_20px_rgba(0,0,0,.38)]" : "border-[#324667] hover:border-[#64e8ff]"}`} style={selected ? { borderColor: module.color } : undefined} onClick={() => navigate(module.id)}>
                 <img className="lab-module-cover absolute inset-0 -z-20 h-full w-full object-cover" src={`${assetBase}${moduleCover[module.id]}`} alt="" />
                 <span className={`lab-module-scrim absolute inset-0 -z-10 ${selected ? "opacity-80" : "opacity-95"}`} aria-hidden="true" />
                 <span className="flex items-center gap-2"><Icon size={16} /><strong className="text-xs">{module.short}</strong></span>
-                <span className="mt-2 hidden text-[10px] leading-4 text-[#c5d1e3] xl:block">{module.description}</span>
                 {selected && <span className="absolute inset-x-0 bottom-0 h-1" style={{ backgroundColor: module.color }} aria-hidden="true" />}
               </button>;
             })}
           </nav>
-          <div className="lab-telemetry mt-5 grid gap-px overflow-hidden rounded-[6px] border border-[#263657] bg-[#263657] sm:grid-cols-2 lg:grid-cols-[1fr_1.2fr_1.5fr_1fr]">
-            <div><span>Workspace</span><strong>{activeModule.short}</strong></div>
-            <div><span>Decision state</span><strong>{evaluationStatus}</strong></div>
-            <div className="min-w-0"><span>Evidence source</span><strong className="truncate" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</strong></div>
-            <div className="relative overflow-hidden"><span>Runtime</span><strong>Browser local</strong><i className="signal-sweep" aria-hidden="true" /></div>
-          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[10px] font-bold uppercase text-[#8ea4c2]"><span>Decision state: <strong className="text-white">{evaluationStatus}</strong></span><span>Runs locally in your browser</span></div>
         </div>
       </section>
 
