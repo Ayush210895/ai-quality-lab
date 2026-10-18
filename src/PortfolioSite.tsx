@@ -175,11 +175,11 @@ const EXPERIENCE = [
     company: "DISH / EchoStar",
     role: "Senior Data Scientist",
     bullets: [
+      "Built churn- and survival-driven forward LTV and targeted-upgrade decisioning with plan simulation, eligibility and tiering rules, production outputs, and a segment-level holdout design; device propensity was supplied by another team.",
       "Built a Snowflake Cortex AI promotional-effectiveness agent that accepts natural-language inputs, runs statistical decomposition in Python, and returns structured pre-, promo-, and post-period lift insights.",
-      "Designed quasi-experimental pricing analyses that isolate incremental promotional lift after adjusting for weekday mix, seasonality, trend, and device-launch effects.",
-      "Deployed a Text2SQL natural-language query layer using Snowflake Cortex AI for product, pricing, inventory, and subscriber data.",
       "Developed a causal demand-planning system using SARIMAX and XGBoost across Indirect, Web, and Walmart channels, exceeding a 75% N-4 forecast-accuracy target.",
-      "Architected a centralized causal feature layer integrating Snowflake pricing and promotion data for elasticity-aware forecasting and pricing strategy.",
+      "Built a Snowflake Intelligence conversational analytics layer over about 50 curated business tables from roughly 200 sources, with governed metrics, verified queries, follow-up analysis, charts, logs, and user feedback.",
+      "Built an OEM contract intelligence agent with version-aware retrieval, evidence-backed answers, citation checks, access controls, and refusal when supporting contract language is missing.",
       "Built an executive analytics platform with Tableau and Snowflake, accelerating decision-making by 30% and reducing manual reporting effort by 40%.",
     ],
   },
@@ -223,8 +223,8 @@ const PROFESSIONAL_SYSTEMS = [
   { id: "01", name: "AI Quality Lab", tag: "Public build - Evaluation infrastructure", description: "Six browser-based workspaces connect model evidence, operating constraints, launch gates, monitoring, and downloadable decision records across ML and LLM systems.", accent: "#5fe0bd" },
   { id: "02", name: "Travel Marketplace Harm Risk", tag: "Public build - Applied ML decision science", description: "A locked XGBoost policy ranks the top 5% of bookings by expected loss and captured 37.2% of harmful value on an untouched future test.", accent: "#ff765c" },
   { id: "03", name: "Financial Document Intelligence Agent", tag: "Public build - Agentic RAG and Text2SQL", description: "Reranked retrieval over filings, read-only Text2SQL, tool calling, evaluation cases, FastAPI, Docker, and Streamlit. Runs locally; cloud deployment remains planned.", accent: "#c8a2ff" },
-  { id: "04", name: "Causal Demand Planning", tag: "Professional work - Forecasting and optimization", description: "SARIMAX and XGBoost forecasting, reconciliation, pricing and promotion features, and time-aware evaluation across three commercial channels.", accent: "#72b7ff" },
-  { id: "05", name: "Financial NLP and Quant Research", tag: "Professional work - NLP and market modeling", description: "FinBERT financial-news classification, XGBoost bond-market forecasting, and governed Bloomberg data workflows for research and risk decisions.", accent: "#ffc159" },
+  { id: "04", name: "LTV and Targeted Upgrade Decisioning", tag: "Professional work - Survival modeling and customer value", description: "Forward-looking LTV combines expected tenure, customer economics, plan-level simulation, eligibility safeguards, offer tiers, and a holdout design for measuring incremental value.", accent: "#72b7ff" },
+  { id: "05", name: "Causal Demand Planning", tag: "Professional work - Forecasting and optimization", description: "SARIMAX and XGBoost forecasting, reconciliation, pricing and promotion features, and time-aware evaluation across three commercial channels.", accent: "#ffc159" },
 ] as const;
 
 const STACK_GROUPS = [
@@ -463,7 +463,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
             </div>
           </div>
           <div className="mt-9 max-w-4xl">
-            <p className="text-base font-black text-white">Applied AI and ML systems for decisions that need evidence.</p><p className="mt-2 max-w-3xl text-base font-semibold leading-8 text-[#cad5e8]">I build causal inference systems and GenAI agents that connect model evidence, production discipline, and business decisions.</p><div className="mt-6 flex flex-wrap gap-2"><button type="button" className="group inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#4d6386] bg-[#0b1425]/55 px-4 text-sm font-black text-[#64e8ff] hover:border-[#64e8ff] hover:bg-[#10213c]" onClick={onProjects}>View Project Atlas <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} /></button><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] bg-[#0b1425]/80 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Quality Lab</button><a className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a></div>
+            <p className="text-base font-black text-white">Applied AI and ML systems for decisions that need evidence.</p><p className="mt-2 max-w-3xl text-base font-semibold leading-8 text-[#cad5e8]">I build customer-value, causal-measurement, forecasting, and grounded GenAI systems that connect model evidence, production discipline, and business decisions.</p><div className="mt-6 flex flex-wrap gap-2"><button type="button" className="group inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#4d6386] bg-[#0b1425]/55 px-4 text-sm font-black text-[#64e8ff] hover:border-[#64e8ff] hover:bg-[#10213c]" onClick={onProjects}>View Project Atlas <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} /></button><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] bg-[#0b1425]/80 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Quality Lab</button><a className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a></div>
           </div>
         </motion.div>
       </section>
