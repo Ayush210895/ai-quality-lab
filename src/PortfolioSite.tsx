@@ -264,7 +264,7 @@ function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: Proj
     return () => { window.removeEventListener("resize", handleResize); window.cancelAnimationFrame(animation); };
   }, []);
 
-  return <div ref={shellRef} className="signal-field relative min-h-[280px] overflow-hidden border border-white/15 bg-[#10262d] lg:min-h-[430px]" aria-label="Interactive project signal map">
+  return <div ref={shellRef} className="signal-field relative min-h-[360px] overflow-hidden border border-white/15 bg-[#10262d] lg:min-h-[430px]" aria-label="Interactive project signal map">
     <canvas ref={canvasRef} className="pointer-events-none absolute inset-0" aria-hidden="true" />
     <div className="absolute left-4 top-4 z-10"><p className="text-[10px] font-extrabold uppercase text-[#66d8c7]">Live project network</p><p className="mt-1 text-xs text-[#9fb4b2]">Select a signal to open its case study</p></div>
     {SIGNAL_PROJECTS.map((node) => {
