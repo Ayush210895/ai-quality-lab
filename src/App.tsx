@@ -8,6 +8,7 @@ import {
   Download,
   ExternalLink,
   FileUp,
+  FlaskConical,
   FolderGit2,
   Gauge,
   GitCompare,
@@ -91,14 +92,14 @@ const reportSchema = z.object({
   assessment: z.record(z.string(), z.unknown()),
 });
 
-const MODULES: Array<{ id: ModuleId; label: string; short: string; icon: typeof Gauge }> = [
-  { id: "portfolio", label: "Evidence registry", short: "Registry", icon: FolderGit2 },
-  { id: "classification", label: "Classification", short: "Classification", icon: Gauge },
-  { id: "comparison", label: "GitHub model comparison", short: "GitHub model", icon: GitCompare },
-  { id: "regression", label: "Regression & forecasting", short: "Forecasting", icon: TrendingUp },
-  { id: "ranking", label: "Ranking & recommendations", short: "Ranking", icon: ListOrdered },
-  { id: "llm", label: "LLM & RAG", short: "LLM & RAG", icon: BrainCircuit },
-  { id: "monitoring", label: "Production monitoring", short: "Monitoring", icon: Activity },
+const MODULES: Array<{ id: ModuleId; label: string; short: string; description: string; color: string; tint: string; icon: typeof Gauge }> = [
+  { id: "classification", label: "Classification", short: "Classify", description: "Threshold, cost and capacity", color: "#087e72", tint: "#e7f5f2", icon: Gauge },
+  { id: "comparison", label: "GitHub model comparison", short: "Compare", description: "Business-aware ranking policy", color: "#b24837", tint: "#fbece8", icon: GitCompare },
+  { id: "regression", label: "Regression & forecasting", short: "Forecast", description: "Error, bias and uncertainty", color: "#2878a5", tint: "#e8f3f9", icon: TrendingUp },
+  { id: "ranking", label: "Ranking & recommendations", short: "Rank", description: "Relevance, order and coverage", color: "#7a4db5", tint: "#f1ebf8", icon: ListOrdered },
+  { id: "llm", label: "LLM & RAG", short: "LLM", description: "Quality, grounding and cost", color: "#a85f00", tint: "#fff2dc", icon: BrainCircuit },
+  { id: "monitoring", label: "Production monitoring", short: "Monitor", description: "Drift and production health", color: "#277443", tint: "#e9f5ec", icon: Activity },
+  { id: "portfolio", label: "Evidence registry", short: "Evidence", description: "Committed project artifacts", color: "#46545a", tint: "#edf1f1", icon: FolderGit2 },
 ];
 
 const chartTooltipStyle = {
@@ -266,11 +267,15 @@ function GateList({ gates }: { gates: any[] }) {
 
 function ControlPanel({ eyebrow, title, intro, children }: { eyebrow: string; title: string; intro: string; children: ReactNode }) {
   return (
-    <aside className="border-b border-line bg-white px-5 py-6 lg:border-b-0 lg:border-r lg:px-6">
-      <p className="text-[11px] font-extrabold uppercase text-teal">{eyebrow}</p>
-      <h2 className="mt-1 text-lg font-bold">{title}</h2>
-      <p className="mt-2 text-xs leading-5 text-slate-500">{intro}</p>
-      <div className="mt-4">{children}</div>
+    <aside className="lab-controls self-start overflow-hidden rounded-[6px] border border-line bg-white lg:sticky lg:top-32">
+      <div className="lab-controls-heading border-b border-line px-5 py-5">
+        <div className="flex items-center gap-3">
+          <span className="lab-step grid h-8 w-8 shrink-0 place-items-center rounded-[6px] text-sm font-black text-white">1</span>
+          <div><p className="text-[10px] font-extrabold uppercase text-slate-500">{eyebrow}</p><h2 className="mt-0.5 text-lg font-black">{title}</h2></div>
+        </div>
+        <p className="mt-3 text-xs leading-5 text-slate-600">{intro}</p>
+      </div>
+      <div className="px-5 pb-2 pt-1">{children}</div>
     </aside>
   );
 }
@@ -569,7 +574,7 @@ function MonitoringLab({ onReport }: { onReport: (report: Report) => void }) {
 }
 
 function Workspace({ controls, children }: { controls: ReactNode; children: ReactNode }) {
-  return <main className="grid min-h-[calc(100vh-74px)] lg:grid-cols-[300px_minmax(0,1fr)]"><>{controls}</><section className="min-w-0 space-y-4 p-4 md:p-6 xl:p-8" aria-live="polite">{children}</section></main>;
+  return <main className="mx-auto grid w-full max-w-[1500px] gap-5 px-4 py-5 md:px-7 lg:grid-cols-[310px_minmax(0,1fr)] lg:py-7"><>{controls}</><section className="min-w-0 space-y-4" aria-live="polite">{children}</section></main>;
 }
 
 function QualityLabApp({ onExit }: { onExit: () => void }) {
@@ -585,21 +590,42 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
   const navigate = (module: ModuleId) => { setActive(module); setReport(null); };
   const lab = active === "portfolio" ? <PortfolioLab onReport={setReport} onNavigate={navigate} /> : active === "classification" ? <ClassificationLab onReport={setReport} /> : active === "comparison" ? <ComparisonLab onReport={setReport} /> : active === "regression" ? <RegressionLab onReport={setReport} /> : active === "ranking" ? <RankingLab onReport={setReport} /> : active === "llm" ? <LlmLab onReport={setReport} /> : <MonitoringLab onReport={setReport} />;
   return (
-    <div className="min-h-screen bg-canvas text-ink">
-      <header className="flex min-h-[74px] flex-col justify-between gap-4 bg-ink px-4 py-3 text-white sm:flex-row sm:items-center md:px-6 xl:px-8">
-        <div className="min-w-0"><p className="text-[11px] font-extrabold uppercase text-[#82d9cc]">AI Quality Lab · v3</p><h1 className="mt-1 truncate text-lg font-bold">{activeModule.label}</h1></div>
-        <div className="flex items-center gap-2">
-          <button className="inline-flex h-9 items-center gap-2 rounded-[6px] border border-slate-500 px-3 text-xs font-bold hover:bg-slate-800" type="button" title="Return to Project Atlas" onClick={onExit}><FolderGit2 size={15} /><span className="hidden sm:inline">Project Atlas</span></button>
-          <span className="mr-1 hidden max-w-64 truncate text-xs text-slate-300 md:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
-          <button className="inline-flex h-9 items-center gap-2 rounded-[6px] border border-slate-500 px-3 text-xs font-bold hover:bg-slate-800" type="button" title="Reset active workspace" onClick={() => setResetKey((value) => value + 1)}><RefreshCw size={15} /><span className="hidden sm:inline">Reset</span></button>
-          <button className="inline-flex h-9 items-center gap-2 rounded-[6px] bg-[#72d6c7] px-3 text-xs font-bold text-[#10272e] hover:bg-[#91e4d8]" type="button" title="Download JSON evidence report" onClick={exportReport} disabled={!report}><Download size={15} /> Export</button>
+    <div className="min-h-screen bg-[#edf2f1] text-ink" style={{ "--lab-accent": activeModule.color, "--lab-tint": activeModule.tint } as React.CSSProperties}>
+      <header className="sticky top-0 z-40 border-b border-[#d4dddc] bg-white/95 backdrop-blur">
+        <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-3 px-4 md:px-7">
+          <button className="flex min-w-0 items-center gap-3 text-left" type="button" title="Return to Project Atlas" onClick={onExit}>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[6px] bg-[#142126] text-white"><FlaskConical size={18} /></span>
+            <span className="min-w-0"><strong className="block truncate text-sm">AI Quality Lab</strong><span className="block truncate text-[10px] font-extrabold uppercase text-[#34766d]">Ayush Soni · Project Atlas</span></span>
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="mr-1 hidden max-w-56 truncate text-xs text-slate-500 lg:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
+            <button className="lab-icon-button" type="button" title="Reset active workspace" aria-label="Reset" onClick={() => setResetKey((value) => value + 1)}><RefreshCw size={16} /></button>
+            <button className="inline-flex h-9 items-center gap-2 rounded-[6px] bg-[#142126] px-3 text-xs font-bold text-white hover:bg-[#29434b] disabled:cursor-not-allowed disabled:opacity-50" type="button" title="Download JSON evidence report" onClick={exportReport} disabled={!report}><Download size={15} /> Export evidence</button>
+          </div>
         </div>
       </header>
-      <nav className="scrollbar-thin flex min-h-14 gap-1 overflow-x-auto border-b border-[#34484f] bg-[#213037] px-2 md:px-5" aria-label="Model evaluation workspaces" role="tablist">
-        {MODULES.map((module) => { const Icon = module.icon; const selected = module.id === active; return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`flex min-w-max items-center gap-2 border-b-[3px] px-3 text-xs font-bold transition-colors ${selected ? "border-[#72d6c7] bg-[#293b42] text-white" : "border-transparent text-slate-300 hover:bg-[#293b42] hover:text-white"}`} onClick={() => navigate(module.id)}><Icon size={16} /><span className="hidden sm:inline">{module.label}</span><span className="sm:hidden">{module.short}</span></button>; })}
-      </nav>
+
+      <section className="border-b border-[#d5dfdd] bg-[#f7f9f8]">
+        <div className="mx-auto max-w-[1500px] px-4 pb-5 pt-6 md:px-7 md:pt-8">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div><p className="text-[11px] font-extrabold uppercase" style={{ color: activeModule.color }}>Interactive evaluation studio</p><h1 className="mt-1 text-3xl font-black sm:text-4xl">{activeModule.label}</h1><p className="mt-2 text-sm text-slate-600">{activeModule.description}</p></div>
+            <button className="inline-flex min-h-9 w-fit items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-slate-600 hover:bg-white" type="button" onClick={onExit}><FolderGit2 size={15} /> Back to all projects</button>
+          </div>
+          <nav className="scrollbar-thin mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="Model evaluation workspaces" role="tablist">
+            {MODULES.map((module) => {
+              const Icon = module.icon;
+              const selected = module.id === active;
+              return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`group min-w-[150px] flex-1 rounded-[6px] border p-3 text-left transition-colors ${selected ? "border-transparent text-white shadow-[0_8px_20px_rgba(20,33,38,.13)]" : "border-[#d4dddc] bg-white text-slate-600 hover:border-[#9aabaa] hover:text-ink"}`} style={selected ? { backgroundColor: module.color } : undefined} onClick={() => navigate(module.id)}>
+                <span className="flex items-center gap-2"><Icon size={16} /><strong className="text-xs">{module.short}</strong></span>
+                <span className={`mt-2 hidden text-[10px] leading-4 xl:block ${selected ? "text-white/80" : "text-slate-500"}`}>{module.description}</span>
+              </button>;
+            })}
+          </nav>
+        </div>
+      </section>
+
       <div key={`${active}-${resetKey}`}>{lab}</div>
-      <footer className="flex flex-col justify-between gap-2 border-t border-line bg-white px-5 py-4 text-xs text-slate-500 sm:flex-row"><span>All evaluation runs locally in your browser.</span><span>Generic evaluation suite · no external RAG project dependency</span></footer>
+      <footer className="border-t border-line bg-white"><div className="mx-auto flex max-w-[1500px] flex-col justify-between gap-2 px-5 py-4 text-xs text-slate-500 sm:flex-row md:px-7"><span>Evaluation runs locally in your browser.</span><span>Independent evaluation suite · source projects remain unchanged</span></div></footer>
     </div>
   );
 }

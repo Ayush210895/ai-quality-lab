@@ -30,6 +30,27 @@ button:focus-visible, input:focus-visible, label:focus-within {
 }
 input[type="range"] { accent-color: #087e72; }
 
+.lab-controls-heading { background: var(--lab-tint); }
+.lab-step { background: var(--lab-accent); }
+.lab-controls input[type="range"] { accent-color: var(--lab-accent); }
+.lab-icon-button {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid #cbd6d4;
+  border-radius: 6px;
+  background: white;
+  color: #46545a;
+}
+.lab-icon-button:hover { background: #edf2f1; color: #142126; }
+
+[aria-label="Evaluation metrics"] article:nth-child(5n + 1) { border-top: 3px solid var(--lab-accent); }
+[aria-label="Evaluation metrics"] article:nth-child(5n + 2) { border-top: 3px solid #2878a5; }
+[aria-label="Evaluation metrics"] article:nth-child(5n + 3) { border-top: 3px solid #a85f00; }
+[aria-label="Evaluation metrics"] article:nth-child(5n + 4) { border-top: 3px solid #7a4db5; }
+[aria-label="Evaluation metrics"] article:nth-child(5n + 5) { border-top: 3px solid #277443; }
+
 .scrollbar-thin { scrollbar-width: thin; scrollbar-color: #8ba1a5 transparent; }
 .chart-grid line { stroke: #e3e9e8; }
 .recharts-cartesian-axis-tick-value { fill: #687579; font-size: 11px; }
