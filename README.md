@@ -9,6 +9,7 @@ This site is an interactive portfolio for Ayush Soni's public AI, machine-learni
 - Searchable, category-based explorer for all public projects.
 - Animated, keyboard-accessible project signal map linking directly to flagship case studies.
 - A clearly ranked Flagship Three spanning applied ML decision science, production MLOps, and grounded GenAI.
+- Asymmetric flagship stories, softly shaped project visuals, and staggered atlas tiles that break the repeated dashboard-card rhythm.
 - Dedicated hash URL for every project, suitable for direct sharing.
 - Project-specific color system and live visual preview.
 - Per-project case workbench with interactive signal, source-artifact, and decision-room views.

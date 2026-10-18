@@ -227,20 +227,20 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
 
 function FlagshipProjects({ onSelectProject }: { onSelectProject: (project: ProjectStory) => void }) {
   const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
-  return <section id="flagship-projects" className="border-b border-[#172a31] bg-[#10242b] text-white">
-    <div className="mx-auto max-w-[1500px] px-4 py-9 md:px-7 lg:py-12">
-      <div className="mb-7 grid gap-3 md:grid-cols-[1fr_430px] md:items-end">
+  return <section id="flagship-projects" className="flagship-band border-b border-[#172a31] bg-[#10242b] text-white">
+    <div className="mx-auto max-w-[1500px] px-4 py-12 md:px-7 lg:py-16">
+      <div className="mb-10 grid gap-3 md:grid-cols-[1fr_430px] md:items-end lg:mb-14">
         <div><p className="text-xs font-extrabold uppercase text-[#66d8c7]">Flagship Three</p><h2 className="mt-1 text-3xl font-black sm:text-4xl">Three systems. Three kinds of leadership.</h2></div>
         <p className="text-sm leading-6 text-[#aebfbd]">Start here for the clearest evidence of applied modeling, production discipline, and grounded AI system design.</p>
       </div>
-      <div className="grid gap-4 xl:grid-cols-3">
+      <div className="space-y-14 lg:space-y-20">
         {flagships.map((project, index) => {
           const meta = FLAGSHIP_META[project.name as (typeof FLAGSHIP_NAMES)[number]];
-          return <article key={project.name} className="group grid min-h-[390px] grid-rows-[auto_auto_1fr_auto] overflow-hidden border border-white/15 bg-[#152f37] transition-transform hover:-translate-y-1" style={{ borderTop: `5px solid ${project.accent}` }}>
-            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4"><span className="font-mono text-sm font-black" style={{ color: project.accent }}>0{index + 1}</span><span className="text-[10px] font-extrabold uppercase text-[#9fb4b2]">{meta.role}</span></div>
-            <div className="h-32 overflow-hidden"><VisualStage project={project} compact /></div>
-            <div className="p-5"><h3 className="break-words text-xl font-black leading-tight">{project.name}</h3><p className="mt-3 text-sm leading-6 text-[#c7d4d2]">{businessQuestion(project)}</p><div className="mt-4 border-l-4 bg-white/5 p-3" style={{ borderColor: project.accent }}><span className="text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>Why this is different</span><p className="mt-1 text-xs leading-5 text-[#d9e1e0]">{meta.differentiator}</p></div></div>
-            <div className="flex items-center justify-between gap-3 border-t border-white/10 px-5 py-4"><span className="text-xs text-[#9fb4b2]">{project.metrics[0].label}: <strong className="text-white">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-3 text-xs font-black text-white" style={{ backgroundColor: project.accent }} onClick={() => onSelectProject(project)}>Open case <ArrowRight size={15} /></button></div>
+          const visualOrder = index % 2 === 0 ? "lg:order-1" : "lg:order-2";
+          const copyOrder = index % 2 === 0 ? "lg:order-2" : "lg:order-1";
+          return <article key={project.name} className="flagship-story relative grid gap-7 border-t border-white/15 pt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(360px,.88fr)] lg:items-center lg:gap-14">
+            <div className={`flagship-visual relative h-[640px] overflow-hidden md:h-[560px] lg:h-[360px] ${visualOrder}`} style={{ "--story-accent": project.accent } as CSSProperties}><VisualStage project={project} /><span aria-hidden="true" className="absolute right-4 top-1 font-mono text-7xl font-black text-white/10 sm:text-8xl">0{index + 1}</span></div>
+            <div className={`${copyOrder}`}><div className="flex items-center gap-3"><span className="h-px w-10" style={{ backgroundColor: project.accent }} /><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{meta.role}</span></div><h3 className="mt-4 break-words text-3xl font-black leading-tight sm:text-4xl">{project.name}</h3><p className="mt-4 text-base font-bold leading-7 text-white">{businessQuestion(project)}</p><div className="mt-5 border-l-4 pl-4" style={{ borderColor: project.accent }}><span className="text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>Why this is different</span><p className="mt-1 text-sm leading-6 text-[#c7d4d2]">{meta.differentiator}</p></div><div className="mt-6 flex flex-wrap items-end gap-x-8 gap-y-3"><span><strong className="block text-3xl font-black tabular-nums" style={{ color: project.accent }}>{project.metrics[0].value}</strong><small className="text-[10px] font-bold uppercase text-[#9fb4b2]">{project.metrics[0].label}</small></span><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] px-4 text-sm font-black text-white" style={{ backgroundColor: project.accent }} onClick={() => onSelectProject(project)}>Open case <ArrowRight size={16} /></button></div></div>
           </article>;
         })}
       </div>
@@ -334,7 +334,7 @@ function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: Proj
 }
 
 function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: () => void }) {
-  return <article className="group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] border border-[#b9cbc7] transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(12,26,33,.18)]" style={{ borderTop: `4px solid ${project.accent}`, backgroundColor: project.soft }}>
+  return <article className="project-tile group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(12,26,33,.18)]" style={{ borderTop: `4px solid ${project.accent}`, backgroundColor: project.soft }}>
     <button type="button" className="block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.name}`}>
       <VisualStage project={project} compact />
     </button>
@@ -469,14 +469,14 @@ function CaseArtifactDeck({ project }: { project: ProjectStory }) {
     if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) { setView("artifact"); return; }
     setTourIndex(0);
   };
-  return <section className="case-workbench min-h-[610px] overflow-hidden border border-white/20 bg-[#12272f] shadow-[14px_14px_0_var(--project-accent)] lg:min-h-[470px]">
+  return <section className="case-workbench min-h-[720px] overflow-hidden bg-[#12272f] lg:min-h-[470px]">
     <div className="border-b border-white/15 px-3 py-3 sm:px-4">
       <div className="flex flex-wrap items-center justify-between gap-3"><div><span className="block text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>Case workbench</span><strong className="mt-0.5 block text-xs text-white">{THEME_LABELS[project.visual]}</strong></div><button type="button" className="inline-flex min-h-9 items-center gap-2 rounded-[4px] border border-white/20 px-3 text-[10px] font-extrabold uppercase text-white hover:bg-white/10" onClick={startTour}>{tourIndex >= 0 ? <RotateCcw size={14} /> : <Play size={14} />}{tourIndex >= 0 ? "Restart tour" : "18 sec guided tour"}</button></div>
       <div className="mt-3 grid grid-cols-3 gap-1" role="tablist" aria-label="Case views">
         {views.map((item, index) => <button key={item} type="button" role="tab" aria-selected={view === item} className={`min-h-9 rounded-[4px] border-t-2 px-2 text-[9px] font-extrabold uppercase sm:text-[10px] ${view === item ? "bg-white text-[#142126]" : "border-white/15 text-[#aebfbd] hover:bg-white/10"}`} style={view === item ? { borderColor: project.accent } : undefined} onClick={() => selectView(item)}><span aria-hidden="true" className="mr-1 font-mono">0{index + 1}</span>{item}</button>)}
       </div>
     </div>
-    <div className="h-[500px] lg:h-[370px]">
+    <div className="h-[610px] lg:h-[370px]">
       {view === "signal" && <VisualStage project={project} />}
       {view === "artifact" && <ArtifactView project={project} />}
       {view === "decision" && <DecisionView project={project} />}

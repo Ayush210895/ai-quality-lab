@@ -71,12 +71,13 @@ input[type="range"] { accent-color: #087e72; }
 }
 
 .signal-field {
-  box-shadow: 18px 18px 0 #ff765c, -10px -10px 0 #183841;
+  border-radius: 32px 8px 52px 18px;
+  box-shadow: 15px 15px 0 #ff765c;
 }
 
 .signal-node {
   max-width: 150px;
-  border-radius: 4px;
+  border-radius: 16px 5px 16px 5px;
   letter-spacing: 0;
   transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
@@ -87,9 +88,75 @@ input[type="range"] { accent-color: #087e72; }
   background: #213d46;
 }
 
+.flagship-band {
+  position: relative;
+  overflow: hidden;
+}
+
+.flagship-band::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(24vw, 320px);
+  height: 11px;
+  background: #ff765c;
+  border-radius: 999px 0 0 999px;
+  content: "";
+}
+
+.flagship-visual {
+  border-radius: 46px 12px 58px 18px;
+  box-shadow: 10px 12px 0 color-mix(in srgb, var(--story-accent) 72%, transparent);
+}
+
+.flagship-story:nth-child(2) .flagship-visual {
+  border-radius: 16px 54px 20px 46px;
+}
+
+.flagship-story:nth-child(3) .flagship-visual {
+  border-radius: 54px 18px 42px 12px;
+}
+
+.project-tile {
+  border: 1px solid color-mix(in srgb, #76928d 40%, transparent);
+  box-shadow: 8px 9px 0 color-mix(in srgb, #31534e 13%, transparent);
+}
+
+.project-tile > button:first-child {
+  border-bottom-right-radius: 54px;
+}
+
+.project-tile:nth-child(3n + 2) > button:first-child {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 54px;
+}
+
+.case-workbench {
+  border-radius: 8px 48px 8px 28px;
+  box-shadow: 13px 13px 0 var(--project-accent);
+}
+
+@media (min-width: 1280px) {
+  #project-explorer .project-tile:nth-child(3n + 2) { transform: translateY(22px); }
+  #project-explorer .project-tile:nth-child(3n + 2):hover { transform: translateY(17px); }
+}
+
 @media (max-width: 640px) {
-  .signal-field { box-shadow: 8px 8px 0 #ff765c; }
+  .signal-field {
+    border-radius: 22px 7px 34px 12px;
+    box-shadow: 7px 8px 0 #ff765c;
+  }
   .signal-node { max-width: 118px; padding: 6px 8px; font-size: 8px; }
+  .flagship-visual {
+    border-radius: 28px 8px 38px 14px;
+    box-shadow: 6px 7px 0 color-mix(in srgb, var(--story-accent) 72%, transparent);
+  }
+  .flagship-story:nth-child(2) .flagship-visual { border-radius: 10px 36px 14px 28px; }
+  .flagship-story:nth-child(3) .flagship-visual { border-radius: 36px 12px 28px 8px; }
+  .case-workbench {
+    border-radius: 7px 32px 7px 20px;
+    box-shadow: 7px 8px 0 var(--project-accent);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
