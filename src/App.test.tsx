@@ -87,6 +87,10 @@ describe("workspace navigation", () => {
     expect(screen.getByRole("heading", { name: "What had to be balanced" })).toBeInTheDocument();
     expect(screen.getByText("Harm value captured versus incident recall")).toBeInTheDocument();
 
+    fireEvent.click(screen.getByRole("tab", { name: "artifact" }));
+    expect(screen.getByText("Evidence record")).toBeInTheDocument();
+    expect(screen.getByText("final_test_metrics.json")).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole("tab", { name: "architecture" }));
     fireEvent.click(screen.getByRole("button", { name: "Run system flow" }));
     expect(screen.getByRole("button", { name: "Inspect Input stage" })).toHaveAttribute("aria-pressed", "true");

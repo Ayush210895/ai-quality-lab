@@ -10,7 +10,9 @@ import {
   Cpu,
   Database,
   ExternalLink,
+  FileJson2,
   FlaskConical,
+  ImageIcon,
   Layers3,
   LayoutGrid,
   Play,
@@ -303,18 +305,19 @@ function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project:
   return <div className="min-h-screen bg-[#f4f7f6] text-[#142126]" style={{ "--project-accent": project.accent, "--project-soft": project.soft } as CSSProperties}>
     <SiteHeader onHome={onBack} onOpenLab={onOpenLab} light />
     <main>
-      <section className="border-b border-[#cad5d3]" style={{ backgroundColor: project.soft }}>
+      <section className="case-hero border-b-4 bg-[#0f1d24] text-white" style={{ borderColor: project.accent }}>
         <div className="mx-auto max-w-[1500px] px-4 py-7 md:px-7 lg:py-10">
-          <button type="button" className="inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#536166] hover:bg-white/70" onClick={onBack}><ArrowLeft size={15} /> All projects</button>
+          <button type="button" className="inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#b9cac8] hover:bg-white/10" onClick={onBack}><ArrowLeft size={15} /> All projects</button>
           <div className="mt-5 grid gap-7 lg:grid-cols-[minmax(0,.85fr)_minmax(480px,1.15fr)] lg:items-stretch">
             <div className="flex flex-col justify-center py-2">
               <p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)} · {project.family}</p>
+              <span className="mt-4 inline-flex w-fit items-center border border-white/20 px-3 py-2 text-[10px] font-extrabold uppercase text-[#b9cac8]"><span className="mr-2 h-2 w-2" style={{ backgroundColor: project.accent }} />{THEME_LABELS[project.visual]}</span>
               <h1 className="mt-3 break-words text-4xl font-black leading-[1.04] sm:text-5xl">{project.name}</h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-[#48565a]">{project.problem}</p>
-              <div className="mt-5 border-l-4 bg-white/75 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>The result in one sentence</span><p className="mt-1 text-sm font-bold leading-6 text-[#26383d]">{project.outcome}</p></div>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[#b9cac8]">{project.problem}</p>
+              <div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>The result in one sentence</span><p className="mt-1 text-sm font-bold leading-6 text-white">{project.outcome}</p></div>
               <div className="mt-6 flex flex-wrap gap-2"><a className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white" style={{ backgroundColor: project.accent }} href={project.repoUrl} target="_blank" rel="noreferrer"><Code2 size={16} /> View repository <ArrowUpRight size={15} /></a>{project.name === "ai-quality-lab" && <button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={16} /> Open live lab</button>}</div>
             </div>
-            <div className="min-h-[560px] overflow-hidden rounded-[6px] border border-white/70 bg-white/60 shadow-[0_18px_45px_rgba(20,33,38,.12)] lg:min-h-[390px]"><VisualStage project={project} /></div>
+            <CaseArtifactDeck project={project} />
           </div>
         </div>
       </section>
@@ -352,6 +355,91 @@ function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project:
         <div className="mx-auto max-w-[1500px] px-4 py-9 md:px-7"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>Continue exploring</p><h2 className="mt-1 text-2xl font-black">Related projects</h2></div><button className="hidden min-h-9 items-center gap-2 text-xs font-bold sm:inline-flex" type="button" onClick={onBack}>See all <ArrowRight size={15} /></button></div><div className="grid gap-3 md:grid-cols-3">{related.map((item) => <button key={item.name} type="button" className="flex min-h-28 items-center justify-between gap-4 rounded-[6px] border border-[#d4dddc] p-4 text-left hover:border-[#8ba29e]" onClick={() => onSelectProject(item)}><span><span className="block text-[10px] font-extrabold uppercase" style={{ color: item.accent }}>{projectGroup(item)}</span><strong className="mt-2 block break-words text-sm">{item.name}</strong></span><ArrowRight className="shrink-0" size={18} /></button>)}</div></div>
       </section>
     </main>
+  </div>;
+}
+
+const THEME_LABELS: Record<VisualKind, string> = {
+  risk: "Risk operations console",
+  fraud: "Investigation command",
+  air: "Environmental sensor grid",
+  ranking: "Recommendation studio",
+  language: "Language intelligence desk",
+  clusters: "Segmentation field",
+  signals: "Wearable signal lab",
+  regression: "Model diagnostics",
+  space: "Mission control archive",
+  agents: "Agent operations room",
+  portfolio: "Risk factor terminal",
+  learning: "Algorithm workbench",
+};
+
+const ARTIFACT_NAMES: Partial<Record<string, string>> = {
+  "travel-marketplace-harm-risk": "final_test_metrics.json",
+  "Credit-Risk-MLOps-AWS": "model_report.json",
+  "Credit-Card-Anomaly-Detection": "full_data_report.json",
+  "Beijing-AQI-Prediction": "full_dataset_results.csv",
+  "Amazon-Recommendation-System": "baseline_random_split.json",
+  "financial-doc-agent": "evaluation_results.json",
+  "FinBERT-Financial-News-Sentiment": "run_manifest.json",
+  "Clustering": "experiment_report.csv",
+  "Portfolio-Risk-PCA-From-Scratch": "portfolio_risk_report.csv",
+  "Human-Activity-Monitoring": "visibility_metrics.csv",
+  "Linear-Regression": "experiment_report.csv",
+  "Logistic-Regression": "experiment_report.json",
+  "Naive-Bayes": "experiment_report.json",
+  "multi-agent-dev-system": "RUN_MANIFEST.json",
+  "Machine-Learning-From-Scratch": "tested implementations",
+};
+
+const QUALITY_LAB_SCREENSHOT = new URL("../artifacts/ai-quality-lab-v3.png", import.meta.url).href;
+const PROJECT_IMAGES: Partial<Record<string, { src: string; alt: string; caption: string }>> = {
+  "ai-quality-lab": { src: QUALITY_LAB_SCREENSHOT, alt: "AI Quality Lab model evaluation interface", caption: "Deployed evaluation workspace with production gates and model-quality controls." },
+  "Space-Race-Visualisation": { src: "https://raw.githubusercontent.com/Ayush210895/Space-Race-Visualisation/main/outputs/figures/launches_by_year.svg", alt: "Space launch attempts by year", caption: "Repository artifact showing the historical launch timeline used in the case study." },
+};
+
+function CaseArtifactDeck({ project }: { project: ProjectStory }) {
+  const [view, setView] = useState<"signal" | "artifact" | "decision">("signal");
+  useEffect(() => setView("signal"), [project.slug]);
+  return <section className="case-workbench min-h-[560px] overflow-hidden border border-white/20 bg-[#12272f] shadow-[14px_14px_0_var(--project-accent)] lg:min-h-[430px]">
+    <div className="flex items-center justify-between gap-3 border-b border-white/15 px-3 py-3 sm:px-4">
+      <div><span className="block text-[9px] font-extrabold uppercase" style={{ color: project.accent }}>Case workbench</span><strong className="mt-0.5 block text-xs text-white">{THEME_LABELS[project.visual]}</strong></div>
+      <div className="flex gap-1" role="tablist" aria-label="Case views">
+        {(["signal", "artifact", "decision"] as const).map((item) => <button key={item} type="button" role="tab" aria-selected={view === item} className={`min-h-9 rounded-[4px] px-2.5 text-[9px] font-extrabold uppercase sm:px-3 sm:text-[10px] ${view === item ? "bg-white text-[#142126]" : "text-[#aebfbd] hover:bg-white/10"}`} onClick={() => setView(item)}>{item}</button>)}
+      </div>
+    </div>
+    <div className="h-[500px] lg:h-[370px]">
+      {view === "signal" && <VisualStage project={project} />}
+      {view === "artifact" && <ArtifactView project={project} />}
+      {view === "decision" && <DecisionView project={project} />}
+    </div>
+  </section>;
+}
+
+function ArtifactView({ project }: { project: ProjectStory }) {
+  const image = PROJECT_IMAGES[project.name];
+  if (image) return <div className="grid h-full grid-rows-[1fr_auto] bg-[#09161b]">
+    <div className="relative min-h-0 overflow-hidden p-4"><img className="h-full w-full object-contain" src={image.src} alt={image.alt} /><span className="absolute left-5 top-5 inline-flex items-center gap-2 bg-[#0f1d24]/95 px-3 py-2 text-[9px] font-extrabold uppercase text-white"><ImageIcon size={13} /> Repository artifact</span></div>
+    <p className="border-t border-white/15 px-5 py-3 text-xs leading-5 text-[#b9cac8]">{image.caption}</p>
+  </div>;
+
+  const artifactName = ARTIFACT_NAMES[project.name] ?? "evidence_snapshot";
+  return <div className="artifact-terminal grid h-full grid-rows-[auto_1fr_auto] bg-[#09161b] text-white">
+    <div className="flex items-center justify-between border-b border-white/15 px-5 py-4"><span className="inline-flex items-center gap-2 text-xs font-bold"><FileJson2 size={16} style={{ color: project.accent }} />{artifactName}</span><span className="font-mono text-[9px] uppercase text-[#8fa5a2]">source {project.sourceCommit}</span></div>
+    <div className="overflow-hidden px-5 py-4 font-mono text-xs">
+      <div className="mb-4 text-[#7f9693]">Evidence record</div>
+      <div className="space-y-3">{project.metrics.map((metric, index) => <div key={metric.label} className="grid grid-cols-[28px_minmax(0,1fr)_auto] gap-3 border-b border-white/10 pb-3"><span className="text-[#607773]">{String(index + 1).padStart(2, "0")}</span><span className="min-w-0 break-words text-[#b9cac8]">{metric.label.toLowerCase().replaceAll(" ", "_")}</span><strong style={{ color: index === 0 ? project.accent : "white" }}>{metric.value}</strong></div>)}</div>
+      <div className="mt-5 border-l-2 pl-3 text-[10px] leading-5 text-[#8fa5a2]" style={{ borderColor: project.accent }}>{project.evidence}</div>
+    </div>
+    <div className="grid grid-cols-3 border-t border-white/15 text-center text-[9px] font-extrabold uppercase text-[#8fa5a2]"><span className="border-r border-white/10 px-2 py-3">Committed</span><span className="border-r border-white/10 px-2 py-3">Traceable</span><span className="px-2 py-3">Reviewable</span></div>
+  </div>;
+}
+
+function DecisionView({ project }: { project: ProjectStory }) {
+  const tradeoffs = TRADEOFFS[project.name] ?? [project.boundary];
+  return <div className="grid h-full overflow-auto bg-[#0f1d24] p-5 text-white sm:p-7">
+    <div><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Decision room</span><h2 className="mt-2 max-w-2xl text-2xl font-black leading-tight">{businessQuestion(project)}</h2><p className="mt-4 text-sm leading-6 text-[#b9cac8]">{project.decision}</p></div>
+    <div className="mt-6 grid gap-3 sm:grid-cols-3">{tradeoffs.map((item, index) => <div key={item} className="border-t-2 bg-white/5 p-3" style={{ borderColor: index === 0 ? project.accent : "rgba(255,255,255,.22)" }}><span className="font-mono text-[9px]" style={{ color: project.accent }}>0{index + 1}</span><p className="mt-2 text-xs leading-5 text-[#d6e0df]">{item}</p></div>)}</div>
+    <div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[9px] font-extrabold uppercase text-[#8fa5a2]">Next validation</span><p className="mt-2 text-xs leading-5">{project.nextStep}</p></div>
   </div>;
 }
 
