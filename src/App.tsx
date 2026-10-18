@@ -64,6 +64,8 @@ import {
 } from "./lib/model-metrics.mjs";
 import { travelEvaluation } from "./data/travelEvaluation";
 import { portfolioProjects, type PortfolioProject, type ProjectStatus } from "./data/projectRegistry";
+import { projectBySlug, type ProjectStory } from "./data/projectStories";
+import PortfolioSite from "./PortfolioSite";
 
 type ModuleId = "portfolio" | "classification" | "comparison" | "regression" | "ranking" | "llm" | "monitoring";
 type Tone = "pass" | "conditional" | "stop" | "neutral";
@@ -90,7 +92,7 @@ const reportSchema = z.object({
 });
 
 const MODULES: Array<{ id: ModuleId; label: string; short: string; icon: typeof Gauge }> = [
-  { id: "portfolio", label: "Project portfolio", short: "Projects", icon: FolderGit2 },
+  { id: "portfolio", label: "Evidence registry", short: "Registry", icon: FolderGit2 },
   { id: "classification", label: "Classification", short: "Classification", icon: Gauge },
   { id: "comparison", label: "GitHub model comparison", short: "GitHub model", icon: GitCompare },
   { id: "regression", label: "Regression & forecasting", short: "Forecasting", icon: TrendingUp },
@@ -570,8 +572,8 @@ function Workspace({ controls, children }: { controls: ReactNode; children: Reac
   return <main className="grid min-h-[calc(100vh-74px)] lg:grid-cols-[300px_minmax(0,1fr)]"><>{controls}</><section className="min-w-0 space-y-4 p-4 md:p-6 xl:p-8" aria-live="polite">{children}</section></main>;
 }
 
-export default function App() {
-  const [active, setActive] = useState<ModuleId>("portfolio");
+function QualityLabApp({ onExit }: { onExit: () => void }) {
+  const [active, setActive] = useState<ModuleId>("classification");
   const [resetKey, setResetKey] = useState(0);
   const [report, setReport] = useState<Report | null>(null);
   const activeModule = MODULES.find((module) => module.id === active)!;
@@ -587,6 +589,7 @@ export default function App() {
       <header className="flex min-h-[74px] flex-col justify-between gap-4 bg-ink px-4 py-3 text-white sm:flex-row sm:items-center md:px-6 xl:px-8">
         <div className="min-w-0"><p className="text-[11px] font-extrabold uppercase text-[#82d9cc]">AI Quality Lab · v3</p><h1 className="mt-1 truncate text-lg font-bold">{activeModule.label}</h1></div>
         <div className="flex items-center gap-2">
+          <button className="inline-flex h-9 items-center gap-2 rounded-[6px] border border-slate-500 px-3 text-xs font-bold hover:bg-slate-800" type="button" title="Return to Project Atlas" onClick={onExit}><FolderGit2 size={15} /><span className="hidden sm:inline">Project Atlas</span></button>
           <span className="mr-1 hidden max-w-64 truncate text-xs text-slate-300 md:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
           <button className="inline-flex h-9 items-center gap-2 rounded-[6px] border border-slate-500 px-3 text-xs font-bold hover:bg-slate-800" type="button" title="Reset active workspace" onClick={() => setResetKey((value) => value + 1)}><RefreshCw size={15} /><span className="hidden sm:inline">Reset</span></button>
           <button className="inline-flex h-9 items-center gap-2 rounded-[6px] bg-[#72d6c7] px-3 text-xs font-bold text-[#10272e] hover:bg-[#91e4d8]" type="button" title="Download JSON evidence report" onClick={exportReport} disabled={!report}><Download size={15} /> Export</button>
@@ -599,4 +602,28 @@ export default function App() {
       <footer className="flex flex-col justify-between gap-2 border-t border-line bg-white px-5 py-4 text-xs text-slate-500 sm:flex-row"><span>All evaluation runs locally in your browser.</span><span>Generic evaluation suite · no external RAG project dependency</span></footer>
     </div>
   );
+}
+
+function currentHash() {
+  return window.location.hash || "#/";
+}
+
+export default function App() {
+  const [route, setRoute] = useState(currentHash);
+  useEffect(() => {
+    const handleHashChange = () => setRoute(currentHash());
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  const navigate = (target: string) => {
+    setRoute(target);
+    if (window.location.hash !== target) window.location.hash = target;
+    if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  if (route.startsWith("#/lab")) return <QualityLabApp onExit={() => navigate("#/")} />;
+  const slug = route.startsWith("#/projects/") ? decodeURIComponent(route.slice("#/projects/".length)) : "";
+  const project = slug ? projectBySlug.get(slug) : undefined;
+  const selectProject = (selected: ProjectStory) => navigate(`#/projects/${selected.slug}`);
+  return <PortfolioSite project={project} onHome={() => navigate("#/")} onOpenLab={() => navigate("#/lab")} onSelectProject={selectProject} />;
 }

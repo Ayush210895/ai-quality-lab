@@ -1,9 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
 vi.mock("recharts", () => ({
+  Area: () => null,
+  AreaChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Bar: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   BarChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   CartesianGrid: () => null,
@@ -13,14 +15,21 @@ vi.mock("recharts", () => ({
   LineChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   ReferenceLine: () => null,
   ResponsiveContainer: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
+  Scatter: () => null,
+  ScatterChart: ({ children }: { children?: ReactNode }) => <div>{children}</div>,
   Tooltip: () => null,
   XAxis: () => null,
   YAxis: () => null,
+  ZAxis: () => null,
 }));
 
 describe("workspace navigation", () => {
+  beforeEach(() => {
+    window.location.hash = "#/lab";
+  });
+
   it.each([
-    ["Project portfolio", "All GitHub projects, one evaluation path"],
+    ["Evidence registry", "All GitHub projects, one evaluation path"],
     ["Classification", "Operating assumptions"],
     ["GitHub model comparison", "Travel harm-risk model"],
     ["Regression & forecasting", "Regression & forecasting"],
@@ -47,9 +56,21 @@ describe("workspace navigation", () => {
 
   it("routes a connected project to its evidence workspace", () => {
     render(<App />);
+    fireEvent.click(screen.getByRole("tab", { name: "Evidence registry" }));
     fireEvent.click(screen.getByRole("button", { name: "Open evidence" }));
 
     expect(screen.getByRole("tab", { name: "GitHub model comparison" })).toHaveAttribute("aria-selected", "true");
     expect(screen.getAllByRole("heading", { name: "Travel harm-risk model" }).length).toBeGreaterThan(0);
+  });
+
+  it("opens the project atlas and a dedicated project page", async () => {
+    window.location.hash = "#/";
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /AI, ML and data systems/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Explore travel-marketplace-harm-risk" }));
+
+    expect(await screen.findByRole("heading", { name: "travel-marketplace-harm-risk" })).toBeInTheDocument();
+    expect(window.location.hash).toBe("#/projects/travel-marketplace-harm-risk");
   });
 });

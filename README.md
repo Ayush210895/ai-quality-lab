@@ -1,14 +1,31 @@
-# AI Quality Lab
+# AI/ML Project Atlas and Quality Lab
 
-AI Quality Lab is a browser-based decision-support suite for evaluating whether an AI or ML system is ready to launch and healthy in production. The React and TypeScript interface covers the main applied-model families through dedicated evaluation workspaces rather than forcing every system into classification metrics.
+This site is an interactive portfolio for Ayush Soni's public AI, machine-learning, GenAI, analytics, and production-system work. Its Project Atlas maps all 19 repositories into visual, themed project stories; the embedded AI Quality Lab remains a browser-based decision-support suite for evaluating whether an AI or ML system is ready to launch and healthy in production.
 
 **Live product:** [ayush210895.github.io/ai-quality-lab](https://ayush210895.github.io/ai-quality-lab/)
+
+## Project Atlas experience
+
+- Searchable, category-based explorer for all public projects.
+- Dedicated hash URL for every project, suitable for direct sharing.
+- Project-specific color system and live visual preview.
+- Story, architecture, and evidence views with verified metrics and honest limitations.
+- Direct repository links and related-project navigation.
+- A persistent route into the interactive Quality Lab.
+
+Example project URL:
+
+```text
+https://ayush210895.github.io/ai-quality-lab/#/projects/travel-marketplace-harm-risk
+```
+
+## Quality Lab
 
 ![AI Quality Lab evaluation suite](artifacts/ai-quality-lab-v3.png)
 
 ## Evaluation workspaces
 
-- **Project portfolio:** maps all 19 public GitHub repositories to their model family, evidence state, pinned source commit, repository, and matching evaluation path.
+- **Evidence registry:** maps all 19 public GitHub repositories to their model family, evidence state, pinned source commit, repository, and matching evaluation path.
 - **Classification:** confusion matrix, PR-AUC, threshold optimization, false-positive and false-negative economics, and review capacity.
 - **Regression and forecasting:** MAE, RMSE, WAPE, directional bias, R², and prediction-interval coverage.
 - **Ranking and recommendations:** Precision@K, Recall@K, NDCG@K, MRR, and catalog coverage.
