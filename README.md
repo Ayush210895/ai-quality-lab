@@ -9,7 +9,7 @@ This site is a unified professional portfolio for Ayush Soni's applied AI, machi
 ## Unified portfolio experience
 
 - Professional homepage with verified experience, selected outcomes, current role direction, resume, and contact paths.
-- Live first-viewport evidence object that switches among applied ML, production MLOps, and grounded GenAI systems.
+- Current public builds and verified professional systems, labeled separately to keep personal-project and employer evidence clear.
 - One navigation system connecting professional context, project cases, source repositories, and the Quality Lab.
 - Responsive desktop and mobile layouts with reduced-motion support.
 
@@ -23,7 +23,7 @@ This site is a unified professional portfolio for Ayush Soni's applied AI, machi
 - Dedicated hash URL for every project, suitable for direct sharing.
 - Project-specific color system and live visual preview.
 - Per-project case workbench with interactive signal, source-artifact, and decision-room views.
-- An 18-second guided case tour plus recruiter and engineer views that change the level of detail without hiding the evidence.
+- A focused project workbench that keeps the business decision, architecture, evidence, operating owner, next validation step, and limitations together.
 - Direct repository, architecture, evidence, and live-demo entry points where each destination genuinely exists.
 - Genuine repository visuals for the Quality Lab and Space Race cases, plus traceable metric, report, CSV, and run-manifest views across the remaining projects.
 - A prominent, evidence-bounded decision statement for every project.

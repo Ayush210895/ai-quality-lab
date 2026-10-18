@@ -209,7 +209,7 @@ const EXPERIENCE = [
   {
     years: "2018 - 2021",
     company: "Accenture",
-    role: "Data Analyst - Banking Analytics",
+    role: "Machine Learning Associate - Banking Analytics",
     bullets: [
       "Built ML credit- and debit-limit optimization for OP Financial, driving 23% revenue growth and a 40% efficiency improvement.",
       "Developed XGBoost churn and segmentation models for Allianz Bank with Tableau and Power BI decision dashboards.",
@@ -220,11 +220,11 @@ const EXPERIENCE = [
 ] as const;
 
 const PROFESSIONAL_SYSTEMS = [
-  { id: "01", name: "Financial Document Intelligence Agent", tag: "Agentic RAG - Text2SQL - Evaluation", description: "Reranked retrieval over filings, read-only Text2SQL, tool calling, evaluation cases, FastAPI, Docker, and Streamlit. Runs locally; cloud deployment remains planned.", accent: "#c8a2ff" },
-  { id: "02", name: "GenAI Data Layer", tag: "GenAI - Natural Language SQL", description: "Natural-language access to enterprise data through Snowflake Cortex AI and Databricks-hosted LLM workflows, connecting schema-grounded SQL with stakeholder-facing answers.", accent: "#5fe0bd" },
-  { id: "03", name: "Forecasting and Price Elasticity", tag: "Time Series - ML - Optimization", description: "Forecasting and elasticity systems supporting pricing, inventory, promotional measurement, and ROI decisions across commercial channels.", accent: "#ff765c" },
-  { id: "04", name: "Bond Market Predictor", tag: "Quant ML - Finance", description: "XGBoost modeling on rolling Bloomberg time-series data, reaching a 62.4% weekly hit rate for fixed-income research.", accent: "#72b7ff" },
-  { id: "05", name: "FinBERT Sentiment Engine", tag: "NLP - Credit Risk", description: "Domain-specific financial-news sentiment modeling integrated into credit-risk and investment-research workflows, with 87% reported accuracy.", accent: "#ffc159" },
+  { id: "01", name: "AI Quality Lab", tag: "Public build - Evaluation infrastructure", description: "Six browser-based workspaces connect model evidence, operating constraints, launch gates, monitoring, and downloadable decision records across ML and LLM systems.", accent: "#5fe0bd" },
+  { id: "02", name: "Travel Marketplace Harm Risk", tag: "Public build - Applied ML decision science", description: "A locked XGBoost policy ranks the top 5% of bookings by expected loss and captured 37.2% of harmful value on an untouched future test.", accent: "#ff765c" },
+  { id: "03", name: "Financial Document Intelligence Agent", tag: "Public build - Agentic RAG and Text2SQL", description: "Reranked retrieval over filings, read-only Text2SQL, tool calling, evaluation cases, FastAPI, Docker, and Streamlit. Runs locally; cloud deployment remains planned.", accent: "#c8a2ff" },
+  { id: "04", name: "Causal Demand Planning", tag: "Professional work - Forecasting and optimization", description: "SARIMAX and XGBoost forecasting, reconciliation, pricing and promotion features, and time-aware evaluation across three commercial channels.", accent: "#72b7ff" },
+  { id: "05", name: "Financial NLP and Quant Research", tag: "Professional work - NLP and market modeling", description: "FinBERT financial-news classification, XGBoost bond-market forecasting, and governed Bloomberg data workflows for research and risk decisions.", accent: "#ffc159" },
 ] as const;
 
 const STACK_GROUPS = [
@@ -236,8 +236,8 @@ const STACK_GROUPS = [
 
 const CREDENTIALS = {
   education: [
-    "Northeastern University - M.S. Data Analytics, 2021-2023",
-    "NMIMS University - B.Tech Computer Science, 2014-2018",
+    "Northeastern University - M.S. Data Analytics Engineering, 2021-2023",
+    "NMIMS University - B.Tech Computer Engineering, 2014-2018",
   ],
   certifications: [
     "Meta Data Analyst",
@@ -459,7 +459,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
             <div>
               <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[.08em] text-[#75a7ff]"><span className="status-pulse h-2 w-2 rounded-full bg-[#2ee5c2] shadow-[0_0_16px_#2ee5c2]" /> status: open_to_opportunities <span className="status-cursor">|</span></span>
               <h1 aria-label="Ayush Soni" className="portfolio-display mt-3 text-[64px] leading-[.92] text-[#f0f4ff] sm:text-[88px] lg:text-[112px]">Ayush Soni</h1>
-              <p className="mt-4 max-w-3xl text-xl font-bold leading-8 text-white sm:text-3xl">Senior Data Scientist - Causal Inference and GenAI Agentic Systems</p>
+              <p className="mt-4 max-w-3xl text-xl font-bold leading-8 text-white sm:text-3xl">Senior Data Scientist - Applied ML, Causal Inference, and GenAI</p>
             </div>
           </div>
           <div className="mt-9 max-w-4xl">
@@ -479,8 +479,8 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
       <section className="border-b border-[#213050] bg-[#070d19]/82 py-16 backdrop-blur-[2px] lg:py-24" id="systems">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 border-b border-[#263657] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Professional systems</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">What I build<br />in the real world.</h2></div>
-            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Production-minded systems spanning grounded AI, forecasting, causal measurement, financial NLP, and decision intelligence.</p>
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Selected systems</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Recent builds<br />and applied work.</h2></div>
+            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Public builds and verified professional work are labeled separately, with scope boundaries kept visible.</p>
           </div>
           <div>
             {PROFESSIONAL_SYSTEMS.map((system) => <article key={system.id} className="group grid gap-5 border-b border-[#263657] py-8 md:grid-cols-[70px_minmax(240px,.8fr)_minmax(0,1.2fr)] md:items-start md:gap-9">
