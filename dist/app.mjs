@@ -4,6 +4,8 @@ import {
   averagePrecision,
   evaluatePredictions,
   generateScenario,
+  parsePredictionCsv,
+  recommendThreshold,
   thresholdSweep,
 } from "./metrics.mjs";
 
@@ -12,7 +14,7 @@ const defaults = {
   threshold: 0.5,
   falsePositiveCost: 10,
   falseNegativeCost: 1000,
-  capacity: 8,
+  capacity: 15,
 };
 
 const controls = {
@@ -29,11 +31,18 @@ const elements = Object.fromEntries(
     "decision-banner", "decision-status", "decision-pill", "decision-summary", "cost-per-thousand",
     "cost-change", "baseline-copy", "sample-summary", "gate-list", "gate-count", "edge-message",
     "tradeoff-chart", "chart-caption", "prevalence-output", "threshold-output",
-    "false-positive-output", "false-negative-output", "capacity-output",
+    "false-positive-output", "false-negative-output", "capacity-output", "dataset-badge",
+    "synthetic-mode", "upload-mode", "upload-panel", "csv-file", "sample-button", "upload-status",
+    "recommendation-note", "apply-recommendation", "policy-table",
   ].map((id) => [id, document.querySelector(`#${id}`)]),
 );
 
 let rows = [];
+let dataMode = "synthetic";
+let uploadedFilename = "";
+let dataVersion = 0;
+let cachedPrAuc = null;
+let recommendationCache = { key: "", value: null };
 
 const currency = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -44,6 +53,16 @@ const integer = new Intl.NumberFormat("en-US");
 
 function percent(value, digits = 1) {
   return value === null || Number.isNaN(value) ? "N/A" : `${(value * 100).toFixed(digits)}%`;
+}
+
+function downloadBlob(content, type, filename) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 function readState() {
@@ -63,13 +82,41 @@ function costsFrom(state) {
   };
 }
 
+function setRows(nextRows) {
+  rows = nextRows;
+  dataVersion += 1;
+  cachedPrAuc = averagePrecision(rows);
+  recommendationCache = { key: "", value: null };
+}
+
 function regenerateRows(state) {
-  rows = generateScenario({ size: 10000, prevalence: state.prevalence / 100, seed: 218 });
+  setRows(generateScenario({ size: 10000, prevalence: state.prevalence / 100, seed: 218 }));
+}
+
+function actualPrevalence() {
+  if (rows.length === 0) return 0;
+  return rows.reduce((sum, row) => sum + row.actual, 0) / rows.length;
+}
+
+function renderDataSource(state) {
+  const synthetic = dataMode === "synthetic";
+  elements["synthetic-mode"].setAttribute("aria-pressed", String(synthetic));
+  elements["upload-mode"].setAttribute("aria-pressed", String(!synthetic));
+  elements["upload-panel"].hidden = synthetic;
+  controls.prevalence.disabled = !synthetic;
+  elements["prevalence-output"].value = synthetic
+    ? `${state.prevalence.toFixed(1)}%`
+    : `${(actualPrevalence() * 100).toFixed(1)}%`;
+  elements["dataset-badge"].textContent = synthetic
+    ? "Synthetic evaluation set"
+    : dataMode === "upload"
+      ? `${uploadedFilename} · browser-local`
+      : "Select a CSV · sample remains active";
 }
 
 function renderOutputs(state) {
-  elements["prevalence-output"].value = `${state.prevalence.toFixed(1)}%`;
-  elements["threshold-output"].value = state.threshold.toFixed(2);
+  renderDataSource(state);
+  elements["threshold-output"].value = state.threshold.toFixed(3);
   elements["false-positive-output"].value = currency.format(state.falsePositiveCost);
   elements["false-negative-output"].value = currency.format(state.falseNegativeCost);
   elements["capacity-output"].value = `${state.capacity.toFixed(1)}%`;
@@ -159,6 +206,67 @@ function drawChart(points, currentThreshold) {
   context.setLineDash([]);
 }
 
+function getRecommendation(state, costs) {
+  const key = [dataVersion, state.falsePositiveCost, state.falseNegativeCost, state.capacity].join(":");
+  if (recommendationCache.key !== key) {
+    recommendationCache = {
+      key,
+      value: recommendThreshold(rows, costs, {
+        minRecall: 0.7,
+        maxReviewRate: state.capacity / 100,
+      }),
+    };
+  }
+  return recommendationCache.value;
+}
+
+function policyRow(label, detail, threshold, metrics, decision, recommended = false) {
+  const row = document.createElement("tr");
+  if (recommended) row.className = "recommended-row";
+  row.innerHTML = `
+    <td class="table-policy">${label}<small>${detail}</small></td>
+    <td>${threshold === null ? "N/A" : threshold.toFixed(3)}</td>
+    <td>${percent(metrics.precision)}</td>
+    <td>${percent(metrics.recall)}</td>
+    <td>${percent(metrics.alertRate)}</td>
+    <td>${currency.format(metrics.costPerThousand)}</td>
+    <td><span class="table-status ${decision.tone}">${decision.status}</span></td>
+  `;
+  return row;
+}
+
+function renderPolicyComparison(state, costs, baseline, currentDecision) {
+  const recommendation = getRecommendation(state, costs);
+  const baselineDecision = assessLaunch(baseline, baseline.expectedCost, state.capacity / 100);
+  const recommendedDecision = assessLaunch(
+    recommendation.metrics,
+    baseline.expectedCost,
+    state.capacity / 100,
+  );
+
+  elements["policy-table"].replaceChildren(
+    policyRow("All negative", "Reference policy", null, baseline, baselineDecision),
+    policyRow("Current", "Slider selection", state.threshold, evaluatePredictions(rows, state.threshold, costs), currentDecision),
+    policyRow(
+      recommendation.feasible ? "Recommended" : "Lowest cost",
+      recommendation.feasible ? "Clears recall and capacity" : "No threshold clears both constraints",
+      recommendation.threshold,
+      recommendation.metrics,
+      recommendedDecision,
+      true,
+    ),
+  );
+
+  elements["recommendation-note"].textContent = recommendation.feasible
+    ? `Threshold ${recommendation.threshold.toFixed(3)} minimizes expected cost while maintaining at least 70% recall and staying within ${state.capacity.toFixed(1)}% review capacity.`
+    : `No threshold satisfies both 70% recall and ${state.capacity.toFixed(1)}% review capacity. The lowest-cost fallback is shown; improve the model or revise the constraint.`;
+  elements["apply-recommendation"].textContent = recommendation.feasible
+    ? "Apply recommended"
+    : "Apply lowest cost";
+  elements["apply-recommendation"].dataset.threshold = String(recommendation.threshold);
+  return recommendation;
+}
+
 function render({ regenerate = false } = {}) {
   const state = readState();
   if (regenerate || rows.length === 0) regenerateRows(state);
@@ -167,13 +275,12 @@ function render({ regenerate = false } = {}) {
   const costs = costsFrom(state);
   const metrics = evaluatePredictions(rows, state.threshold, costs);
   const baseline = allNegativeBaseline(rows, costs);
-  const prAuc = averagePrecision(rows);
   const decision = assessLaunch(metrics, baseline.expectedCost, state.capacity / 100);
 
   elements.accuracy.textContent = percent(metrics.accuracy);
   elements.precision.textContent = percent(metrics.precision);
   elements.recall.textContent = percent(metrics.recall);
-  elements["pr-auc"].textContent = percent(prAuc);
+  elements["pr-auc"].textContent = percent(cachedPrAuc);
   elements["alert-rate"].textContent = percent(metrics.alertRate);
   elements["sample-summary"].textContent = `${integer.format(metrics.total)} transactions · ${integer.format(metrics.positives)} positives`;
   renderMatrix(metrics);
@@ -197,14 +304,19 @@ function render({ regenerate = false } = {}) {
 
   const points = thresholdSweep(rows, costs);
   drawChart(points, state.threshold);
-  elements["chart-caption"].textContent = `Current threshold: ${state.threshold.toFixed(2)} · Precision ${percent(metrics.precision)} · Recall ${percent(metrics.recall)}`;
+  elements["chart-caption"].textContent = `Current threshold: ${state.threshold.toFixed(3)} · Precision ${percent(metrics.precision)} · Recall ${percent(metrics.recall)}`;
+  const recommendation = renderPolicyComparison(state, costs, baseline, decision);
 
   window.currentReport = {
     generatedAt: new Date().toISOString(),
-    scenario: state,
+    dataSource: dataMode === "upload"
+      ? { type: "csv", filename: uploadedFilename, processedLocally: true }
+      : { type: "synthetic", seed: 218 },
+    scenario: { ...state, observedPrevalence: actualPrevalence() },
     sample: { total: metrics.total, positives: metrics.positives },
-    metrics: { ...metrics, prAuc },
+    metrics: { ...metrics, prAuc: cachedPrAuc },
     baseline,
+    recommendation,
     decision,
   };
 }
@@ -213,21 +325,73 @@ controls.prevalence.addEventListener("input", () => render({ regenerate: true })
 [controls.threshold, controls.falsePositiveCost, controls.falseNegativeCost, controls.capacity]
   .forEach((control) => control.addEventListener("input", () => render()));
 
+elements["synthetic-mode"].addEventListener("click", () => {
+  dataMode = "synthetic";
+  uploadedFilename = "";
+  elements["csv-file"].value = "";
+  elements["upload-status"].className = "upload-status";
+  elements["upload-status"].textContent = "Processed locally in your browser.";
+  render({ regenerate: true });
+});
+
+elements["upload-mode"].addEventListener("click", () => {
+  if (dataMode === "synthetic") dataMode = "upload-pending";
+  render();
+  elements["csv-file"].focus();
+});
+
+elements["csv-file"].addEventListener("change", async (event) => {
+  const [file] = event.target.files;
+  if (!file) return;
+
+  elements["upload-status"].className = "upload-status";
+  elements["upload-status"].textContent = "Validating CSV...";
+  try {
+    if (file.size > 15 * 1024 * 1024) throw new Error("The file exceeds the 15 MB browser limit.");
+    const parsed = parsePredictionCsv(await file.text());
+    dataMode = "upload";
+    uploadedFilename = file.name;
+    setRows(parsed.rows);
+    const ignored = parsed.metadata.ignoredColumns.length > 0
+      ? ` Ignored columns: ${parsed.metadata.ignoredColumns.join(", ")}.`
+      : "";
+    elements["upload-status"].className = "upload-status success";
+    elements["upload-status"].textContent = `${integer.format(parsed.metadata.total)} rows loaded locally.${ignored}`;
+    render();
+  } catch (error) {
+    elements["upload-status"].className = "upload-status error";
+    elements["upload-status"].textContent = error.message;
+  }
+});
+
+elements["sample-button"].addEventListener("click", () => {
+  const sampleRows = generateScenario({ size: 250, prevalence: 0.08, seed: 218 });
+  const csv = ["actual,score", ...sampleRows.map((row) => `${row.actual},${row.score.toFixed(6)}`)].join("\n");
+  downloadBlob(csv, "text/csv", "ai-quality-lab-sample.csv");
+});
+
+elements["apply-recommendation"].addEventListener("click", () => {
+  controls.threshold.value = elements["apply-recommendation"].dataset.threshold;
+  render();
+});
+
 document.querySelector("#reset-button").addEventListener("click", () => {
   Object.entries(defaults).forEach(([name, value]) => { controls[name].value = String(value); });
+  dataMode = "synthetic";
+  uploadedFilename = "";
+  elements["csv-file"].value = "";
+  elements["upload-status"].className = "upload-status";
+  elements["upload-status"].textContent = "Processed locally in your browser.";
   render({ regenerate: true });
 });
 
 document.querySelector("#export-button").addEventListener("click", () => {
-  const blob = new Blob([JSON.stringify(window.currentReport, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "ai-quality-lab-decision-report.json";
-  link.click();
-  URL.revokeObjectURL(url);
+  downloadBlob(
+    JSON.stringify(window.currentReport, null, 2),
+    "application/json",
+    "ai-quality-lab-decision-report.json",
+  );
 });
 
 window.addEventListener("resize", () => render());
 render({ regenerate: true });
-

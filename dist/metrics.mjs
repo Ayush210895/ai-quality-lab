@@ -32,6 +32,31 @@ function safeDivide(numerator, denominator) {
   return denominator === 0 ? null : numerator / denominator;
 }
 
+function summarizeCounts(counts, costs) {
+  const total = counts.tp + counts.fp + counts.tn + counts.fn;
+  const precision = safeDivide(counts.tp, counts.tp + counts.fp);
+  const recall = safeDivide(counts.tp, counts.tp + counts.fn);
+  const accuracy = safeDivide(counts.tp + counts.tn, total);
+  const f1 = precision === null || recall === null || precision + recall === 0
+    ? null
+    : (2 * precision * recall) / (precision + recall);
+  const alertRate = safeDivide(counts.tp + counts.fp, total);
+  const expectedCost = counts.fp * costs.falsePositiveCost + counts.fn * costs.falseNegativeCost;
+
+  return {
+    ...counts,
+    total,
+    positives: counts.tp + counts.fn,
+    precision,
+    recall,
+    accuracy,
+    f1,
+    alertRate,
+    expectedCost,
+    costPerThousand: total === 0 ? 0 : (expectedCost / total) * 1000,
+  };
+}
+
 export function evaluatePredictions(
   rows,
   threshold,
@@ -51,28 +76,7 @@ export function evaluatePredictions(
     if (row.actual === 1 && predicted === 0) counts.fn += 1;
   }
 
-  const total = rows.length;
-  const precision = safeDivide(counts.tp, counts.tp + counts.fp);
-  const recall = safeDivide(counts.tp, counts.tp + counts.fn);
-  const accuracy = safeDivide(counts.tp + counts.tn, total);
-  const f1 = precision === null || recall === null || precision + recall === 0
-    ? null
-    : (2 * precision * recall) / (precision + recall);
-  const alertRate = safeDivide(counts.tp + counts.fp, total);
-  const expectedCost = counts.fp * falsePositiveCost + counts.fn * falseNegativeCost;
-
-  return {
-    ...counts,
-    total,
-    positives: counts.tp + counts.fn,
-    precision,
-    recall,
-    accuracy,
-    f1,
-    alertRate,
-    expectedCost,
-    costPerThousand: total === 0 ? 0 : (expectedCost / total) * 1000,
-  };
+  return summarizeCounts(counts, { falsePositiveCost, falseNegativeCost });
 }
 
 export function averagePrecision(rows) {
@@ -172,5 +176,155 @@ export function thresholdSweep(rows, costs) {
     points.push({ threshold, ...evaluatePredictions(rows, threshold, costs) });
   }
   return points;
+}
+
+function parseCsvRecords(text) {
+  const records = [];
+  let record = [];
+  let field = "";
+  let quoted = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    const next = text[index + 1];
+
+    if (character === '"' && quoted && next === '"') {
+      field += '"';
+      index += 1;
+    } else if (character === '"') {
+      quoted = !quoted;
+    } else if (character === "," && !quoted) {
+      record.push(field);
+      field = "";
+    } else if ((character === "\n" || character === "\r") && !quoted) {
+      if (character === "\r" && next === "\n") index += 1;
+      record.push(field);
+      if (record.some((value) => value.trim() !== "")) records.push(record);
+      record = [];
+      field = "";
+    } else {
+      field += character;
+    }
+  }
+
+  if (quoted) throw new Error("The CSV contains an unclosed quoted field.");
+  record.push(field);
+  if (record.some((value) => value.trim() !== "")) records.push(record);
+  return records;
+}
+
+export function parsePredictionCsv(text, { maxRows = 200000 } = {}) {
+  const cleanText = String(text ?? "").replace(/^\uFEFF/, "");
+  const records = parseCsvRecords(cleanText);
+  if (records.length < 2) {
+    throw new Error("The CSV must contain a header and at least one data row.");
+  }
+
+  const headers = records[0].map((value) => value.trim().toLowerCase());
+  const actualIndex = headers.indexOf("actual");
+  const scoreIndex = headers.indexOf("score");
+  if (actualIndex === -1 || scoreIndex === -1) {
+    throw new Error('Required columns are missing. Use headers named "actual" and "score".');
+  }
+  if (records.length - 1 > maxRows) {
+    throw new Error(`The file exceeds the ${maxRows.toLocaleString("en-US")} row limit.`);
+  }
+
+  const rows = [];
+  const issues = [];
+  records.slice(1).forEach((record, index) => {
+    const line = index + 2;
+    const actualText = (record[actualIndex] ?? "").trim();
+    const scoreText = (record[scoreIndex] ?? "").trim();
+    const actual = Number(actualText);
+    const score = Number(scoreText);
+
+    if (!/^[01]$/.test(actualText)) {
+      issues.push(`line ${line}: actual must be 0 or 1`);
+    } else if (scoreText === "" || !Number.isFinite(score) || score < 0 || score > 1) {
+      issues.push(`line ${line}: score must be between 0 and 1`);
+    } else {
+      rows.push({ actual, score });
+    }
+  });
+
+  if (issues.length > 0) {
+    const preview = issues.slice(0, 3).join("; ");
+    const remainder = issues.length > 3 ? `; plus ${issues.length - 3} more` : "";
+    throw new Error(`Invalid CSV values: ${preview}${remainder}.`);
+  }
+
+  const positives = rows.reduce((sum, row) => sum + row.actual, 0);
+  if (positives === 0 || positives === rows.length) {
+    throw new Error("The evaluation data must contain both positive and negative outcomes.");
+  }
+
+  return {
+    rows,
+    metadata: {
+      total: rows.length,
+      positives,
+      negatives: rows.length - positives,
+      ignoredColumns: headers.filter((name) => name !== "actual" && name !== "score"),
+    },
+  };
+}
+
+export function recommendThreshold(
+  rows,
+  costs,
+  { minRecall = 0.7, maxReviewRate = 0.08 } = {},
+) {
+  if (rows.length === 0) throw new Error("Threshold recommendation requires evaluation rows.");
+
+  const sorted = [...rows].sort((a, b) => b.score - a.score);
+  const positives = rows.reduce((sum, row) => sum + row.actual, 0);
+  const counts = { tp: 0, fp: 0, tn: rows.length - positives, fn: positives };
+  const candidates = [];
+
+  if (sorted[0].score < 1) {
+    candidates.push({ threshold: 1, metrics: summarizeCounts(counts, costs) });
+  }
+
+  for (let index = 0; index < sorted.length;) {
+    const score = sorted[index].score;
+    while (index < sorted.length && sorted[index].score === score) {
+      if (sorted[index].actual === 1) {
+        counts.tp += 1;
+        counts.fn -= 1;
+      } else {
+        counts.fp += 1;
+        counts.tn -= 1;
+      }
+      index += 1;
+    }
+    candidates.push({ threshold: score, metrics: summarizeCounts({ ...counts }, costs) });
+  }
+
+  if (candidates[candidates.length - 1].threshold > 0) {
+    candidates.push({ threshold: 0, metrics: summarizeCounts({ ...counts }, costs) });
+  }
+  const feasible = candidates.filter(({ metrics }) => (
+    metrics.recall !== null
+    && metrics.recall >= minRecall
+    && metrics.alertRate !== null
+    && metrics.alertRate <= maxReviewRate
+  ));
+  const pool = feasible.length > 0 ? feasible : candidates;
+  const best = pool.reduce((winner, candidate) => {
+    if (candidate.metrics.expectedCost < winner.metrics.expectedCost) return candidate;
+    if (
+      candidate.metrics.expectedCost === winner.metrics.expectedCost
+      && candidate.threshold > winner.threshold
+    ) return candidate;
+    return winner;
+  });
+
+  return {
+    ...best,
+    feasible: feasible.length > 0,
+    constraints: { minRecall, maxReviewRate },
+    candidateCount: candidates.length,
+  };
 }
 

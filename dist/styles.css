@@ -28,6 +28,7 @@ body {
 }
 
 button, input { font: inherit; }
+button:disabled, input:disabled { cursor: not-allowed; opacity: 0.55; }
 
 .app-header {
   min-height: 84px;
@@ -67,6 +68,8 @@ button, input { font: inherit; }
 .button-primary:hover { background: #91e4d8; }
 .button-secondary { background: transparent; color: white; border-color: #61747a; }
 .button-secondary:hover { background: #26383e; }
+.button-dark { background: var(--navy); color: white; }
+.button-dark:hover { background: #24566a; }
 .button:focus-visible, input:focus-visible { outline: 3px solid #f5b94c; outline-offset: 2px; }
 
 .workspace {
@@ -83,6 +86,23 @@ button, input { font: inherit; }
 
 .panel-heading h2, .analysis-panel h2, .gate-panel h2 { margin: 0; font-size: 1.05rem; }
 .section-label { color: var(--teal); }
+
+.data-source-control { margin-top: 23px; }
+.control-title { display: block; margin-bottom: 8px; font-size: 0.78rem; font-weight: 800; }
+.segmented-control { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #aebabc; border-radius: 6px; padding: 3px; background: #edf1f1; }
+.segmented-control button { min-height: 34px; border: 0; border-radius: 4px; color: var(--muted); background: transparent; cursor: pointer; font-size: 0.8rem; font-weight: 800; }
+.segmented-control button[aria-pressed="true"] { background: var(--surface); color: var(--navy); box-shadow: 0 1px 5px rgba(23, 33, 38, 0.12); }
+.upload-panel { margin-top: 10px; }
+.file-input { display: block; border: 1px dashed #8ba1a5; border-radius: 6px; padding: 13px; background: #f7f9f8; cursor: pointer; }
+.file-input strong, .file-input span { display: block; }
+.file-input strong { font-size: 0.82rem; }
+.file-input span { margin-top: 3px; color: var(--muted); font-size: 0.74rem; }
+.file-input input { display: block; width: 100%; margin-top: 10px; font-size: 0.72rem; }
+.text-button { border: 0; padding: 8px 0 0; background: transparent; color: var(--teal); cursor: pointer; font-size: 0.76rem; font-weight: 800; }
+.text-button:hover { color: var(--navy); }
+.upload-status { margin: 8px 0 0; color: var(--muted); font-size: 0.74rem; line-height: 1.4; }
+.upload-status.error { color: var(--coral); font-weight: 700; }
+.upload-status.success { color: var(--green); font-weight: 700; }
 
 .control { display: block; margin-top: 27px; }
 .control > span { display: flex; justify-content: space-between; gap: 12px; font-size: 0.88rem; }
@@ -147,6 +167,22 @@ input[type="range"] {
 .metric strong { display: block; font-size: 1.5rem; margin: 7px 0 5px; font-variant-numeric: tabular-nums; }
 .metric-emphasis { border-top: 3px solid var(--blue); }
 
+.policy-panel { margin-bottom: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px; }
+.policy-heading p:last-child { margin: 6px 0 0; color: var(--muted); font-size: 0.82rem; line-height: 1.4; }
+.table-scroll { overflow-x: auto; margin-top: 15px; }
+table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 0.8rem; }
+th, td { padding: 11px 12px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
+th { color: var(--muted); background: #f6f8f7; font-size: 0.7rem; text-transform: uppercase; }
+th:first-child, td:first-child { text-align: left; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr.recommended-row { background: #eef8f5; }
+.table-policy { font-weight: 800; }
+.table-policy small { display: block; margin-top: 2px; color: var(--muted); font-weight: 500; }
+.table-status { display: inline-block; border-radius: 999px; padding: 4px 8px; background: #e7eeef; color: var(--navy); font-size: 0.68rem; font-weight: 800; white-space: nowrap; }
+.table-status.pass { background: var(--green-soft); color: var(--green); }
+.table-status.conditional { background: var(--amber-soft); color: var(--amber); }
+.table-status.stop { background: var(--coral-soft); color: var(--coral); }
+
 .analysis-grid { display: grid; grid-template-columns: minmax(380px, 0.9fr) minmax(420px, 1.1fr); gap: 18px; }
 .analysis-panel, .gate-panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 20px; }
 .horizontal-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
@@ -202,6 +238,7 @@ canvas { display: block; width: 100%; height: 260px; margin-top: 15px; }
   .decision-banner { grid-template-columns: 1fr; }
   .decision-cost { text-align: left; border-left: 0; border-top: 1px solid var(--line); padding: 14px 0 0; }
   .gate-list { grid-template-columns: 1fr; }
+  .policy-heading { align-items: flex-start; flex-direction: column; }
 }
 
 @media (max-width: 520px) {

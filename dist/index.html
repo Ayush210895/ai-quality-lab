@@ -27,6 +27,23 @@
           <h2>Operating assumptions</h2>
         </div>
 
+        <div class="data-source-control">
+          <span class="control-title">Evaluation data</span>
+          <div class="segmented-control" role="group" aria-label="Evaluation data source">
+            <button id="synthetic-mode" type="button" aria-pressed="true">Synthetic</button>
+            <button id="upload-mode" type="button" aria-pressed="false">Upload CSV</button>
+          </div>
+          <div class="upload-panel" id="upload-panel" hidden>
+            <label class="file-input" for="csv-file">
+              <strong>Select prediction file</strong>
+              <span>Required columns: actual, score</span>
+              <input id="csv-file" type="file" accept=".csv,text/csv" />
+            </label>
+            <button class="text-button" id="sample-button" type="button">Download sample CSV</button>
+            <p class="upload-status" id="upload-status">Processed locally in your browser.</p>
+          </div>
+        </div>
+
         <label class="control" for="prevalence">
           <span><strong>Positive prevalence</strong><output id="prevalence-output">1.0%</output></span>
           <input id="prevalence" type="range" min="0.2" max="15" step="0.1" value="1" />
@@ -35,7 +52,7 @@
 
         <label class="control" for="threshold">
           <span><strong>Decision threshold</strong><output id="threshold-output">0.50</output></span>
-          <input id="threshold" type="range" min="0.05" max="0.95" step="0.01" value="0.50" />
+          <input id="threshold" type="range" min="0" max="1" step="any" value="0.50" />
           <small>Scores at or above this value generate an alert.</small>
         </label>
 
@@ -52,8 +69,8 @@
         </label>
 
         <label class="control" for="capacity">
-          <span><strong>Maximum review rate</strong><output id="capacity-output">8.0%</output></span>
-          <input id="capacity" type="range" min="1" max="30" step="0.5" value="8" />
+          <span><strong>Maximum review rate</strong><output id="capacity-output">15.0%</output></span>
+          <input id="capacity" type="range" min="1" max="30" step="0.5" value="15" />
           <small>Maximum share of transactions the team can investigate.</small>
         </label>
 
@@ -87,6 +104,33 @@
           <article class="metric"><span>Recall</span><strong id="recall">0%</strong><small>Positives successfully found</small></article>
           <article class="metric"><span>PR-AUC</span><strong id="pr-auc">0%</strong><small>Ranking quality on rare events</small></article>
           <article class="metric metric-emphasis"><span>Alert rate</span><strong id="alert-rate">0%</strong><small>Share sent for review</small></article>
+        </section>
+
+        <section class="policy-panel">
+          <div class="panel-heading horizontal-heading policy-heading">
+            <div>
+              <p class="section-label">Policy comparison</p>
+              <h2>Current versus recommended operation</h2>
+              <p id="recommendation-note">Searching for a cost-efficient threshold that clears quality and capacity constraints.</p>
+            </div>
+            <button class="button button-dark" id="apply-recommendation" type="button">Apply recommended</button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Policy</th>
+                  <th scope="col">Threshold</th>
+                  <th scope="col">Precision</th>
+                  <th scope="col">Recall</th>
+                  <th scope="col">Alert rate</th>
+                  <th scope="col">Cost / 1,000</th>
+                  <th scope="col">Decision</th>
+                </tr>
+              </thead>
+              <tbody id="policy-table"></tbody>
+            </table>
+          </div>
         </section>
 
         <div class="analysis-grid">
