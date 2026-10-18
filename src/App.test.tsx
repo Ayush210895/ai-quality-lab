@@ -68,8 +68,8 @@ describe("workspace navigation", () => {
     window.location.hash = "#/";
     render(<App />);
 
-    expect(screen.getByRole("heading", { name: /AI, ML and data systems/ })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Explore travel-marketplace-harm-risk" }));
+    expect(screen.getByRole("heading", { name: /Systems you can inspect, question, and operate/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Harm risk" }));
 
     expect(await screen.findByRole("heading", { name: "travel-marketplace-harm-risk" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "What this evidence allows us to decide" })).toBeInTheDocument();

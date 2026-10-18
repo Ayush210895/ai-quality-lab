@@ -66,6 +66,32 @@ input[type="range"] { accent-color: #087e72; }
   transform: translateY(-3px);
 }
 
+.atlas-hero {
+  border-bottom: 5px solid #66d8c7;
+}
+
+.signal-field {
+  box-shadow: 18px 18px 0 #ff765c, -10px -10px 0 #183841;
+}
+
+.signal-node {
+  max-width: 150px;
+  border-radius: 4px;
+  letter-spacing: 0;
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.signal-node:hover,
+.signal-node:focus-visible {
+  transform: translateY(-3px);
+  background: #213d46;
+}
+
+@media (max-width: 640px) {
+  .signal-field { box-shadow: 8px 8px 0 #ff765c; }
+  .signal-node { max-width: 118px; padding: 6px 8px; font-size: 8px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     scroll-behavior: auto !important;

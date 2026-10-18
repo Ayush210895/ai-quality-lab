@@ -7,6 +7,7 @@ This site is an interactive portfolio for Ayush Soni's public AI, machine-learni
 ## Project Atlas experience
 
 - Searchable, category-based explorer for all public projects.
+- Animated, keyboard-accessible project signal map linking directly to flagship case studies.
 - Dedicated hash URL for every project, suitable for direct sharing.
 - Project-specific color system and live visual preview.
 - A prominent, evidence-bounded decision statement for every project.

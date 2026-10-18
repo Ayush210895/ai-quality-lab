@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -148,31 +148,35 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
     return matchesGroup && text.includes(query.trim().toLowerCase());
   }), [group, query]);
 
-  return <div className="min-h-screen bg-[#f1f5f4] text-[#142126]">
+  const exploreGroup = (nextGroup: ProjectGroup) => {
+    setGroup(nextGroup);
+    document.getElementById("project-explorer")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return <div className="min-h-screen bg-[#dfe9e6] text-[#142126]">
     <SiteHeader onHome={() => window.scrollTo({ top: 0, behavior: "smooth" })} onOpenLab={onOpenLab} />
     <main>
-      <section className="border-b border-[#d7dfdf] bg-[#f7f9f8]">
-        <div className="mx-auto grid max-w-[1500px] gap-8 px-4 py-9 md:px-7 lg:grid-cols-[minmax(0,1.15fr)_minmax(420px,.85fr)] lg:items-center lg:py-12">
-          <div>
-            <p className="text-xs font-extrabold uppercase text-[#087e72]">Applied intelligence, made inspectable</p>
-            <h1 className="mt-3 max-w-4xl text-4xl font-black leading-[1.06] sm:text-5xl lg:text-6xl">AI, ML and data systems built around real decisions.</h1>
-            <p className="mt-5 max-w-3xl text-base leading-7 text-[#536166]">Explore model behavior, architecture, evidence, and honest limitations across production ML, GenAI, recommendations, risk, forecasting, and analytics.</p>
-          </div>
-          <div>
-            <p className="mb-3 text-[11px] font-extrabold uppercase text-[#687579]">Explore by signal</p>
-            <div className="grid grid-cols-3 overflow-hidden rounded-[6px] border border-[#cad5d3] bg-white">
-              <AtlasStat value={String(projectStories.length)} label="Technical projects" color="#087e72" />
-              <AtlasStat value={String(projectStories.filter((project) => project.featured).length)} label="Featured systems" color="#d84b37" />
-              <AtlasStat value="1" label="Interactive lab" color="#6b48a8" />
+      <section className="atlas-hero relative overflow-hidden bg-[#0c1a21] text-white">
+        <div className="mx-auto grid min-h-[520px] max-w-[1500px] gap-5 px-4 py-7 md:px-7 lg:grid-cols-[minmax(0,.88fr)_minmax(520px,1.12fr)] lg:items-center lg:gap-10 lg:py-8">
+          <div className="relative z-10 max-w-3xl">
+            <p className="text-xs font-extrabold uppercase text-[#66d8c7]">Applied intelligence, made inspectable</p>
+            <h1 className="mt-3 max-w-3xl text-4xl font-black leading-[1.05] sm:text-5xl lg:text-6xl">Systems you can inspect, question, and operate.</h1>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#bed0ce] sm:text-base sm:leading-7">Move through the live signal map, open a system, and trace how model evidence becomes a business decision.</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#66d8c7] px-4 text-sm font-black text-[#0c1a21]" onClick={() => exploreGroup("Featured")}><LayoutGrid size={17} /> Explore systems</button>
+              <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] border border-white/30 bg-white/5 px-4 text-sm font-bold text-white hover:bg-white/10" onClick={onOpenLab}><FlaskConical size={17} /> Test a model</button>
             </div>
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              {(["Applied ML", "GenAI & NLP", "Analytics"] as ProjectGroup[]).map((item, index) => <button key={item} type="button" className="min-h-12 rounded-[6px] px-2 text-xs font-extrabold text-white" style={{ backgroundColor: ["#087e72", "#6b48a8", "#294f9c"][index] }} onClick={() => { setGroup(item); document.getElementById("project-explorer")?.scrollIntoView({ behavior: "smooth" }); }}>{item}</button>)}
+            <div className="mt-7 grid max-w-xl grid-cols-3 border-t border-white/20 pt-4">
+              <AtlasStat value={String(projectStories.length)} label="Technical projects" color="#66d8c7" />
+              <AtlasStat value={String(projectStories.filter((item) => item.status === "evidence-ready" || item.status === "connected").length)} label="Evidence backed" color="#ff8f70" />
+              <AtlasStat value="6" label="Evaluation modes" color="#d0a8ff" />
             </div>
           </div>
+          <AtlasSignalField onSelectProject={onSelectProject} />
         </div>
       </section>
 
-      <section className="sticky top-16 z-20 border-b border-[#d7dfdf] bg-[#f1f5f4]/95">
+      <section className="sticky top-16 z-20 border-b border-[#b7c9c5] bg-[#e8f0ee]/95 shadow-[0_8px_22px_rgba(12,26,33,.08)]">
         <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-3 md:px-7 lg:flex-row lg:items-center lg:justify-between">
           <div className="scrollbar-thin flex gap-1 overflow-x-auto" aria-label="Project categories">
             {GROUPS.map((item) => <button key={item} type="button" className={`min-h-9 shrink-0 rounded-[6px] px-3 text-xs font-bold ${group === item ? "bg-[#142126] text-white" : "text-[#536166] hover:bg-white"}`} onClick={() => setGroup(item)}>{item}</button>)}
@@ -181,7 +185,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
         </div>
       </section>
 
-      <section id="project-explorer" className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-10">
+      <section id="project-explorer" className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-12">
         <div className="mb-5 flex items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase text-[#087e72]">Project explorer</p><h2 className="mt-1 text-2xl font-black">{group === "All" ? "The complete atlas" : group === "Featured" ? "Featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#687579]">{visible.length} projects</span></div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {visible.map((item) => <ProjectTile key={item.name} project={item} onSelect={() => onSelectProject(item)} />)}
@@ -193,20 +197,100 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
 }
 
 function AtlasStat({ value, label, color }: { value: string; label: string; color: string }) {
-  return <div className="border-r border-[#d8e0df] p-4 last:border-r-0" style={{ borderTop: `4px solid ${color}`, backgroundColor: `${color}10` }}><strong className="block text-3xl font-black tabular-nums">{value}</strong><span className="mt-1 block text-xs leading-5 text-[#687579]">{label}</span></div>;
+  return <div className="border-r border-white/20 pr-3 last:border-r-0 sm:pr-5"><strong className="block text-2xl font-black tabular-nums" style={{ color }}>{value}</strong><span className="mt-1 block text-[10px] font-bold uppercase leading-4 text-[#9fb4b2]">{label}</span></div>;
+}
+
+const SIGNAL_PROJECTS = [
+  { name: "travel-marketplace-harm-risk", label: "Harm risk", x: 8, y: 14, color: "#ff765c" },
+  { name: "Credit-Risk-MLOps-AWS", label: "Credit MLOps", x: 57, y: 8, color: "#5fe0bd" },
+  { name: "financial-doc-agent", label: "Financial agent", x: 25, y: 43, color: "#c8a2ff" },
+  { name: "Amazon-Recommendation-System", label: "Recommender", x: 66, y: 42, color: "#ffc159" },
+  { name: "multi-agent-dev-system", label: "Agent system", x: 11, y: 66, color: "#72b7ff" },
+  { name: "ai-quality-lab", label: "Quality Lab", x: 58, y: 68, color: "#66d8c7" },
+];
+
+function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: ProjectStory) => void }) {
+  const shellRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [activeName, setActiveName] = useState(SIGNAL_PROJECTS[0].name);
+  const activeProject = projectStories.find((item) => item.name === activeName) ?? projectStories[0];
+
+  useEffect(() => {
+    const shell = shellRef.current;
+    const canvas = canvasRef.current;
+    if (!shell || !canvas) return;
+    if (window.navigator.userAgent.includes("jsdom")) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let animation = 0;
+
+    const draw = (time = 0) => {
+      const width = shell.clientWidth;
+      const height = shell.clientHeight;
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      if (canvas.width !== width * ratio || canvas.height !== height * ratio) {
+        canvas.width = width * ratio;
+        canvas.height = height * ratio;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+      }
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.clearRect(0, 0, width, height);
+      context.strokeStyle = "rgba(120, 205, 194, .28)";
+      context.lineWidth = 1;
+      const points = SIGNAL_PROJECTS.map((item) => ({ x: width * (item.x + 10) / 100, y: height * (item.y + 4) / 100 }));
+      const links = [[0, 2], [0, 1], [1, 3], [2, 3], [2, 4], [3, 5], [4, 5]];
+      links.forEach(([start, end], index) => {
+        const from = points[start];
+        const to = points[end];
+        context.beginPath();
+        context.moveTo(from.x, from.y);
+        context.lineTo(to.x, to.y);
+        context.stroke();
+        const progress = reducedMotion ? 0.5 : ((time / 1800) + index * 0.17) % 1;
+        const pulseX = from.x + (to.x - from.x) * progress;
+        const pulseY = from.y + (to.y - from.y) * progress;
+        context.fillStyle = index % 2 ? "#66d8c7" : "#ffc159";
+        context.fillRect(pulseX - 2, pulseY - 2, 4, 4);
+      });
+      context.fillStyle = "rgba(255,255,255,.12)";
+      for (let i = 0; i < 32; i += 1) context.fillRect((i * 83) % width, (i * 47) % height, 1, 1);
+      if (!reducedMotion) animation = window.requestAnimationFrame(draw);
+    };
+    draw();
+    const handleResize = () => { if (reducedMotion) draw(); };
+    window.addEventListener("resize", handleResize);
+    return () => { window.removeEventListener("resize", handleResize); window.cancelAnimationFrame(animation); };
+  }, []);
+
+  return <div ref={shellRef} className="signal-field relative min-h-[280px] overflow-hidden border border-white/15 bg-[#10262d] lg:min-h-[430px]" aria-label="Interactive project signal map">
+    <canvas ref={canvasRef} className="pointer-events-none absolute inset-0" aria-hidden="true" />
+    <div className="absolute left-4 top-4 z-10"><p className="text-[10px] font-extrabold uppercase text-[#66d8c7]">Live project network</p><p className="mt-1 text-xs text-[#9fb4b2]">Select a signal to open its case study</p></div>
+    {SIGNAL_PROJECTS.map((node) => {
+      const selected = node.name === activeName;
+      const project = projectStories.find((item) => item.name === node.name);
+      if (!project) return null;
+      return <button key={node.name} type="button" className={`signal-node absolute z-10 min-h-10 border px-3 py-2 text-left text-[10px] font-black uppercase text-white ${selected ? "bg-[#0c1a21]" : "bg-[#17313a]/90"}`} style={{ left: `${node.x}%`, top: `${node.y}%`, borderColor: node.color, boxShadow: selected ? `0 0 0 2px ${node.color}` : undefined }} onMouseEnter={() => setActiveName(node.name)} onFocus={() => setActiveName(node.name)} onClick={() => onSelectProject(project)}><span className="mr-2 inline-block h-2 w-2" style={{ backgroundColor: node.color }} />{node.label}</button>;
+    })}
+    <div className="absolute bottom-0 left-0 right-0 z-10 grid grid-cols-[1fr_auto] items-end gap-4 border-t border-white/15 bg-[#0c1a21]/95 px-4 py-3">
+      <span><span className="block text-[9px] font-extrabold uppercase text-[#66d8c7]">Active decision</span><strong className="mt-1 line-clamp-1 block text-xs sm:text-sm">{businessQuestion(activeProject)}</strong></span>
+      <span className="text-right"><strong className="block text-lg tabular-nums text-[#ffc159]">{activeProject.metrics[0].value}</strong><small className="block max-w-24 text-[9px] text-[#9fb4b2]">{activeProject.metrics[0].label}</small></span>
+    </div>
+  </div>;
 }
 
 function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: () => void }) {
-  return <article className="group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] border border-[#d1dcda] bg-white transition-transform hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(20,33,38,.12)]" style={{ borderTop: `4px solid ${project.accent}` }}>
+  return <article className="group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] border border-[#b9cbc7] transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(12,26,33,.18)]" style={{ borderTop: `4px solid ${project.accent}`, backgroundColor: project.soft }}>
     <button type="button" className="block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.name}`}>
       <VisualStage project={project} compact />
     </button>
-    <div className="flex flex-1 flex-col p-5">
+    <div className="flex flex-1 flex-col border-t border-white/70 p-5">
       <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[9px] font-extrabold uppercase text-[#536166]">{STATUS_COPY[project.status].label}</span></div>
       <h3 className="mt-3 break-words text-xl font-black leading-tight">{project.name}</h3>
       <p className="mt-3 text-sm leading-6 text-[#5b696d]">{project.summary}</p>
       <div className="mt-4 flex flex-wrap gap-1.5">{project.stack.slice(0, 4).map((item) => <span key={item} className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[10px] font-bold text-[#536166]">{item}</span>)}</div>
-      <div className="mt-4 rounded-[6px] p-3" style={{ backgroundColor: project.soft }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why it matters</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#48565a]">{project.outcome}</p></div>
+      <div className="mt-4 border-l-4 pl-3" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why it matters</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#48565a]">{project.outcome}</p></div>
       <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#e0e7e6] pt-4"><span className="text-xs font-bold text-[#687579]">{project.metrics[0].label}: <strong className="text-[#142126]">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-9 shrink-0 items-center gap-2 rounded-[6px] px-3 text-xs font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onSelect}>Case study <ArrowRight size={15} /></button></div>
     </div>
   </article>;
