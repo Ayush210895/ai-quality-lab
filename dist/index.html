@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Evaluate classification thresholds using quality, cost, and operating-capacity gates." />
+    <title>AI Quality Lab | Decision Threshold Explorer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="product-name">AI Quality Lab</p>
+        <h1>Decision Threshold Explorer</h1>
+      </div>
+      <div class="header-actions">
+        <span class="dataset-badge" id="dataset-badge">Synthetic evaluation set</span>
+        <button class="button button-secondary" id="reset-button" type="button">Reset scenario</button>
+        <button class="button button-primary" id="export-button" type="button">Export report</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="control-panel" aria-label="Scenario assumptions">
+        <div class="panel-heading">
+          <p class="section-label">Scenario</p>
+          <h2>Operating assumptions</h2>
+        </div>
+
+        <label class="control" for="prevalence">
+          <span><strong>Positive prevalence</strong><output id="prevalence-output">1.0%</output></span>
+          <input id="prevalence" type="range" min="0.2" max="15" step="0.1" value="1" />
+          <small>Share of transactions that are truly positive.</small>
+        </label>
+
+        <label class="control" for="threshold">
+          <span><strong>Decision threshold</strong><output id="threshold-output">0.50</output></span>
+          <input id="threshold" type="range" min="0.05" max="0.95" step="0.01" value="0.50" />
+          <small>Scores at or above this value generate an alert.</small>
+        </label>
+
+        <label class="control" for="false-positive-cost">
+          <span><strong>False-alert cost</strong><output id="false-positive-output">$10</output></span>
+          <input id="false-positive-cost" type="range" min="1" max="200" step="1" value="10" />
+          <small>Review effort and customer friction per false alert.</small>
+        </label>
+
+        <label class="control" for="false-negative-cost">
+          <span><strong>Missed-positive cost</strong><output id="false-negative-output">$1,000</output></span>
+          <input id="false-negative-cost" type="range" min="100" max="5000" step="50" value="1000" />
+          <small>Loss or harm associated with a missed positive.</small>
+        </label>
+
+        <label class="control" for="capacity">
+          <span><strong>Maximum review rate</strong><output id="capacity-output">8.0%</output></span>
+          <input id="capacity" type="range" min="1" max="30" step="0.5" value="8" />
+          <small>Maximum share of transactions the team can investigate.</small>
+        </label>
+
+        <div class="baseline-note">
+          <p class="section-label">Reference policy</p>
+          <strong>Predict every transaction as negative</strong>
+          <p id="baseline-copy">Calculating baseline...</p>
+        </div>
+      </aside>
+
+      <section class="results" aria-live="polite">
+        <section class="decision-banner" id="decision-banner">
+          <div>
+            <p class="section-label">Launch recommendation</p>
+            <div class="decision-title-row">
+              <h2 id="decision-status">Calculating</h2>
+              <span class="status-pill" id="decision-pill">Reviewing gates</span>
+            </div>
+            <p id="decision-summary">Evaluating the current operating point.</p>
+          </div>
+          <div class="decision-cost">
+            <span>Expected cost / 1,000</span>
+            <strong id="cost-per-thousand">$0</strong>
+            <small id="cost-change">Against all-negative baseline</small>
+          </div>
+        </section>
+
+        <section class="metric-grid" aria-label="Evaluation metrics">
+          <article class="metric"><span>Accuracy</span><strong id="accuracy">0%</strong><small>Overall correctness</small></article>
+          <article class="metric"><span>Precision</span><strong id="precision">0%</strong><small>Alerts that were positive</small></article>
+          <article class="metric"><span>Recall</span><strong id="recall">0%</strong><small>Positives successfully found</small></article>
+          <article class="metric"><span>PR-AUC</span><strong id="pr-auc">0%</strong><small>Ranking quality on rare events</small></article>
+          <article class="metric metric-emphasis"><span>Alert rate</span><strong id="alert-rate">0%</strong><small>Share sent for review</small></article>
+        </section>
+
+        <div class="analysis-grid">
+          <section class="analysis-panel">
+            <div class="panel-heading horizontal-heading">
+              <div><p class="section-label">Classification outcomes</p><h2>Confusion matrix</h2></div>
+              <span id="sample-summary">10,000 transactions</span>
+            </div>
+            <div class="matrix" aria-label="Confusion matrix">
+              <div class="matrix-axis matrix-axis-top">Predicted outcome</div>
+              <div class="matrix-header"></div>
+              <div class="matrix-header">Positive</div>
+              <div class="matrix-header">Negative</div>
+              <div class="matrix-label">Actual positive</div>
+              <div class="matrix-cell cell-positive"><strong id="tp">0</strong><span>True positive</span></div>
+              <div class="matrix-cell cell-risk"><strong id="fn">0</strong><span>False negative</span></div>
+              <div class="matrix-label">Actual negative</div>
+              <div class="matrix-cell cell-warning"><strong id="fp">0</strong><span>False positive</span></div>
+              <div class="matrix-cell cell-neutral"><strong id="tn">0</strong><span>True negative</span></div>
+            </div>
+          </section>
+
+          <section class="analysis-panel chart-panel">
+            <div class="panel-heading horizontal-heading">
+              <div><p class="section-label">Operating curve</p><h2>Threshold trade-offs</h2></div>
+              <div class="legend"><span class="legend-precision">Precision</span><span class="legend-recall">Recall</span></div>
+            </div>
+            <canvas id="tradeoff-chart" width="720" height="340" aria-label="Precision and recall by decision threshold"></canvas>
+            <p class="chart-caption" id="chart-caption">Current threshold: 0.50</p>
+          </section>
+        </div>
+
+        <section class="gate-panel">
+          <div class="panel-heading horizontal-heading">
+            <div><p class="section-label">Decision evidence</p><h2>Launch gates</h2></div>
+            <span class="gate-count" id="gate-count">0 of 3 passed</span>
+          </div>
+          <div class="gate-list" id="gate-list"></div>
+        </section>
+
+        <div class="edge-message" id="edge-message" hidden></div>
+      </section>
+    </main>
+
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>
+
