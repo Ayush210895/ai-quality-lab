@@ -66,7 +66,7 @@ import {
 import { travelEvaluation } from "./data/travelEvaluation";
 import { portfolioProjects, type PortfolioProject, type ProjectStatus } from "./data/projectRegistry";
 import { projectBySlug, type ProjectStory } from "./data/projectStories";
-import PortfolioSite from "./PortfolioSite";
+import PortfolioSite, { ConstellationField } from "./PortfolioSite";
 
 type ModuleId = "portfolio" | "classification" | "comparison" | "regression" | "ranking" | "llm" | "monitoring";
 type Tone = "pass" | "conditional" | "stop" | "neutral";
@@ -590,42 +590,45 @@ function QualityLabApp({ onExit }: { onExit: () => void }) {
   const navigate = (module: ModuleId) => { setActive(module); setReport(null); };
   const lab = active === "portfolio" ? <PortfolioLab onReport={setReport} onNavigate={navigate} /> : active === "classification" ? <ClassificationLab onReport={setReport} /> : active === "comparison" ? <ComparisonLab onReport={setReport} /> : active === "regression" ? <RegressionLab onReport={setReport} /> : active === "ranking" ? <RankingLab onReport={setReport} /> : active === "llm" ? <LlmLab onReport={setReport} /> : <MonitoringLab onReport={setReport} />;
   return (
-    <div className="min-h-screen bg-[#edf2f1] text-ink" style={{ "--lab-accent": activeModule.color, "--lab-tint": activeModule.tint } as React.CSSProperties}>
-      <header className="sticky top-0 z-40 border-b border-[#d4dddc] bg-white/95 backdrop-blur">
+    <div className="quality-lab relative min-h-screen overflow-hidden bg-[#050814] text-ink" style={{ "--lab-accent": activeModule.color, "--lab-tint": activeModule.tint } as React.CSSProperties}>
+      <ConstellationField />
+      <div className="relative z-10">
+      <header className="sticky top-0 z-40 border-b border-white/15 bg-[#07101d]/95 text-white backdrop-blur-xl">
         <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-3 px-4 md:px-7">
           <button className="flex min-w-0 items-center gap-3 text-left" type="button" title="Return to Project Atlas" onClick={onExit}>
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[6px] bg-[#142126] text-white"><FlaskConical size={18} /></span>
-            <span className="min-w-0"><strong className="block truncate text-sm">AI Quality Lab</strong><span className="block truncate text-[10px] font-extrabold uppercase text-[#34766d]">Ayush Soni · Project Atlas</span></span>
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[6px] bg-[#64e8ff] text-[#07101d]"><FlaskConical size={18} /></span>
+            <span className="min-w-0"><strong className="block truncate text-sm">AI Quality Lab</strong><span className="block truncate text-[10px] font-extrabold uppercase text-[#75a7ff]">Ayush Soni · Project Atlas</span></span>
           </button>
           <div className="flex items-center gap-2">
-            <span className="mr-1 hidden max-w-56 truncate text-xs text-slate-500 lg:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
+            <span className="mr-1 hidden max-w-56 truncate text-xs text-[#9fb0c8] lg:block" title={report?.dataset}>{report?.dataset ?? "Preparing evaluation"}</span>
             <button className="lab-icon-button" type="button" title="Reset active workspace" aria-label="Reset" onClick={() => setResetKey((value) => value + 1)}><RefreshCw size={16} /></button>
-            <button className="inline-flex h-9 items-center gap-2 rounded-[6px] bg-[#142126] px-3 text-xs font-bold text-white hover:bg-[#29434b] disabled:cursor-not-allowed disabled:opacity-50" type="button" title="Download JSON evidence report" onClick={exportReport} disabled={!report}><Download size={15} /> Export evidence</button>
+            <button className="inline-flex h-9 items-center gap-2 rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d] disabled:cursor-not-allowed disabled:opacity-50" type="button" title="Download JSON evidence report" onClick={exportReport} disabled={!report}><Download size={15} /> Export evidence</button>
           </div>
         </div>
       </header>
 
-      <section className="border-b border-[#d5dfdd] bg-[#f7f9f8]">
+      <section className="border-b border-[#263657] bg-[#08111f]/88 text-white backdrop-blur-[2px]">
         <div className="mx-auto max-w-[1500px] px-4 pb-5 pt-6 md:px-7 md:pt-8">
           <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-            <div><p className="text-[11px] font-extrabold uppercase" style={{ color: activeModule.color }}>Interactive evaluation studio</p><h1 className="mt-1 text-3xl font-black sm:text-4xl">{activeModule.label}</h1><p className="mt-2 text-sm text-slate-600">{activeModule.description}</p></div>
-            <button className="inline-flex min-h-9 w-fit items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-slate-600 hover:bg-white" type="button" onClick={onExit}><FolderGit2 size={15} /> Back to all projects</button>
+            <div><p className="text-[11px] font-extrabold uppercase text-[#64e8ff]">Interactive evaluation studio</p><h1 className="portfolio-display mt-2 text-4xl sm:text-5xl">{activeModule.label}</h1><p className="mt-2 text-sm text-[#aebed6]">{activeModule.description}</p></div>
+            <button className="inline-flex min-h-9 w-fit items-center gap-2 rounded-[6px] px-2 text-xs font-bold text-[#aebed6] hover:bg-white/10 hover:text-white" type="button" onClick={onExit}><FolderGit2 size={15} /> Back to all projects</button>
           </div>
           <nav className="scrollbar-thin mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="Model evaluation workspaces" role="tablist">
             {MODULES.map((module) => {
               const Icon = module.icon;
               const selected = module.id === active;
-              return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`group min-w-[150px] flex-1 rounded-[6px] border p-3 text-left transition-colors ${selected ? "border-transparent text-white shadow-[0_8px_20px_rgba(20,33,38,.13)]" : "border-[#d4dddc] bg-white text-slate-600 hover:border-[#9aabaa] hover:text-ink"}`} style={selected ? { backgroundColor: module.color } : undefined} onClick={() => navigate(module.id)}>
+              return <button key={module.id} type="button" role="tab" aria-label={module.label} aria-selected={selected} className={`group min-w-[150px] flex-1 rounded-[6px] border p-3 text-left transition-colors ${selected ? "border-transparent text-white shadow-[0_8px_20px_rgba(0,0,0,.28)]" : "border-[#324667] bg-[#0b1425] text-[#aebed6] hover:border-[#64e8ff] hover:text-white"}`} style={selected ? { backgroundColor: module.color } : undefined} onClick={() => navigate(module.id)}>
                 <span className="flex items-center gap-2"><Icon size={16} /><strong className="text-xs">{module.short}</strong></span>
-                <span className={`mt-2 hidden text-[10px] leading-4 xl:block ${selected ? "text-white/80" : "text-slate-500"}`}>{module.description}</span>
+                <span className={`mt-2 hidden text-[10px] leading-4 xl:block ${selected ? "text-white/80" : "text-[#8296b5]"}`}>{module.description}</span>
               </button>;
             })}
           </nav>
         </div>
       </section>
 
-      <div key={`${active}-${resetKey}`}>{lab}</div>
-      <footer className="border-t border-line bg-white"><div className="mx-auto flex max-w-[1500px] flex-col justify-between gap-2 px-5 py-4 text-xs text-slate-500 sm:flex-row md:px-7"><span>Evaluation runs locally in your browser.</span><span>Independent evaluation suite · source projects remain unchanged</span></div></footer>
+      <div className="lab-workspace" key={`${active}-${resetKey}`}>{lab}</div>
+      <footer className="border-t border-[#263657] bg-[#07101d]/95"><div className="mx-auto flex max-w-[1500px] flex-col justify-between gap-2 px-5 py-4 text-xs text-[#8ea4c2] sm:flex-row md:px-7"><span>Evaluation runs locally in your browser.</span><span>Independent evaluation suite · source projects remain unchanged</span></div></footer>
+      </div>
     </div>
   );
 }

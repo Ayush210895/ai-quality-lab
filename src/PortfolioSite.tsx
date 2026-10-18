@@ -261,23 +261,23 @@ export default function PortfolioSite({ project, view, onHome, onProjects, onOpe
       : <UnifiedHome onHome={onHome} onProjects={onProjects} onOpenLab={onOpenLab} onSelectProject={onSelectProject} />;
 }
 
-function SiteHeader({ onHome, onProjects, onOpenLab, light = false, subtitle = "AI/ML Project Atlas" }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean; subtitle?: string }) {
-  return <header className={`sticky top-0 z-30 border-b ${light ? "border-white/20 bg-[#142126] text-white" : "border-[#d7dfdf] bg-[#f7f9f8]/95 text-[#142126]"}`}>
+function SiteHeader({ onHome, onProjects, onOpenLab, subtitle = "AI/ML Project Atlas" }: { onHome: () => void; onProjects: () => void; onOpenLab: () => void; light?: boolean; subtitle?: string }) {
+  return <header className="sticky top-0 z-30 border-b border-white/15 bg-[#07101d]/95 text-white backdrop-blur-xl">
     <div className="mx-auto flex min-h-16 max-w-[1500px] items-center justify-between gap-4 px-4 md:px-7">
       <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={onHome}>
-        <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-[6px] ${light ? "bg-[#73dbcb] text-[#142126]" : "bg-[#142126] text-white"}`}><ChartNoAxesCombined size={19} /></span>
-        <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className={`block truncate text-[11px] font-bold uppercase ${light ? "text-[#9edfd5]" : "text-[#34766d]"}`}>{subtitle}</span></span>
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[6px] bg-[#64e8ff] text-[#07101d]"><ChartNoAxesCombined size={19} /></span>
+        <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className="block truncate text-[11px] font-bold uppercase text-[#75a7ff]">{subtitle}</span></span>
       </button>
       <nav className="flex items-center gap-2" aria-label="Portfolio navigation">
-        <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold ${light ? "hover:bg-white/10" : "hover:bg-white"}`} type="button" title="Browse all projects" onClick={onProjects}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
-        <a className={`hidden min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold sm:inline-flex ${light ? "hover:bg-white/10" : "hover:bg-white"}`} href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><Code2 size={15} /> GitHub</a>
-        <button className={`inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-[6px] px-3 text-xs font-bold ${light ? "bg-white text-[#142126]" : "bg-[#142126] text-white"}`} type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
+        <button className="inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold hover:bg-white/10" type="button" title="Browse all projects" onClick={onProjects}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
+        <a className="hidden min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold hover:bg-white/10 sm:inline-flex" href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><Code2 size={15} /> GitHub</a>
+        <button className="inline-flex min-h-9 items-center gap-2 whitespace-nowrap rounded-[6px] bg-white px-3 text-xs font-bold text-[#07101d]" type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
       </nav>
     </div>
   </header>;
 }
 
-function ConstellationField() {
+export function ConstellationField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -446,15 +446,21 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
       </section>
 
       <section className="decision-console border-b border-[#263657] bg-[#0a1425]/82 py-16 backdrop-blur-[2px] lg:py-24">
-        <div className="mx-auto grid max-w-[1500px] gap-10 px-4 md:px-7 lg:grid-cols-[360px_minmax(0,1fr)] lg:items-center">
-          <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Interactive decision console</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Touch the evidence.<br />Change the system.</h2><p className="mt-5 text-sm leading-7 text-[#aebed6]">Switch between three flagship systems to see how the business question, technical signal, and operating proof change together.</p><div className="mt-7 space-y-2">{flagships.map((project, index) => <button key={project.name} type="button" aria-pressed={project.name === activeName} className={`flex min-h-14 w-full items-center justify-between border px-4 text-left text-xs font-extrabold uppercase transition-all ${project.name === activeName ? "translate-x-2 border-white bg-white text-[#07101d]" : "border-[#324667] bg-[#09111f]/70 text-[#9fb4d1] hover:border-[#64e8ff]"}`} onClick={() => setActiveName(project.name as (typeof FLAGSHIP_NAMES)[number])}><span><span className="mr-3 font-mono" style={{ color: project.accent }}>0{index + 1}</span>{project.displayName}</span><ArrowRight size={15} /></button>)}</div></div>
-          <motion.div key={activeProject.name} className="unified-artifact overflow-hidden" initial={reducedMotion ? false : { opacity: 0, scale: .98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .32 }}>
-            <div className="flex items-center justify-between gap-4 border-b border-white/15 bg-[#112830] px-5 py-4">
-              <span><span className="block text-[9px] font-extrabold uppercase text-[#67dcc7]">Live evidence object</span><strong className="mt-1 block text-sm">{activeProject.displayName}</strong></span>
+        <div className="mx-auto max-w-[1500px] px-4 md:px-7">
+          <div className="grid gap-6 border-b border-[#263657] pb-9 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Evidence studio</p><h2 className="portfolio-display mt-3 text-4xl leading-[1.02] sm:text-6xl">Test the decision,<br />not just the model.</h2></div>
+            <p className="max-w-2xl text-sm leading-7 text-[#aebed6]">Compare three flagship systems. Each view connects a business question to a technical signal, an operating constraint, and evidence someone can act on.</p>
+          </div>
+          <div className="mt-8 grid gap-7 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start">
+            <div className="decision-selector">{flagships.map((project, index) => <button key={project.name} type="button" aria-pressed={project.name === activeName} className={`flex min-h-16 w-full items-center justify-between border-b px-1 text-left text-xs font-extrabold uppercase transition-colors ${project.name === activeName ? "border-white text-white" : "border-[#324667] text-[#8296b5] hover:text-[#64e8ff]"}`} onClick={() => setActiveName(project.name as (typeof FLAGSHIP_NAMES)[number])}><span><span className="mr-3 font-mono" style={{ color: project.accent }}>0{index + 1}</span>{project.displayName}</span><ArrowRight size={15} /></button>)}</div>
+          <motion.div key={activeProject.name} className="unified-artifact overflow-hidden" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .32 }}>
+            <div className="flex items-center justify-between gap-4 border-b border-white/15 bg-[#0c1728] px-5 py-4">
+              <span><span className="block text-[9px] font-extrabold uppercase text-[#64e8ff]">Interactive evidence</span><strong className="mt-1 block text-sm">{activeProject.displayName}</strong></span>
               <span className="font-mono text-[10px] text-[#9fb4b1]">{activeProject.sourceCommit}</span>
             </div>
             <div className="h-[430px]"><VisualStage project={activeProject} /></div>
           </motion.div>
+          </div>
         </div>
       </section>
 
@@ -568,15 +574,17 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
     return matchesGroup && text.includes(query.trim().toLowerCase());
   }), [group, query]);
 
-  return <div className="min-h-screen bg-[#dfe9e6] text-[#142126]">
+  return <div className="atlas-page relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]">
+    <ConstellationField />
+    <div className="relative z-10">
     <SiteHeader onHome={onHome} onProjects={() => window.scrollTo({ top: 0, behavior: "smooth" })} onOpenLab={onOpenLab} />
     <main>
-      <section className="atlas-hero relative isolate h-[calc(100svh-96px)] min-h-[640px] max-h-[760px] overflow-hidden bg-[#0c1a21] text-white">
+      <section className="atlas-hero relative isolate h-[calc(100svh-64px)] min-h-[650px] max-h-[820px] overflow-hidden bg-[#050814]/45 text-white">
         <AtlasSignalField onSelectProject={onSelectProject} />
         <div className="pointer-events-none relative z-10 mx-auto flex h-full max-w-[1500px] items-start px-4 pt-8 md:px-7 md:pt-12 lg:items-center lg:pt-0">
           <motion.div className="pointer-events-auto max-w-3xl lg:max-w-[650px]" initial={reducedMotion ? false : { opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .65, ease: [0.22, 1, 0.36, 1] }}>
             <p className="text-xs font-extrabold uppercase text-[#66d8c7]">Applied intelligence, made inspectable</p>
-            <h1 className="hero-title mt-3 max-w-3xl text-4xl font-black leading-[1.02] sm:text-5xl lg:text-7xl">Systems you can inspect, question, and operate.</h1>
+            <h1 className="hero-title portfolio-display mt-3 max-w-3xl text-4xl leading-[1.02] sm:text-5xl lg:text-7xl">Systems you can inspect, question, and operate.</h1>
             <p className="mt-5 max-w-xl text-sm leading-6 text-[#bed0ce] sm:text-base sm:leading-7">Move through the live signal field, open a system, and trace how model evidence becomes a business decision.</p>
             <div className="mt-6 flex flex-wrap gap-2">
               <button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[6px] bg-[#66d8c7] px-4 text-sm font-black text-[#0c1a21]" onClick={() => document.getElementById("flagship-projects")?.scrollIntoView({ behavior: "smooth" })}><LayoutGrid size={17} /> Explore flagships</button>
@@ -593,30 +601,30 @@ function ProjectExplorer({ onHome, onProjects, onOpenLab, onSelectProject }: Pic
 
       <FlagshipProjects onSelectProject={onSelectProject} />
 
-      <section className="sticky top-16 z-20 border-b border-[#b7c9c5] bg-[#e8f0ee]/95 shadow-[0_8px_22px_rgba(12,26,33,.08)]">
+      <section className="sticky top-16 z-20 border-b border-[#263657] bg-[#07101d]/95 shadow-[0_8px_22px_rgba(0,0,0,.28)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1500px] flex-col gap-3 px-4 py-3 md:px-7 lg:flex-row lg:items-center lg:justify-between">
           <div className="scrollbar-thin flex gap-1 overflow-x-auto" aria-label="Project categories">
-            {GROUPS.map((item) => <button key={item} type="button" className={`min-h-9 shrink-0 rounded-[6px] px-3 text-xs font-bold ${group === item ? "bg-[#142126] text-white" : "text-[#536166] hover:bg-white"}`} onClick={() => setGroup(item)}>{item}</button>)}
+            {GROUPS.map((item) => <button key={item} type="button" className={`min-h-9 shrink-0 rounded-[6px] px-3 text-xs font-bold ${group === item ? "bg-[#64e8ff] text-[#07101d]" : "text-[#aebed6] hover:bg-white/10 hover:text-white"}`} onClick={() => setGroup(item)}>{item}</button>)}
           </div>
-          <label className="relative block w-full lg:w-72"><Search className="pointer-events-none absolute left-3 top-2.5 text-[#758488]" size={16} /><span className="sr-only">Search project atlas</span><input className="h-9 w-full rounded-[6px] border border-[#cbd6d4] bg-white pl-9 pr-3 text-sm" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search models, tools, methods" /></label>
+          <label className="relative block w-full lg:w-72"><Search className="pointer-events-none absolute left-3 top-2.5 text-[#8296b5]" size={16} /><span className="sr-only">Search project atlas</span><input className="h-9 w-full rounded-[6px] border border-[#324667] bg-[#0b1425] pl-9 pr-3 text-sm text-white placeholder:text-[#7184a2]" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search models, tools, methods" /></label>
         </div>
       </section>
 
       <section id="project-explorer" className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-12">
-        <div className="mb-5 flex items-end justify-between gap-4"><div><p className="text-xs font-extrabold uppercase text-[#087e72]">Project explorer</p><h2 className="mt-1 text-2xl font-black">{group === "All" ? "The complete atlas" : group === "Featured" ? "Featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#687579]">{visible.length} projects</span></div>
+        <div className="mb-7 flex items-end justify-between gap-4 border-b border-[#263657] pb-6"><div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Project explorer</p><h2 className="portfolio-display mt-2 text-4xl">{group === "All" ? "The complete atlas" : group === "Featured" ? "Featured systems" : group}</h2></div><span className="text-sm font-bold tabular-nums text-[#8ea4c2]">{visible.length} projects</span></div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {visible.map((item) => <ProjectTile key={item.name} project={item} onSelect={() => onSelectProject(item)} />)}
         </div>
         {visible.length === 0 && <div className="border-y border-[#cbd6d4] py-20 text-center"><strong>No matching project</strong><p className="mt-2 text-sm text-[#687579]">Try a different technology, domain, or category.</p></div>}
       </section>
-    </main>
+    </main></div>
   </div>;
 }
 
 function FlagshipProjects({ onSelectProject }: { onSelectProject: (project: ProjectStory) => void }) {
   const reducedMotion = useReducedMotion();
   const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
-  return <section id="flagship-projects" className="flagship-band border-b border-[#172a31] bg-[#10242b] text-white">
+  return <section id="flagship-projects" className="flagship-band border-b border-[#263657] bg-[#09101e]/88 text-white backdrop-blur-[2px]">
     <div className="mx-auto max-w-[1500px] px-4 py-12 md:px-7 lg:py-16">
       <div className="mb-10 grid gap-3 md:grid-cols-[1fr_430px] md:items-end lg:mb-14">
         <div><p className="text-xs font-extrabold uppercase text-[#66d8c7]">Flagship Three</p><h2 className="mt-1 text-3xl font-black sm:text-4xl">Three systems. Three kinds of leadership.</h2></div>
@@ -725,17 +733,17 @@ function AtlasSignalField({ onSelectProject }: { onSelectProject: (project: Proj
 
 function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: () => void }) {
   const reducedMotion = useReducedMotion();
-  return <motion.article layout className="project-tile group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(12,26,33,.18)]" style={{ borderTop: `4px solid ${project.accent}`, backgroundColor: project.soft }} initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: [0.22, 1, 0.36, 1] }}>
+  return <motion.article layout className="project-tile group flex min-h-[540px] flex-col overflow-hidden rounded-[6px] bg-[#0b1425] text-white transition-transform hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(0,0,0,.35)]" style={{ borderTop: `4px solid ${project.accent}` }} initial={reducedMotion ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .45, ease: [0.22, 1, 0.36, 1] }}>
     <button type="button" className="block h-48 w-full overflow-hidden text-left" onClick={onSelect} aria-label={`Explore ${project.displayName}`}>
       <VisualStage project={project} compact />
     </button>
-    <div className="flex flex-1 flex-col border-t border-white/70 p-5">
-      <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[9px] font-extrabold uppercase text-[#536166]">{STATUS_COPY[project.status].label}</span></div>
+    <div className="flex flex-1 flex-col border-t border-white/15 p-5">
+      <div className="flex items-center justify-between gap-3"><span className="text-[11px] font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)}</span><span className="rounded-full border border-[#324667] px-2 py-1 text-[9px] font-extrabold uppercase text-[#9fb0c8]">{STATUS_COPY[project.status].label}</span></div>
       <h3 className="mt-3 break-words text-xl font-black leading-tight">{project.displayName}</h3>
-      <p className="mt-3 text-sm leading-6 text-[#5b696d]">{project.summary}</p>
-      <div className="mt-4 flex flex-wrap gap-1.5">{project.stack.slice(0, 4).map((item) => <span key={item} className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[10px] font-bold text-[#536166]">{item}</span>)}</div>
-      <div className="mt-4 border-l-4 pl-3" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why it matters</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#48565a]">{project.outcome}</p></div>
-      <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#e0e7e6] pt-4"><span className="text-xs font-bold text-[#687579]">{project.metrics[0].label}: <strong className="text-[#142126]">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-9 shrink-0 items-center gap-2 rounded-[6px] px-3 text-xs font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onSelect}>Case study <ArrowRight size={15} /></button></div>
+      <p className="mt-3 text-sm leading-6 text-[#aebed6]">{project.summary}</p>
+      <div className="mt-4 flex flex-wrap gap-1.5">{project.stack.slice(0, 4).map((item) => <span key={item} className="rounded-full border border-[#324667] px-2 py-1 text-[10px] font-bold text-[#9fb0c8]">{item}</span>)}</div>
+      <div className="mt-4 border-l-4 pl-3" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why it matters</span><p className="mt-1 line-clamp-3 text-xs leading-5 text-[#b9c7db]">{project.outcome}</p></div>
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#263657] pt-4"><span className="text-xs font-bold text-[#8ea4c2]">{project.metrics[0].label}: <strong className="text-white">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-9 shrink-0 items-center gap-2 rounded-[6px] px-3 text-xs font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onSelect}>Case study <ArrowRight size={15} /></button></div>
     </div>
   </motion.article>;
 }
@@ -750,7 +758,9 @@ function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { 
     window.requestAnimationFrame(() => document.getElementById("project-detail")?.scrollIntoView({ behavior: "smooth" }));
   };
   const related = projectStories.filter((candidate) => candidate.name !== project.name && (projectGroup(candidate) === projectGroup(project) || candidate.visual === project.visual)).slice(0, 3);
-  return <div className="min-h-screen bg-[#f4f7f6] text-[#142126]" style={{ "--project-accent": project.accent, "--project-soft": project.soft } as CSSProperties}>
+  return <div className="project-page relative min-h-screen overflow-hidden bg-[#050814] text-[#eaf2ff]" style={{ "--project-accent": project.accent, "--project-soft": project.soft } as CSSProperties}>
+    <ConstellationField />
+    <div className="relative z-10">
     <SiteHeader onHome={onHome} onProjects={onBack} onOpenLab={onOpenLab} light />
     <main>
       <section className="case-hero border-b-4 bg-[#0f1d24] text-white" style={{ borderColor: project.accent }}>
@@ -760,7 +770,7 @@ function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { 
             <div className="flex flex-col justify-center py-2">
               <p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>{projectGroup(project)} · {project.family}</p>
               <div className="mt-4 flex flex-wrap items-center gap-3"><span className="inline-flex w-fit items-center border border-white/20 px-3 py-2 text-[10px] font-extrabold uppercase text-[#b9cac8]"><span className="mr-2 h-2 w-2" style={{ backgroundColor: project.accent }} />{THEME_LABELS[project.visual]}</span><div className="flex border border-white/20 p-1" role="group" aria-label="Choose case-study audience"><button type="button" aria-pressed={audience === "recruiter"} className={`inline-flex min-h-8 items-center gap-1.5 rounded-[4px] px-2.5 text-[10px] font-extrabold uppercase ${audience === "recruiter" ? "bg-white text-[#142126]" : "text-[#aebfbd]"}`} onClick={() => setAudience("recruiter")}><UserRound size={13} /> Recruiter</button><button type="button" aria-pressed={audience === "engineer"} className={`inline-flex min-h-8 items-center gap-1.5 rounded-[4px] px-2.5 text-[10px] font-extrabold uppercase ${audience === "engineer" ? "bg-white text-[#142126]" : "text-[#aebfbd]"}`} onClick={() => setAudience("engineer")}><Code2 size={13} /> Engineer</button></div></div>
-              <h1 className="mt-3 break-words text-4xl font-black leading-[1.04] sm:text-5xl">{project.displayName}</h1>
+              <h1 className="portfolio-display mt-3 break-words text-4xl leading-[1.04] sm:text-5xl">{project.displayName}</h1>
               {audience === "recruiter" ? <><p className="mt-5 max-w-2xl text-base leading-7 text-[#b9cac8]">{project.problem}</p><div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Why this project is different</span><p className="mt-1 text-sm font-bold leading-6 text-white">{projectDifferentiator(project)}</p></div><div className="mt-4 flex flex-wrap gap-2">{roleFit.map((role) => <span key={role} className="border border-white/20 px-2.5 py-1.5 text-[10px] font-bold text-[#c9d6d4]">{role}</span>)}</div></> : <><p className="mt-5 max-w-2xl text-base leading-7 text-[#b9cac8]">{project.approach}</p><div className="mt-5 border-l-4 bg-white/5 p-4" style={{ borderColor: project.accent }}><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>Engineering boundary</span><p className="mt-1 text-sm font-bold leading-6 text-white">{project.boundary}</p></div><div className="mt-4 flex flex-wrap gap-2">{project.stack.slice(0, 5).map((item) => <span key={item} className="border border-white/20 px-2.5 py-1.5 text-[10px] font-bold text-[#c9d6d4]">{item}</span>)}</div></>}
               <div className="mt-6 flex flex-wrap gap-2"><a className="inline-flex min-h-10 items-center gap-2 rounded-[6px] px-4 text-sm font-bold text-white" style={{ backgroundColor: project.accent }} href={project.repoUrl} target="_blank" rel="noreferrer"><Code2 size={16} /> Repository <ArrowUpRight size={15} /></a><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("architecture")}><Layers3 size={15} /> Architecture</button><button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-white/25 px-3 text-xs font-bold text-white hover:bg-white/10" onClick={() => openSection("evidence")}><Database size={15} /> Evidence</button>{project.name === "ai-quality-lab" && <button type="button" className="inline-flex min-h-10 items-center gap-2 rounded-[6px] border border-[#9baba8] bg-white px-4 text-sm font-bold text-[#142126]" onClick={onOpenLab}><FlaskConical size={16} /> Live demo</button>}</div>
             </div>
@@ -801,7 +811,7 @@ function ProjectPage({ project, onHome, onBack, onOpenLab, onSelectProject }: { 
       <section className="border-t border-[#d4dddc] bg-white">
         <div className="mx-auto max-w-[1500px] px-4 py-9 md:px-7"><div className="mb-5 flex items-end justify-between"><div><p className="text-xs font-extrabold uppercase" style={{ color: project.accent }}>Continue exploring</p><h2 className="mt-1 text-2xl font-black">Related projects</h2></div><button className="hidden min-h-9 items-center gap-2 text-xs font-bold sm:inline-flex" type="button" onClick={onBack}>See all <ArrowRight size={15} /></button></div><div className="grid gap-3 md:grid-cols-3">{related.map((item) => <button key={item.name} type="button" className="flex min-h-28 items-center justify-between gap-4 rounded-[6px] border border-[#d4dddc] p-4 text-left hover:border-[#8ba29e]" onClick={() => onSelectProject(item)}><span><span className="block text-[10px] font-extrabold uppercase" style={{ color: item.accent }}>{projectGroup(item)}</span><strong className="mt-2 block break-words text-sm">{item.displayName}</strong></span><ArrowRight className="shrink-0" size={18} /></button>)}</div></div>
       </section>
-    </main>
+    </main></div>
   </div>;
 }
 
