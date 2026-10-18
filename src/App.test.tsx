@@ -76,8 +76,9 @@ describe("workspace navigation", () => {
     expect(window.location.hash).toBe("#/projects/travel-marketplace-harm-risk");
   });
 
-  it("defines a decision for every mapped project", () => {
-    expect(projectStories).toHaveLength(19);
+  it("defines a decision for every public-facing case study", () => {
+    expect(projectStories).toHaveLength(17);
     expect(projectStories.every((project) => project.decision.trim().length > 40)).toBe(true);
+    expect(projectStories.every((project) => project.nextStep.trim().length > 40)).toBe(true);
   });
 });

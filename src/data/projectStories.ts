@@ -13,13 +13,15 @@ export type ProjectStory = PortfolioProject & {
   approach: string;
   outcome: string;
   decision: string;
+  decisionOwner: string;
+  nextStep: string;
   stack: string[];
   metrics: ProjectMetric[];
   pipeline: string[];
   boundary: string;
 };
 
-type StoryDetails = Omit<ProjectStory, keyof PortfolioProject | "slug" | "decision">;
+type StoryDetails = Omit<ProjectStory, keyof PortfolioProject | "slug" | "decision" | "decisionOwner" | "nextStep">;
 
 const details: Record<string, StoryDetails> = {
   "travel-marketplace-harm-risk": {
@@ -312,15 +314,41 @@ const decisions: Record<string, string> = {
   "ai-quality-lab": "Make model launch decisions from business value, operating constraints, and reliability gates together rather than from a single headline metric.",
 };
 
+const operatingDetails: Record<string, { decisionOwner: string; nextStep: string }> = {
+  "travel-marketplace-harm-risk": { decisionOwner: "Trust and safety operations", nextStep: "Shadow-test both ranking policies, monitor incident recall by harm tier, and calibrate the review-capacity guardrail." },
+  "Credit-Risk-MLOps-AWS": { decisionOwner: "Model risk and lending operations", nextStep: "Verify the deployment path in a controlled cloud environment and add approval, rollback, and live drift evidence." },
+  "Credit-Card-Anomaly-Detection": { decisionOwner: "Fraud investigation operations", nextStep: "Evaluate temporal stability, investigator yield, calibration, and fraud capture at several realistic queue capacities." },
+  "Beijing-AQI-Prediction": { decisionOwner: "Environmental forecasting team", nextStep: "Introduce temporal cross-validation, nonlinear models, station-level error analysis, and operational alert thresholds." },
+  "Amazon-Recommendation-System": { decisionOwner: "Recommendation product team", nextStep: "Add temporal splits, NDCG and diversity metrics, cold-start handling, and an online experiment design." },
+  "financial-doc-agent": { decisionOwner: "Financial research workflow owner", nextStep: "Expand the evaluation set, measure retrieval and SQL errors separately, and add abstention for unsupported answers." },
+  "FinBERT-Financial-News-Sentiment": { decisionOwner: "Research and risk analysts", nextStep: "Create a labeled financial-news test set, test issuer aggregation, and monitor language and market-regime drift." },
+  "Clustering": { decisionOwner: "Analytics and segmentation team", nextStep: "Define the downstream use case, stability-test clusters, and compare whether segments change real decisions." },
+  "Portfolio-Risk-PCA-From-Scratch": { decisionOwner: "Portfolio risk analyst", nextStep: "Extend the return history, test rolling factor stability, and compare risk contributions across market regimes." },
+  "Human-Activity-Monitoring": { decisionOwner: "Wearable analytics team", nextStep: "Train a participant-held-out classifier and report class-level performance, robustness, and inference cost." },
+  "Linear-Regression": { decisionOwner: "ML practitioner or learner", nextStep: "Add stronger baselines, cross-validation, residual diagnostics, and domain-specific acceptance thresholds." },
+  "Logistic-Regression": { decisionOwner: "ML practitioner or learner", nextStep: "Evaluate calibration, threshold economics, subgroup behavior, and generalization on a real imbalanced dataset." },
+  "Naive-Bayes": { decisionOwner: "ML practitioner or learner", nextStep: "Test feature-dependence violations and compare against calibrated logistic and tree-based baselines on real data." },
+  "multi-agent-dev-system": { decisionOwner: "Engineering platform team", nextStep: "Benchmark completion quality, intervention rate, latency, and cost across a fixed suite of software tasks." },
+  "Machine-Learning-From-Scratch": { decisionOwner: "Learner and interview candidate", nextStep: "Connect each concept to a tested implementation, failure case, and concise production-oriented explanation." },
+  "Space-Race-Visualisation": { decisionOwner: "Analyst or research audience", nextStep: "Add source freshness, interactive filtering, uncertainty notes, and explicit definitions for every comparison." },
+  "Ayush210895.github.io": { decisionOwner: "Portfolio owner", nextStep: "Keep claims, links, and featured work synchronized with current evidence and target roles." },
+  "Ayush210895": { decisionOwner: "Portfolio owner", nextStep: "Keep the profile concise and route visitors to the strongest evidence-backed case studies." },
+  "ai-quality-lab": { decisionOwner: "ML product and governance teams", nextStep: "Add saved evaluations, side-by-side run history, accessibility testing, and lazy-loaded workspaces." },
+};
+
 function slugify(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
-export const projectStories: ProjectStory[] = portfolioProjects.map((project) => ({
+const allProjectStories: ProjectStory[] = portfolioProjects.map((project) => ({
   ...project,
   ...details[project.name],
   decision: decisions[project.name],
+  ...operatingDetails[project.name],
   slug: slugify(project.name),
 }));
 
-export const projectBySlug = new Map(projectStories.map((project) => [project.slug, project]));
+const supportingRepositories = new Set(["Ayush210895.github.io", "Ayush210895"]);
+
+export const projectStories = allProjectStories.filter((project) => !supportingRepositories.has(project.name));
+export const projectBySlug = new Map(allProjectStories.map((project) => [project.slug, project]));
