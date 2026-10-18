@@ -73,7 +73,7 @@ describe("workspace navigation", () => {
     expect(screen.getAllByRole("button", { name: "Open case" })).toHaveLength(3);
     fireEvent.click(screen.getByRole("button", { name: "Harm risk" }));
 
-    expect(await screen.findByRole("heading", { name: "travel-marketplace-harm-risk" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Travel Marketplace Harm Risk" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "What this evidence allows us to decide" })).toBeInTheDocument();
     expect(window.location.hash).toBe("#/projects/travel-marketplace-harm-risk");
   });
@@ -81,7 +81,7 @@ describe("workspace navigation", () => {
   it("shows the case-study hook, tradeoffs, and interactive architecture", async () => {
     window.location.hash = "#/";
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "Explore travel-marketplace-harm-risk" }));
+    fireEvent.click(screen.getByRole("button", { name: "Explore Travel Marketplace Harm Risk" }));
 
     expect(await screen.findByText("Why this project is different")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Recruiter" })).toHaveAttribute("aria-pressed", "true");

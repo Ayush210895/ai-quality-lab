@@ -377,7 +377,7 @@ function PortfolioLab({ onReport, onNavigate }: { onReport: (report: Report) => 
   const [query, setQuery] = useState("");
   const visible = portfolioProjects.filter((project) => {
     const matchesFilter = filter === "all" || project.status === filter;
-    const haystack = `${project.name} ${project.summary} ${project.family}`.toLowerCase();
+    const haystack = `${project.displayName} ${project.name} ${project.summary} ${project.family}`.toLowerCase();
     return matchesFilter && haystack.includes(query.trim().toLowerCase());
   });
   const counts = portfolioProjects.reduce<Record<ProjectStatus, number>>((result, project) => {
@@ -430,7 +430,7 @@ function ProjectCard({ project, onNavigate }: { project: PortfolioProject; onNav
   const status = STATUS_DETAILS[project.status];
   return <article className="flex min-h-64 flex-col rounded-[6px] border border-line bg-white p-5">
     <div className="flex items-start justify-between gap-3"><span className={`rounded-full border px-2.5 py-1 text-[11px] font-extrabold ${status.className}`}>{status.label}</span><span className="font-mono text-[11px] text-slate-400">{project.sourceCommit}</span></div>
-    <h3 className="mt-4 break-words text-base font-bold text-ink">{project.name}</h3>
+    <h3 className="mt-4 break-words text-base font-bold text-ink">{project.displayName}</h3>
     <p className="mt-2 text-sm leading-6 text-slate-600">{project.summary}</p>
     <dl className="mt-4 space-y-2 border-t border-line pt-4 text-xs"><div><dt className="font-bold text-slate-500">Model family</dt><dd className="mt-1 text-ink">{project.family}</dd></div><div><dt className="font-bold text-slate-500">Evidence</dt><dd className="mt-1 leading-5 text-ink">{project.evidence}</dd></div></dl>
     <div className="mt-auto flex flex-wrap gap-2 pt-5">
