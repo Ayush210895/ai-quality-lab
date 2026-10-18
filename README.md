@@ -47,6 +47,8 @@ The project portfolio deliberately separates repository visibility from evaluati
 
 The registry is a pinned static snapshot, so the public application does not depend on GitHub API availability or expose account credentials.
 
+See the [portfolio production-readiness roadmap](docs/PRODUCTION_READINESS_ROADMAP.md) for the current maturity classification and next gate for every repository. "Production ready" is deliberately not used as one blanket label: a deployed interface, an evaluated model, an analytical package, and a learning implementation require different evidence.
+
 ## Classification threshold optimization
 
 The threshold optimizer evaluates every distinct model score and recommends the lowest-cost operating point that reaches at least 70% recall without exceeding the selected review capacity. The interface compares the current, recommended, and all-negative policies before a reviewer applies a change.

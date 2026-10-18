@@ -12,5 +12,15 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("recharts") || id.includes("d3-")) return "charts";
+          if (id.includes("lucide-react")) return "icons";
+          if (id.includes("react")) return "react";
+          if (id.includes("zod")) return "validation";
+        },
+      },
+    },
   },
 });

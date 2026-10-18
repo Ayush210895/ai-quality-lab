@@ -83,8 +83,8 @@ const details: Record<string, StoryDetails> = {
   "Amazon-Recommendation-System": {
     accent: "#e07818", soft: "#fff3e5", visual: "ranking", featured: true,
     problem: "A useful recommender must balance prediction error, coverage, personalization, and interpretable top-N outputs.",
-    approach: "Compare Bayesian popularity, user KNN, item KNN, and low-rank SVD implementations on the Amazon All Beauty 5-core data.",
-    outcome: "Item-based KNN achieved the lowest reported RMSE while all evaluated approaches retained full item coverage.",
+    approach: "Compare Bayesian popularity, user KNN, item KNN, and low-rank SVD implementations, with temporal holdout as the default evaluation path.",
+    outcome: "Item-based KNN led the committed historical baseline; future decisions now have a leakage-resistant temporal evaluation path and machine-readable output.",
     stack: ["Python", "NumPy", "Pandas", "Collaborative filtering", "SVD", "CI"],
     metrics: [
       { label: "Ratings evaluated", value: "4,092", note: "991 users, 85 products" },
@@ -92,7 +92,7 @@ const details: Record<string, StoryDetails> = {
       { label: "Coverage", value: "100%", note: "Reported for all baselines" },
     ],
     pipeline: ["Beauty reviews", "User-item matrix", "Four recommenders", "Offline comparison", "Top-N products"],
-    boundary: "The split is random and offline. A production decision would add temporal validation, ranking metrics, diversity, and online experimentation.",
+    boundary: "The displayed metrics are the historical random-split baseline. Re-run the temporal path and add ranking, diversity, cold-start, and online evidence before serving recommendations.",
   },
   "financial-doc-agent": {
     accent: "#6b48a8", soft: "#f2edfb", visual: "language", featured: true,
@@ -112,8 +112,8 @@ const details: Record<string, StoryDetails> = {
     accent: "#155f9a", soft: "#e9f3fb", visual: "language", featured: false,
     problem: "Unstructured financial headlines need to become issuer-level signals that analysts can review alongside risk indicators.",
     approach: "Run FinBERT probabilities per headline, compute positive-minus-negative sentiment, and aggregate by issuer, sector, or date.",
-    outcome: "A runnable inference and aggregation layer with immediate sample data and structured CSV outputs.",
-    stack: ["Python", "PyTorch", "Hugging Face", "FinBERT", "Pandas"],
+    outcome: "A tested, containerized batch-inference layer with validated inputs, atomic CSV outputs, and machine-readable run provenance.",
+    stack: ["Python", "PyTorch", "Hugging Face", "Docker", "GitHub Actions"],
     metrics: [
       { label: "Sentiment classes", value: "3", note: "Positive, neutral, negative" },
       { label: "Output levels", value: "2", note: "Headline and issuer" },
@@ -154,7 +154,7 @@ const details: Record<string, StoryDetails> = {
     accent: "#cf5b24", soft: "#fff0e9", visual: "signals", featured: false,
     problem: "Wearable acceleration signals contain nonlinear temporal structure that ordinary summary statistics can miss.",
     approach: "Extract natural and horizontal visibility-graph features plus permutation entropy and statistical complexity.",
-    outcome: "A reusable analysis over 15 participants and four activities, producing feature tables and comparison plots.",
+    outcome: "A reproducible analysis over 15 participants and four activities, with complete graph and entropy tables committed for inspection.",
     stack: ["Python", "Time series", "Visibility graphs", "Permutation entropy", "Network metrics"],
     metrics: [
       { label: "Participants", value: "15", note: "Chest-mounted accelerometer" },
@@ -209,8 +209,8 @@ const details: Record<string, StoryDetails> = {
   "multi-agent-dev-system": {
     accent: "#325b88", soft: "#eaf1f8", visual: "agents", featured: true,
     problem: "A free-form software request must become specifications, architecture, code, tests, review, deployment assets, and documentation.",
-    approach: "Coordinate seven tightly scoped Claude Agent SDK roles through inspectable filesystem artifacts rather than hidden agent-to-agent messages.",
-    outcome: "An end-to-end build pipeline that preserves each role's outputs, transcripts, test report, review, Docker assets, and final README.",
+    approach: "Coordinate seven tightly scoped Claude Agent SDK roles through inspectable filesystem artifacts, approval-aware execution, and per-run manifests.",
+    outcome: "An end-to-end build pipeline that preserves outputs and transcripts, records model and permission provenance, and makes unattended edits opt-in.",
     stack: ["Python", "Claude Agent SDK", "Multi-agent orchestration", "Docker", "GitHub Actions"],
     metrics: [
       { label: "Specialist roles", value: "7", note: "PM through documentation" },
@@ -319,7 +319,7 @@ const operatingDetails: Record<string, { decisionOwner: string; nextStep: string
   "Credit-Risk-MLOps-AWS": { decisionOwner: "Model risk and lending operations", nextStep: "Verify the deployment path in a controlled cloud environment and add approval, rollback, and live drift evidence." },
   "Credit-Card-Anomaly-Detection": { decisionOwner: "Fraud investigation operations", nextStep: "Evaluate temporal stability, investigator yield, calibration, and fraud capture at several realistic queue capacities." },
   "Beijing-AQI-Prediction": { decisionOwner: "Environmental forecasting team", nextStep: "Introduce temporal cross-validation, nonlinear models, station-level error analysis, and operational alert thresholds." },
-  "Amazon-Recommendation-System": { decisionOwner: "Recommendation product team", nextStep: "Add temporal splits, NDCG and diversity metrics, cold-start handling, and an online experiment design." },
+  "Amazon-Recommendation-System": { decisionOwner: "Recommendation product team", nextStep: "Run and commit the temporal baseline, then add NDCG, diversity, cold-start slices, and an online experiment design." },
   "financial-doc-agent": { decisionOwner: "Financial research workflow owner", nextStep: "Expand the evaluation set, measure retrieval and SQL errors separately, and add abstention for unsupported answers." },
   "FinBERT-Financial-News-Sentiment": { decisionOwner: "Research and risk analysts", nextStep: "Create a labeled financial-news test set, test issuer aggregation, and monitor language and market-regime drift." },
   "Clustering": { decisionOwner: "Analytics and segmentation team", nextStep: "Define the downstream use case, stability-test clusters, and compare whether segments change real decisions." },
