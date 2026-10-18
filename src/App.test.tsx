@@ -70,7 +70,7 @@ describe("workspace navigation", () => {
 
     expect(screen.getByRole("heading", { name: "Ayush Soni" })).toBeInTheDocument();
     expect(screen.getByText("Applied AI and ML systems for decisions that need evidence.")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Explore selected work" }));
+    fireEvent.click(screen.getByRole("button", { name: "View Project Atlas" }));
     expect(screen.getByRole("heading", { name: /Systems you can inspect, question, and operate/ })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Three systems\. Three kinds of leadership/ })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Open case" })).toHaveLength(3);

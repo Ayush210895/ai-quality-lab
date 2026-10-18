@@ -420,9 +420,7 @@ export function ConstellationField() {
 function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<PortfolioSiteProps, "onHome" | "onProjects" | "onOpenLab" | "onSelectProject">) {
   const reducedMotion = useReducedMotion();
   const flagships = FLAGSHIP_NAMES.map((name) => projectStories.find((project) => project.name === name)).filter((project): project is ProjectStory => Boolean(project));
-  const [activeName, setActiveName] = useState<(typeof FLAGSHIP_NAMES)[number]>(FLAGSHIP_NAMES[0]);
   const [previewName, setPreviewName] = useState<(typeof FLAGSHIP_NAMES)[number] | null>(null);
-  const activeProject = flagships.find((project) => project.name === activeName) ?? flagships[0];
   const previewProject = flagships.find((project) => project.name === previewName);
   const assetBase = import.meta.env.BASE_URL;
 
@@ -456,7 +454,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
             </div>
           </div>
           <div className="mt-9 grid gap-7 lg:grid-cols-[1fr_320px] lg:items-end">
-            <div><p className="text-base font-black text-white">Applied AI and ML systems for decisions that need evidence.</p><p className="mt-2 max-w-3xl text-base font-semibold leading-8 text-[#cad5e8]">I build causal inference systems and GenAI agents that defend the number behind the answer, connecting experimentation, Snowflake and Databricks LLM workflows, forecasting, NLP, and production ML with decisions that can survive scrutiny.</p><div className="mt-6 flex flex-wrap gap-2"><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] bg-[#2d92ff] px-4 text-sm font-black text-white" onClick={onProjects}><LayoutGrid size={17} /> Explore selected work</button><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] bg-[#0b1425]/80 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Quality Lab</button><a className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a></div></div>
+            <div><p className="text-base font-black text-white">Applied AI and ML systems for decisions that need evidence.</p><p className="mt-2 max-w-3xl text-base font-semibold leading-8 text-[#cad5e8]">I build causal inference systems and GenAI agents that defend the number behind the answer, connecting experimentation, Snowflake and Databricks LLM workflows, forecasting, NLP, and production ML with decisions that can survive scrutiny.</p><div className="mt-6 flex flex-wrap gap-2"><button type="button" className="group inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#4d6386] bg-[#0b1425]/55 px-4 text-sm font-black text-[#64e8ff] hover:border-[#64e8ff] hover:bg-[#10213c]" onClick={onProjects}>View Project Atlas <ArrowRight className="transition-transform group-hover:translate-x-1" size={17} /></button><button type="button" className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] bg-[#0b1425]/80 px-4 text-sm font-bold" onClick={onOpenLab}><FlaskConical size={17} /> Quality Lab</button><a className="inline-flex min-h-11 items-center gap-2 rounded-[4px] border border-[#38527c] px-4 text-sm font-bold" href={`${assetBase}assets/Ayush_Soni_Resume_BigTech_Generalist.pdf`} download><Download size={17} /> Resume</a></div></div>
             <div className="space-y-2 border-l border-[#263d65] pl-5 font-mono text-[10px] font-bold uppercase tracking-[.12em] text-[#8ba7d1]"><p><span className="text-[#ff765c]">01</span> United States</p><p><span className="text-[#5fe0bd]">02</span> DISH / EchoStar</p><p><span className="text-[#c8a2ff]">03</span> Northeastern - M.S. Data Analytics</p><p><span className="text-[#ffc159]">04</span> Open to relocate</p></div>
           </div>
           <div className="capability-rail mt-10 grid grid-cols-2 border border-[#263657] md:grid-cols-4"><div><strong>AI/ML</strong><span>Model development</span></div><div><strong>GenAI</strong><span>Enterprise agents</span></div><div><strong>Causal</strong><span>Lift and forecasting</span></div><div><strong>MLOps</strong><span>Production systems</span></div></div>
@@ -468,25 +466,6 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
           <HomeProof value="75%+" label="N-4 forecast accuracy target exceeded" accent="#5fe0bd" />
           <HomeProof value="30%" label="Faster executive decision-making" accent="#ff765c" />
           <HomeProof value="40%" label="Less manual reporting effort" accent="#c8a2ff" />
-        </div>
-      </section>
-
-      <section className="decision-console border-b border-[#263657] bg-[#0a1425]/82 py-16 backdrop-blur-[2px] lg:py-24">
-        <div className="mx-auto max-w-[1500px] px-4 md:px-7">
-          <div className="grid gap-6 border-b border-[#263657] pb-9 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Evidence studio</p><h2 className="portfolio-display mt-3 text-4xl leading-[1.02] sm:text-6xl">Test the decision,<br />not just the model.</h2></div>
-            <p className="max-w-2xl text-sm leading-7 text-[#aebed6]">Compare three flagship systems. Each view connects a business question to a technical signal, an operating constraint, and evidence someone can act on.</p>
-          </div>
-          <div className="mt-8 grid gap-7 lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start">
-            <div className="decision-selector">{flagships.map((project, index) => <button key={project.name} type="button" aria-pressed={project.name === activeName} className={`flex min-h-16 w-full items-center justify-between border-b px-1 text-left text-xs font-extrabold uppercase transition-colors ${project.name === activeName ? "border-white text-white" : "border-[#324667] text-[#8296b5] hover:text-[#64e8ff]"}`} onClick={() => setActiveName(project.name as (typeof FLAGSHIP_NAMES)[number])}><span><span className="mr-3 font-mono" style={{ color: project.accent }}>0{index + 1}</span>{project.displayName}</span><ArrowRight size={15} /></button>)}</div>
-          <motion.div key={activeProject.name} className="unified-artifact overflow-hidden" initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .32 }}>
-            <div className="flex items-center justify-between gap-4 border-b border-white/15 bg-[#0c1728] px-5 py-4">
-              <span><span className="block text-[9px] font-extrabold uppercase text-[#64e8ff]">Interactive evidence</span><strong className="mt-1 block text-sm">{activeProject.displayName}</strong></span>
-              <span className="font-mono text-[10px] text-[#9fb4b1]">{activeProject.sourceCommit}</span>
-            </div>
-            <div className="h-[430px]"><VisualStage project={activeProject} /></div>
-          </motion.div>
-          </div>
         </div>
       </section>
 
