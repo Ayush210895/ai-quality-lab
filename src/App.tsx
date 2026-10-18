@@ -645,7 +645,7 @@ export default function App() {
   const navigate = (target: string) => {
     setRoute(target);
     if (window.location.hash !== target) window.location.hash = target;
-    if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: "smooth" });
+    if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: "auto" });
   };
   if (route.startsWith("#/lab")) return <QualityLabApp onExit={() => navigate("#/")} />;
   const slug = route.startsWith("#/projects/") ? decodeURIComponent(route.slice("#/projects/".length)) : "";

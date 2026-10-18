@@ -9,8 +9,9 @@ This site is an interactive portfolio for Ayush Soni's public AI, machine-learni
 - Searchable, category-based explorer for all public projects.
 - Dedicated hash URL for every project, suitable for direct sharing.
 - Project-specific color system and live visual preview.
+- A prominent, evidence-bounded decision statement for every project.
 - Story, architecture, and evidence views with verified metrics and honest limitations.
-- Direct repository links and related-project navigation.
+- Visible Projects and Quality Lab navigation, direct repository links, and related-project paths.
 - A persistent route into the interactive Quality Lab.
 
 Example project URL:

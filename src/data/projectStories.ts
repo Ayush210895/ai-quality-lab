@@ -12,13 +12,14 @@ export type ProjectStory = PortfolioProject & {
   problem: string;
   approach: string;
   outcome: string;
+  decision: string;
   stack: string[];
   metrics: ProjectMetric[];
   pipeline: string[];
   boundary: string;
 };
 
-type StoryDetails = Omit<ProjectStory, keyof PortfolioProject | "slug">;
+type StoryDetails = Omit<ProjectStory, keyof PortfolioProject | "slug" | "decision">;
 
 const details: Record<string, StoryDetails> = {
   "travel-marketplace-harm-risk": {
@@ -282,11 +283,33 @@ const details: Record<string, StoryDetails> = {
     metrics: [
       { label: "Model workspaces", value: "6", note: "Applied model families" },
       { label: "Metric tests", value: "21", note: "Core evaluation logic" },
-      { label: "UI tests", value: "9", note: "Navigation and workflows" },
+      { label: "UI tests", value: "11", note: "Navigation and workflows" },
     ],
     pipeline: ["Model evidence", "Operating policy", "Quality metrics", "Production gates", "Decision export"],
     boundary: "The browser suite evaluates supplied evidence; it does not execute arbitrary Python model binaries.",
   },
+};
+
+const decisions: Record<string, string> = {
+  "travel-marketplace-harm-risk": "Use expected-loss ranking when the review objective is harmful value captured, while retaining incident recall as a monitored guardrail.",
+  "Credit-Risk-MLOps-AWS": "Promote a credit-model candidate only after it clears the registered metric gate; treat the current implementation as a local production pattern until cloud operation is verified.",
+  "Credit-Card-Anomaly-Detection": "Prioritize the top 500 anomaly-ranked transactions for investigator review; do not use this benchmark alone to auto-block transactions.",
+  "Beijing-AQI-Prediction": "Use the pipeline and linear model as a reproducible baseline, then require temporal validation and stronger nonlinear candidates before operational forecasting.",
+  "Amazon-Recommendation-System": "Carry item-based KNN forward as the strongest offline baseline, but require temporal ranking evaluation and an online experiment before serving it.",
+  "financial-doc-agent": "Route calculation-heavy questions through read-only SQL and narrative questions through retrieval; keep human review for consequential financial decisions.",
+  "FinBERT-Financial-News-Sentiment": "Use sentiment as an analyst triage signal, not as an automated trading or risk decision, until labeled evaluation and drift controls exist.",
+  "Clustering": "Choose the clustering method from the data geometry and business objective rather than declaring one universal winner across datasets.",
+  "Portfolio-Risk-PCA-From-Scratch": "Use the dominant component to diagnose concentration and hedging behavior, not to change portfolio allocation from this short sample alone.",
+  "Human-Activity-Monitoring": "Use the extracted graph and entropy features to design a held-out activity classifier; the current evidence supports characterization, not automated classification.",
+  "Linear-Regression": "Use these estimators as transparent reference implementations and baselines; choose a production model only after domain-specific validation.",
+  "Logistic-Regression": "Use the implementation as an interpretable classification baseline, then validate threshold and calibration on real domain data before deployment.",
+  "Naive-Bayes": "Use Naive Bayes when transparent discrete likelihoods are valuable, but require real-data validation before making operational predictions.",
+  "multi-agent-dev-system": "Use artifact-mediated agent coordination when traceability matters; expand automation only after task-level quality, latency, and cost benchmarks pass.",
+  "Machine-Learning-From-Scratch": "Use this repository for learning, debugging, and interview explanation; rely on tested project repositories for performance or deployment claims.",
+  "Space-Race-Visualisation": "Use the dashboard to compare historical launch patterns and agency scale, without treating descriptive relationships as causal or predictive.",
+  "Ayush210895.github.io": "Use the portfolio as the public recruiter entry point, with every material claim linked back to current repository or resume evidence.",
+  "Ayush210895": "Use the profile repository as a concise discovery index; evaluate technical depth in the linked project evidence rather than the profile summary.",
+  "ai-quality-lab": "Make model launch decisions from business value, operating constraints, and reliability gates together rather than from a single headline metric.",
 };
 
 function slugify(name: string) {
@@ -296,6 +319,7 @@ function slugify(name: string) {
 export const projectStories: ProjectStory[] = portfolioProjects.map((project) => ({
   ...project,
   ...details[project.name],
+  decision: decisions[project.name],
   slug: slugify(project.name),
 }));
 

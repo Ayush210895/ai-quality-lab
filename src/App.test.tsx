@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+import { projectStories } from "./data/projectStories";
 
 vi.mock("recharts", () => ({
   Area: () => null,
@@ -71,6 +72,12 @@ describe("workspace navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Explore travel-marketplace-harm-risk" }));
 
     expect(await screen.findByRole("heading", { name: "travel-marketplace-harm-risk" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "What this evidence allows us to decide" })).toBeInTheDocument();
     expect(window.location.hash).toBe("#/projects/travel-marketplace-harm-risk");
+  });
+
+  it("defines a decision for every mapped project", () => {
+    expect(projectStories).toHaveLength(19);
+    expect(projectStories.every((project) => project.decision.trim().length > 40)).toBe(true);
   });
 });

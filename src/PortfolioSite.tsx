@@ -10,7 +10,9 @@ import {
   ExternalLink,
   FlaskConical,
   Layers3,
+  LayoutGrid,
   Search,
+  Scale,
 } from "lucide-react";
 import {
   Area,
@@ -64,6 +66,7 @@ function SiteHeader({ onHome, onOpenLab, light = false }: { onHome: () => void; 
         <span className="min-w-0"><strong className="block truncate text-sm">Ayush Soni</strong><span className={`block truncate text-[11px] font-bold uppercase ${light ? "text-[#9edfd5]" : "text-[#34766d]"}`}>AI/ML Project Atlas</span></span>
       </button>
       <nav className="flex items-center gap-2" aria-label="Portfolio navigation">
+        <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-2.5 text-xs font-bold ${light ? "hover:bg-white/10" : "hover:bg-white"}`} type="button" title="Browse all projects" onClick={onHome}><LayoutGrid size={15} /><span className="hidden sm:inline">Projects</span></button>
         <a className={`hidden min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold sm:inline-flex ${light ? "hover:bg-white/10" : "hover:bg-white"}`} href="https://github.com/Ayush210895" target="_blank" rel="noreferrer"><Code2 size={15} /> GitHub</a>
         <button className={`inline-flex min-h-9 items-center gap-2 rounded-[6px] px-3 text-xs font-bold ${light ? "bg-white text-[#142126]" : "bg-[#142126] text-white"}`} type="button" onClick={onOpenLab}><FlaskConical size={15} /> Quality Lab</button>
       </nav>
@@ -76,7 +79,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
   const [query, setQuery] = useState("");
   const visible = useMemo(() => projectStories.filter((project) => {
     const matchesGroup = group === "All" || (group === "Featured" ? project.featured : projectGroup(project) === group);
-    const text = `${project.name} ${project.summary} ${project.problem} ${project.stack.join(" ")}`.toLowerCase();
+    const text = `${project.name} ${project.summary} ${project.problem} ${project.decision} ${project.stack.join(" ")}`.toLowerCase();
     return matchesGroup && text.includes(query.trim().toLowerCase());
   }), [group, query]);
 
@@ -91,7 +94,7 @@ function ProjectExplorer({ onOpenLab, onSelectProject }: Pick<PortfolioSiteProps
             <p className="mt-5 max-w-3xl text-base leading-7 text-[#536166]">Explore model behavior, architecture, evidence, and honest limitations across production ML, GenAI, recommendations, risk, forecasting, and analytics.</p>
           </div>
           <div className="grid grid-cols-3 gap-2 border-t border-[#aebcba] pt-5 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
-            <AtlasStat value="19" label="Public projects" />
+            <AtlasStat value={String(projectStories.length)} label="Public projects" />
             <AtlasStat value={String(projectStories.filter((project) => project.featured).length)} label="Featured systems" />
             <AtlasStat value="1" label="Interactive lab" />
           </div>
@@ -132,7 +135,7 @@ function ProjectTile({ project, onSelect }: { project: ProjectStory; onSelect: (
       <h3 className="mt-3 break-words text-xl font-black leading-tight">{project.name}</h3>
       <p className="mt-3 text-sm leading-6 text-[#5b696d]">{project.summary}</p>
       <div className="mt-4 flex flex-wrap gap-1.5">{project.stack.slice(0, 4).map((item) => <span key={item} className="rounded-full border border-[#d7dfdf] px-2 py-1 text-[10px] font-bold text-[#536166]">{item}</span>)}</div>
-      <div className="mt-auto flex items-center justify-between border-t border-[#e0e7e6] pt-4"><span className="text-xs font-bold text-[#687579]">{project.metrics[0].label}: <strong className="text-[#142126]">{project.metrics[0].value}</strong></span><button type="button" className="grid h-9 w-9 place-items-center rounded-[6px] text-white" style={{ backgroundColor: project.accent }} onClick={onSelect} title={`Open ${project.name}`}><ArrowRight size={17} /></button></div>
+      <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#e0e7e6] pt-4"><span className="text-xs font-bold text-[#687579]">{project.metrics[0].label}: <strong className="text-[#142126]">{project.metrics[0].value}</strong></span><button type="button" className="inline-flex min-h-9 shrink-0 items-center gap-2 rounded-[6px] px-3 text-xs font-bold text-white" style={{ backgroundColor: project.accent }} onClick={onSelect}>Case study <ArrowRight size={15} /></button></div>
     </div>
   </article>;
 }
@@ -161,6 +164,13 @@ function ProjectPage({ project, onBack, onOpenLab, onSelectProject }: { project:
 
       <section className="border-b border-[#d4dddc] bg-white">
         <div className="mx-auto grid max-w-[1500px] grid-cols-1 md:grid-cols-3">{project.metrics.map((metric) => <div key={metric.label} className="border-b border-[#dfe6e5] px-5 py-5 last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0 lg:px-7"><span className="text-xs font-bold text-[#687579]">{metric.label}</span><strong className="mt-1 block text-3xl font-black tabular-nums">{metric.value}</strong><small className="mt-1 block text-xs text-[#687579]">{metric.note}</small></div>)}</div>
+      </section>
+
+      <section className="border-b border-[#d4dddc] bg-[#142126] text-white">
+        <div className="mx-auto grid max-w-[1500px] gap-4 px-4 py-6 md:grid-cols-[auto_minmax(0,1fr)] md:items-start md:px-7 lg:py-8">
+          <span className="grid h-11 w-11 place-items-center rounded-[6px]" style={{ backgroundColor: project.accent }}><Scale size={20} /></span>
+          <div><p className="text-[11px] font-extrabold uppercase text-[#9edfd5]">Decision supported</p><h2 className="mt-1 text-xl font-black sm:text-2xl">What this evidence allows us to decide</h2><p className="mt-3 max-w-5xl text-sm leading-6 text-[#d6e0df] sm:text-base sm:leading-7">{project.decision}</p></div>
+        </div>
       </section>
 
       <section className="mx-auto max-w-[1500px] px-4 py-8 md:px-7 lg:py-12">
