@@ -174,57 +174,57 @@ const EXPERIENCE = [
     years: "2024 - Present",
     company: "DISH / EchoStar",
     role: "Senior Data Scientist",
-    bullets: [
-      "Built churn- and survival-driven forward LTV and targeted-upgrade decisioning with plan simulation, eligibility and tiering rules, production outputs, and a segment-level holdout design; device propensity was supplied by another team.",
-      "Built a Snowflake Cortex AI promotional-effectiveness agent that accepts natural-language inputs, runs statistical decomposition in Python, and returns structured pre-, promo-, and post-period lift insights.",
-      "Developed a causal demand-planning system using SARIMAX and XGBoost across Indirect, Web, and Walmart channels, exceeding a 75% N-4 forecast-accuracy target.",
-      "Built a Snowflake Intelligence conversational analytics layer over about 50 curated business tables from roughly 200 sources, with governed metrics, verified queries, follow-up analysis, charts, logs, and user feedback.",
-      "Built a governed enterprise knowledge assistant with version-aware retrieval, evidence-backed answers, citation checks, role-aware access, and abstention when approved source material is insufficient.",
-      "Built an executive analytics platform with Tableau and Snowflake, accelerating decision-making by 30% and reducing manual reporting effort by 40%.",
+    projects: [
+      { name: "Customer Value and Upgrade Decisioning", detail: "Built churn- and survival-driven forward LTV with plan simulation, eligibility and tiering rules, production outputs, and a segment-level holdout design; device propensity was supplied by another team." },
+      { name: "Promotion Effectiveness Agent", detail: "Built a Snowflake Cortex AI workflow that accepts natural-language inputs, runs statistical decomposition in Python, and returns structured pre-, promo-, and post-period lift insights." },
+      { name: "Causal Demand Planning", detail: "Developed SARIMAX and XGBoost forecasting across Indirect, Web, and Walmart channels, exceeding a 75% N-4 forecast-accuracy target." },
+      { name: "Governed Conversational Analytics", detail: "Built a Snowflake Intelligence layer over about 50 curated business tables from roughly 200 sources, with governed metrics, verified queries, follow-up analysis, charts, logs, and user feedback." },
+      { name: "Enterprise Knowledge Assistant", detail: "Built version-aware retrieval, evidence-backed answers, citation checks, role-aware access, and abstention when approved source material is insufficient." },
+      { name: "Executive Decision Platform", detail: "Built Tableau and Snowflake analytics that accelerated decision-making by 30% and reduced manual reporting effort by 40%." },
     ],
   },
   {
     years: "2024",
     company: "The Partnership Center",
     role: "Data Scientist",
-    bullets: [
-      "Deployed ML regression models that reduced forecast error by 20% and improved operational efficiency by 40%.",
-      "Migrated enterprise data to Snowflake and automated repeatable ETL workflows for portfolio-performance monitoring.",
-      "Built Power BI dashboards with advanced DAX calculations for investment-portfolio performance trends.",
-      "Partnered with operations teams to translate model outputs into resource-planning workflows.",
+    projects: [
+      { name: "Resource Utilization Forecasting", detail: "Deployed ML regression models that reduced forecast error by 20% and improved operational efficiency by 40%." },
+      { name: "Portfolio Data Foundation", detail: "Migrated enterprise data to Snowflake and automated repeatable ETL workflows for portfolio-performance monitoring." },
+      { name: "Investment Performance Analytics", detail: "Built Power BI dashboards with advanced DAX calculations for investment-portfolio trends and resource-planning decisions." },
+      { name: "Operational Adoption", detail: "Partnered with operations teams to translate model outputs into recurring resource-planning workflows." },
     ],
   },
   {
     years: "2023 - 2024",
     company: "UBS",
     role: "Data Scientist - Quant Research and NLP/AI",
-    bullets: [
-      "Built XGBoost market-prediction pipelines on Bloomberg time-series data, reaching a 62.4% weekly hit rate for bond-market forecasting.",
-      "Developed a FinBERT sentiment engine with 87% accuracy for credit-risk, research, and investment-decision workflows.",
-      "Designed Python and SQL predictive pipelines to model equity performance and support quantitative research.",
-      "Improved global mutual-fund forecasting accuracy by 33% through feature engineering and Bloomberg-data validation.",
-      "Automated Bloomberg and YODA reporting pipelines across research and risk reporting.",
+    projects: [
+      { name: "Bond Market Forecasting", detail: "Built XGBoost pipelines on Bloomberg time-series data, reaching a 62.4% weekly directional hit rate." },
+      { name: "Financial News Sentiment", detail: "Developed a FinBERT engine with 87% accuracy for credit-risk, research, and investment-decision workflows." },
+      { name: "Equity Research Pipelines", detail: "Designed Python and SQL predictive pipelines to model equity performance and support quantitative research." },
+      { name: "Mutual Fund Forecasting", detail: "Improved global forecasting accuracy by 33% through feature engineering and Bloomberg-data validation." },
+      { name: "Research Data Automation", detail: "Automated Bloomberg and YODA reporting pipelines across research and risk reporting." },
     ],
   },
   {
     years: "2018 - 2021",
     company: "Accenture",
     role: "Machine Learning Associate - Banking Analytics",
-    bullets: [
-      "Built ML credit- and debit-limit optimization for OP Financial, driving 23% revenue growth and a 40% efficiency improvement.",
-      "Developed XGBoost churn and segmentation models for Allianz Bank with Tableau and Power BI decision dashboards.",
-      "Ran A/B tests and statistical inference across credit and debit portfolios to improve segmentation and campaign response.",
-      "Migrated DB2 and Teradata workloads to AWS and standardized validation practices.",
+    projects: [
+      { name: "Credit Limit Decisioning", detail: "Built ML credit- and debit-limit optimization for OP Financial, driving 23% revenue growth and a 40% efficiency improvement." },
+      { name: "Churn and Customer Segmentation", detail: "Developed XGBoost models for Allianz Bank with Tableau and Power BI decision dashboards." },
+      { name: "Portfolio Experimentation", detail: "Ran A/B tests and statistical inference across credit and debit portfolios to improve segmentation and campaign response." },
+      { name: "Cloud Data Modernization", detail: "Migrated DB2 and Teradata workloads to AWS and standardized validation practices." },
     ],
   },
 ] as const;
 
-const PROFESSIONAL_SYSTEMS = [
-  { id: "01", name: "AI Quality Lab", tag: "Public build - Evaluation infrastructure", description: "Six browser-based workspaces connect model evidence, operating constraints, launch gates, monitoring, and downloadable decision records across ML and LLM systems.", accent: "#5fe0bd" },
-  { id: "02", name: "Travel Marketplace Harm Risk", tag: "Public build - Applied ML decision science", description: "A locked XGBoost policy ranks the top 5% of bookings by expected loss and captured 37.2% of harmful value on an untouched future test.", accent: "#ff765c" },
-  { id: "03", name: "Financial Document Intelligence Agent", tag: "Public build - Agentic RAG and Text2SQL", description: "Reranked retrieval over filings, read-only Text2SQL, tool calling, evaluation cases, FastAPI, Docker, and Streamlit. Runs locally; cloud deployment remains planned.", accent: "#c8a2ff" },
-  { id: "04", name: "LTV and Targeted Upgrade Decisioning", tag: "Professional work - Survival modeling and customer value", description: "Forward-looking LTV combines expected tenure, customer economics, plan-level simulation, eligibility safeguards, offer tiers, and a holdout design for measuring incremental value.", accent: "#72b7ff" },
-  { id: "05", name: "Causal Demand Planning", tag: "Professional work - Forecasting and optimization", description: "SARIMAX and XGBoost forecasting, reconciliation, pricing and promotion features, and time-aware evaluation across three commercial channels.", accent: "#ffc159" },
+const GITHUB_SHOWCASE = [
+  { id: "01", name: "AI Quality Lab", tag: "Evaluation infrastructure", description: "Six interactive workspaces connect model metrics, operating constraints, launch gates, monitoring, and downloadable decision records across ML and LLM systems.", proof: "33 automated tests", repoUrl: "https://github.com/Ayush210895/ai-quality-lab", accent: "#5fe0bd" },
+  { id: "02", name: "Travel Marketplace Harm Risk", tag: "Applied ML decision science", description: "A leakage-aware XGBoost system optimizes a fixed review queue for expected loss and validates the locked policy on an untouched future period.", proof: "37.2% harmful value captured at 5% capacity", repoUrl: "https://github.com/Ayush210895/travel-marketplace-harm-risk", accent: "#ff765c" },
+  { id: "03", name: "Financial Document Agent", tag: "Grounded GenAI and Text2SQL", description: "Reranked retrieval, source citations, read-only Text2SQL, tool routing, evaluation cases, FastAPI, Docker, and Streamlit form one locally runnable analyst workflow.", proof: "Narrative and numeric evaluation harness", repoUrl: "https://github.com/Ayush210895/financial-doc-agent", accent: "#c8a2ff" },
+  { id: "04", name: "Credit Risk MLOps on AWS", tag: "Production ML lifecycle", description: "Tracked training, metric-gated registry promotion, API serving, containers, CI, and drift reporting make the approval path inspectable from model build to operation.", proof: "ROC-AUC 0.807 and recall 80.0%", repoUrl: "https://github.com/Ayush210895/Credit-Risk-MLOps-AWS", accent: "#72b7ff" },
+  { id: "05", name: "Amazon Recommendation System", tag: "Ranking and personalization", description: "Collaborative filtering, temporal evaluation, and readable recommendation outputs test whether offline ranking quality survives a realistic holdout.", proof: "Temporal holdout evaluation", repoUrl: "https://github.com/Ayush210895/Amazon-Recommendation-System", accent: "#ffc159" },
 ] as const;
 
 const STACK_GROUPS = [
@@ -479,14 +479,15 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
       <section className="border-b border-[#213050] bg-[#070d19]/82 py-16 backdrop-blur-[2px] lg:py-24" id="systems">
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 border-b border-[#263657] pb-10 lg:grid-cols-[.72fr_1.28fr] lg:items-end">
-            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">Selected systems</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Recent builds<br />and applied work.</h2></div>
-            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Public builds and verified professional work are labeled separately, with scope boundaries kept visible.</p>
+            <div><p className="text-xs font-extrabold uppercase text-[#64e8ff]">GitHub showcase</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Strongest public<br />engineering work.</h2></div>
+            <p className="max-w-2xl text-base leading-7 text-[#aebed6]">Five repositories selected for decision quality, technical depth, reproducible evidence, and production thinking across applied ML, GenAI, MLOps, and ranking.</p>
           </div>
           <div>
-            {PROFESSIONAL_SYSTEMS.map((system) => <article key={system.id} className="group grid gap-5 border-b border-[#263657] py-8 md:grid-cols-[70px_minmax(240px,.8fr)_minmax(0,1.2fr)] md:items-start md:gap-9">
-              <span className="font-mono text-sm font-black" style={{ color: system.accent }}>{system.id}</span>
-              <div><span className="text-[10px] font-extrabold uppercase" style={{ color: system.accent }}>{system.tag}</span><h3 className="mt-2 text-2xl font-black text-white">{system.name}</h3></div>
-              <p className="border-l border-[#34476d] pl-5 text-sm leading-7 text-[#b9c7db] transition-colors group-hover:border-white/40">{system.description}</p>
+            {GITHUB_SHOWCASE.map((project) => <article key={project.id} className="group grid gap-5 border-b border-[#263657] py-8 lg:grid-cols-[70px_minmax(240px,.8fr)_minmax(0,1.2fr)_190px] lg:items-start lg:gap-9">
+              <span className="font-mono text-sm font-black" style={{ color: project.accent }}>{project.id}</span>
+              <div><span className="text-[10px] font-extrabold uppercase" style={{ color: project.accent }}>{project.tag}</span><h3 className="mt-2 text-2xl font-black text-white">{project.name}</h3></div>
+              <p className="border-l border-[#34476d] pl-5 text-sm leading-7 text-[#b9c7db] transition-colors group-hover:border-white/40">{project.description}</p>
+              <div className="lg:text-right"><p className="font-mono text-[10px] font-bold uppercase text-[#8ea4c2]">Evidence signal</p><p className="mt-2 text-xs font-bold leading-5 text-white">{project.proof}</p><a className="mt-4 inline-flex items-center gap-2 text-xs font-black text-[#64e8ff] hover:text-white" href={project.repoUrl} target="_blank" rel="noreferrer"><ExternalLink size={15} /> View repository <ArrowUpRight size={14} /></a></div>
             </article>)}
           </div>
         </div>
@@ -513,7 +514,7 @@ function UnifiedHome({ onHome, onProjects, onOpenLab, onSelectProject }: Pick<Po
         <div className="mx-auto max-w-[1500px] px-4 md:px-7">
           <div className="grid gap-8 lg:grid-cols-[.6fr_1.4fr]"><div><p className="text-xs font-extrabold uppercase text-[#67dcc7]">Experience</p><h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">Built across product, finance, and operations.</h2></div><p className="max-w-2xl text-base leading-7 text-[#b9cac7]">The common thread is not a particular algorithm. It is turning uncertain data into a decision, earning stakeholder trust, and building the path from analysis to use.</p></div>
           <div className="mt-12 border-t border-[#263657]">
-            {EXPERIENCE.map((item) => <article key={`${item.company}-${item.years}`} className="grid gap-5 border-b border-[#263657] py-9 md:grid-cols-[150px_260px_1fr] md:gap-8"><span className="font-mono text-xs font-bold text-[#64e8ff]">{item.years}</span><span><strong className="block text-lg">{item.company}</strong><small className="mt-1 block text-xs text-[#91a7c5]">{item.role}</small></span><ul className="space-y-3">{item.bullets.map((bullet) => <li key={bullet} className="relative pl-5 text-sm leading-6 text-[#c8d4e6] before:absolute before:left-0 before:top-[9px] before:h-1.5 before:w-1.5 before:rounded-full before:bg-[#5fe0bd]">{bullet}</li>)}</ul></article>)}
+            {EXPERIENCE.map((item) => <article key={`${item.company}-${item.years}`} className="grid gap-6 border-b border-[#263657] py-10 lg:grid-cols-[150px_260px_1fr] lg:gap-8"><span className="font-mono text-xs font-bold text-[#64e8ff]">{item.years}</span><span><strong className="block text-lg">{item.company}</strong><small className="mt-1 block text-xs text-[#91a7c5]">{item.role}</small><span className="mt-4 inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase text-[#67dcc7]"><Boxes size={13} /> Selected project work</span></span><div className="border-t border-[#263657]">{item.projects.map((project, index) => <div key={project.name} className="grid gap-2 border-b border-[#263657] py-4 sm:grid-cols-[minmax(170px,.55fr)_minmax(0,1fr)] sm:gap-6"><h3 className="text-sm font-black leading-6 text-white"><span className="mr-2 font-mono text-[10px] text-[#5fe0bd]">0{index + 1}</span>{project.name}</h3><p className="text-sm leading-6 text-[#c8d4e6]">{project.detail}</p></div>)}</div></article>)}
           </div>
         </div>
       </section>
